@@ -102,7 +102,7 @@ input[type=range]{width:100%;accent-color:#c78aff}
 }
 .songs{
  display:grid;
- grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+ grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
  gap:17px;
 }
 .card{
@@ -121,13 +121,34 @@ input[type=range]{width:100%;accent-color:#c78aff}
 }
 .card h3{margin-bottom:5px}
 .card p{color:#bcaacb;font-size:13px}
+.card-btns{
+ display:flex;
+ gap:8px;
+ flex-wrap:wrap;
+ margin-top:12px;
+}
 .card button{
  background:#a45ce1;
  color:white;
  border:0;
- padding:10px 18px;
+ padding:10px 16px;
  border-radius:20px;
  cursor:pointer;
+ font-size:13px;
+}
+.dl-btn{
+ display:inline-block;
+ background:transparent;
+ color:#d8a8ff;
+ border:1.5px solid #a45ce1;
+ padding:8px 15px;
+ border-radius:20px;
+ text-decoration:none;
+ font-size:13px;
+}
+.dl-btn:hover{
+ background:#a45ce1;
+ color:white;
 }
 .about{
  background:#1c1425;
@@ -175,8 +196,7 @@ footer a{color:#d8a8ff;margin:10px}
  <p>LISTEN • RELAX • FEEL • REMEMBER</p>
  <p>Original Music | Romantic | Sad | Lofi</p>
  <a class="btn" href="#player">Listen Now ▶</a>
- <a class="btn" href="https://youtube.com/@rlofi01"
- target="_blank">YouTube Channel</a>
+ <a class="btn" href="https://youtube.com/@rlofi01" target="_blank">YouTube Channel</a>
 </div>
 
 <section id="player">
@@ -184,11 +204,11 @@ footer a{color:#d8a8ff;margin:10px}
  <p class="sub">Listen to R LOFI 01 Original Music</p>
 
  <div class="player">
-  <div class="cover" id="cover">🎵</div>
-  <h3 id="songName">Welcome to R LOFI 01</h3>
+  <div class="cover" id="cover">💜</div>
+  <h3 id="songName">Ek Naam Tha</h3>
   <p class="sub" id="artist">R LOFI 01</p>
 
-  <audio id="audio"></audio>
+  <audio id="audio" src="Ek Naam Tha.mp3"></audio>
 
   <div class="time">
    <span id="current">0:00</span>
@@ -203,9 +223,12 @@ footer a{color:#d8a8ff;margin:10px}
    <button id="next">⏭</button>
   </div>
 
+  <div style="margin: 12px 0;">
+   <a id="playerDownload" class="dl-btn" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3">⬇ Download Song</a>
+  </div>
+
   <p class="sub">🔊 Volume</p>
-  <input type="range" id="volume"
-   min="0" max="1" step="0.01" value="0.8">
+  <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8">
  </div>
 </section>
 
@@ -216,23 +239,32 @@ footer a{color:#d8a8ff;margin:10px}
  <div class="songs">
   <div class="card">
    <div class="art">💜</div>
-   <h3>Romantic Memories</h3>
+   <h3>Ek Naam Tha</h3>
    <p>Romantic • Emotional</p>
-   <button onclick="playSong(0)">▶ Play Song</button>
+   <div class="card-btns">
+    <button onclick="playSong(0)">▶ Play</button>
+    <a class="dl-btn" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3">⬇ Download</a>
+   </div>
   </div>
 
   <div class="card">
    <div class="art">🌧️</div>
    <h3>Sad Memories</h3>
-   <p>Sad • Heart Touching</p>
-   <button onclick="playSong(1)">▶ Play Song</button>
+   <p>Sad • Heart Touching (Coming Soon)</p>
+   <div class="card-btns">
+    <button onclick="playSong(1)">▶ Play</button>
+    <a class="dl-btn" href="song2.mp3" download="Sad Memories.mp3">⬇ Download</a>
+   </div>
   </div>
 
   <div class="card">
    <div class="art">🌙</div>
    <h3>Lofi Collection</h3>
-   <p>Relax • Chill • Lofi</p>
-   <button onclick="playSong(2)">▶ Play Song</button>
+   <p>Relax • Chill • Lofi (Coming Soon)</p>
+   <div class="card-btns">
+    <button onclick="playSong(2)">▶ Play</button>
+    <a class="dl-btn" href="song3.mp3" download="Lofi Collection.mp3">⬇ Download</a>
+   </div>
   </div>
  </div>
 </section>
@@ -244,9 +276,7 @@ footer a{color:#d8a8ff;margin:10px}
   <p class="sub">
    Enjoy original songs, romantic music and emotional melodies.
   </p>
-  <a class="btn"
-   href="https://youtube.com/@rlofi01"
-   target="_blank">Visit R LOFI 01</a>
+  <a class="btn" href="https://youtube.com/@rlofi01" target="_blank">Visit R LOFI 01</a>
  </div>
 </section>
 
@@ -266,26 +296,25 @@ footer a{color:#d8a8ff;margin:10px}
 <footer>
  <h3>R LOFI 01 🎧</h3>
  <p>Feel Every Beat. Remember Every Moment.</p>
- <a href="https://youtube.com/@rlofi01"
- target="_blank">YouTube</a>
+ <a href="https://youtube.com/@rlofi01" target="_blank">YouTube</a>
  <p>© 2026 R LOFI 01. All Rights Reserved.</p>
 </footer>
 
 <script>
 const tracks = [
  {
-  name:"Romantic Memories",
-  file:"songs/song1.mp3",
+  name:"Ek Naam Tha",
+  file:"Ek Naam Tha.mp3",
   icon:"💜"
  },
  {
   name:"Sad Memories",
-  file:"songs/song2.mp3",
+  file:"song2.mp3",
   icon:"🌧️"
  },
  {
   name:"Lofi Collection",
-  file:"songs/song3.mp3",
+  file:"song3.mp3",
   icon:"🌙"
  }
 ];
@@ -293,26 +322,30 @@ const tracks = [
 let index=0;
 const audio=document.getElementById("audio");
 const playBtn=document.getElementById("play");
+const playerDownload=document.getElementById("playerDownload");
 
 function playSong(i){
  index=i;
  audio.src=tracks[index].file;
  document.getElementById("songName").textContent=tracks[index].name;
  document.getElementById("cover").textContent=tracks[index].icon;
+ playerDownload.href=tracks[index].file;
+ playerDownload.download=tracks[index].name + " - R LOFI 01.mp3";
  audio.play().then(()=>{
   playBtn.textContent="Ⅱ";
  }).catch(()=>{
   playBtn.textContent="▶";
-  alert("Please upload the MP3 song to the songs folder.");
+  alert("এই গানটি এখনো আপলোড করা হয়নি।");
  });
 }
 
 playBtn.onclick=()=>{
- if(!audio.src){
-  playSong(0);
- }else if(audio.paused){
-  audio.play();
-  playBtn.textContent="Ⅱ";
+ if(audio.paused){
+  audio.play().then(()=>{
+   playBtn.textContent="Ⅱ";
+  }).catch(()=>{
+   alert("গানটি লোড হচ্ছে, একটু পর আবার চেষ্টা করুন।");
+  });
  }else{
   audio.pause();
   playBtn.textContent="▶";
