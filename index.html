@@ -5,129 +5,248 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>R LOFI 01 | Official Music</title>
-<meta name="description" content="Listen to original music by R LOFI 01. Lofi, Romantic and Emotional Songs.">
+<meta name="theme-color" content="#100b19">
+
 <style>
 *{box-sizing:border-box}
 body{
  margin:0;
- background:#100d18;
- color:white;
+ background:#100b19;
+ color:#fff;
  font-family:Arial,sans-serif;
 }
 header{
  display:flex;
  justify-content:space-between;
  align-items:center;
- padding:22px 7%;
- background:#171222;
+ padding:20px 7%;
+ background:#171020;
+ position:sticky;
+ top:0;
+ z-index:5;
 }
-.logo{font-size:24px;font-weight:bold;color:#d6a5ff}
-nav a{color:white;text-decoration:none;margin-left:18px;font-size:14px}
+.logo{font-size:23px;font-weight:bold;color:#d7a4ff}
+nav a{
+ color:#ddd;
+ text-decoration:none;
+ margin-left:15px;
+ font-size:14px;
+}
 .hero{
- min-height:440px;
+ min-height:390px;
+ padding:65px 20px;
+ text-align:center;
  display:flex;
  flex-direction:column;
- justify-content:center;
  align-items:center;
- text-align:center;
- padding:40px 20px;
- background:radial-gradient(ellipse at 50% 40%,#573477,#21162f 55%,#100d18);
+ justify-content:center;
+ background:
+ radial-gradient(ellipse at 50% 30%,#70418f,#302044 50%,#100b19);
 }
-.hero h1{font-size:clamp(40px,9vw,75px);margin:10px}
-.hero p{color:#d5c3e8;letter-spacing:2px}
+.hero h1{
+ font-size:clamp(42px,9vw,76px);
+ margin:10px 0;
+}
+.hero p{color:#dfc9ef;letter-spacing:2px}
 .btn{
  display:inline-block;
- padding:14px 25px;
- background:#a45ee5;
- border-radius:30px;
+ background:#a45ce1;
  color:white;
+ padding:13px 24px;
+ border-radius:30px;
  text-decoration:none;
- margin-top:18px;
+ margin:10px 5px;
 }
-section{padding:45px 7%}
-h2{color:#d6a5ff}
-.songs{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
- gap:20px;
-}
-.card{
- background:#211a2d;
- border-radius:15px;
- padding:20px;
+section{padding:40px 7%}
+h2{color:#d8a8ff}
+.sub{color:#b9a9c5;font-size:14px}
+.player{
+ background:linear-gradient(145deg,#30203f,#191321);
+ padding:22px;
+ border-radius:18px;
+ max-width:600px;
+ margin:auto;
+ text-align:center;
 }
 .cover{
- height:145px;
+ width:100%;
+ max-width:280px;
+ aspect-ratio:1;
+ margin:0 auto 20px;
+ border-radius:15px;
+ background:linear-gradient(135deg,#70458f,#24182f);
+ display:flex;
+ justify-content:center;
+ align-items:center;
+ font-size:75px;
+}
+.player h3{margin:10px}
+.controls button{
+ border:0;
+ border-radius:50%;
+ width:45px;
+ height:45px;
+ margin:8px;
+ background:#a45ce1;
+ color:white;
+ font-size:19px;
+ cursor:pointer;
+}
+#play{width:58px;height:58px;font-size:24px}
+input[type=range]{width:100%;accent-color:#c78aff}
+.time{
+ display:flex;
+ justify-content:space-between;
+ font-size:12px;
+ color:#c8b5d5;
+}
+.songs{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(210px,1fr));
+ gap:17px;
+}
+.card{
+ background:#21182c;
+ padding:18px;
+ border-radius:15px;
+}
+.art{
+ height:135px;
  border-radius:12px;
  display:flex;
- align-items:center;
  justify-content:center;
- font-size:48px;
- background:linear-gradient(135deg,#61417e,#24172f);
+ align-items:center;
+ font-size:45px;
+ background:linear-gradient(135deg,#694381,#25172f);
 }
-.card p{color:#bcaacb}
-.card a{color:#d6a5ff;text-decoration:none}
+.card h3{margin-bottom:5px}
+.card p{color:#bcaacb;font-size:13px}
+.card button{
+ background:#a45ce1;
+ color:white;
+ border:0;
+ padding:10px 18px;
+ border-radius:20px;
+ cursor:pointer;
+}
 .about{
- background:#191323;
- border-radius:15px;
+ background:#1c1425;
  padding:25px;
+ border-radius:15px;
  line-height:1.8;
+ color:#d4c4df;
+}
+.youtube{
+ background:#21182c;
+ padding:25px;
+ border-radius:15px;
+ text-align:center;
 }
 footer{
  text-align:center;
+ background:#171020;
  padding:30px;
- background:#171222;
- color:#bcaacb;
+ color:#c4b4d0;
 }
-footer a{color:#d6a5ff;margin:10px}
+footer a{color:#d8a8ff;margin:10px}
+@media(max-width:500px){
+ header{padding:17px 4%}
+ nav a{margin-left:8px;font-size:12px}
+ section{padding:30px 5%}
+}
 </style>
 </head>
+
 <body>
 
 <header>
  <div class="logo">R LOFI 01 🎧</div>
  <nav>
   <a href="#home">Home</a>
+  <a href="#player">Player</a>
   <a href="#music">Music</a>
   <a href="#about">About</a>
  </nav>
 </header>
 
 <div class="hero" id="home">
- <div style="font-size:55px">🎧🌙</div>
+ <div style="font-size:55px">🌙🎧</div>
  <h1>R LOFI 01</h1>
  <p>LISTEN • RELAX • FEEL • REMEMBER</p>
  <p>Original Music | Romantic | Sad | Lofi</p>
- <a class="btn" href="https://youtube.com/@rlofi01" target="_blank">
-  Explore My Music ▶
- </a>
+ <a class="btn" href="#player">Listen Now ▶</a>
+ <a class="btn" href="https://youtube.com/@rlofi01"
+ target="_blank">YouTube Channel</a>
 </div>
 
-<section id="music">
- <h2>🎵 Latest Music</h2>
- <div class="songs">
+<section id="player">
+ <h2>🎧 Music Player</h2>
+ <p class="sub">Listen to R LOFI 01 Original Music</p>
 
+ <div class="player">
+  <div class="cover" id="cover">🎵</div>
+  <h3 id="songName">Welcome to R LOFI 01</h3>
+  <p class="sub" id="artist">R LOFI 01</p>
+
+  <audio id="audio"></audio>
+
+  <div class="time">
+   <span id="current">0:00</span>
+   <span id="duration">0:00</span>
+  </div>
+
+  <input type="range" id="seek" value="0" min="0" max="100">
+
+  <div class="controls">
+   <button id="prev">⏮</button>
+   <button id="play">▶</button>
+   <button id="next">⏭</button>
+  </div>
+
+  <p class="sub">🔊 Volume</p>
+  <input type="range" id="volume"
+   min="0" max="1" step="0.01" value="0.8">
+ </div>
+</section>
+
+<section id="music">
+ <h2>🎵 Latest Releases</h2>
+ <p class="sub">Discover music by R LOFI 01</p>
+
+ <div class="songs">
   <div class="card">
-   <div class="cover">🌧️</div>
+   <div class="art">💜</div>
    <h3>Romantic Memories</h3>
    <p>Romantic • Emotional</p>
-   <a href="https://youtube.com/@rlofi01" target="_blank">Listen on YouTube →</a>
+   <button onclick="playSong(0)">▶ Play Song</button>
   </div>
 
   <div class="card">
-   <div class="cover">🌙</div>
+   <div class="art">🌧️</div>
    <h3>Sad Memories</h3>
    <p>Sad • Heart Touching</p>
-   <a href="https://youtube.com/@rlofi01" target="_blank">Listen on YouTube →</a>
+   <button onclick="playSong(1)">▶ Play Song</button>
   </div>
 
   <div class="card">
-   <div class="cover">✨</div>
+   <div class="art">🌙</div>
    <h3>Lofi Collection</h3>
    <p>Relax • Chill • Lofi</p>
-   <a href="https://youtube.com/@rlofi01" target="_blank">Listen on YouTube →</a>
+   <button onclick="playSong(2)">▶ Play Song</button>
   </div>
+ </div>
+</section>
 
+<section id="youtube">
+ <h2>▶ YouTube Music</h2>
+ <div class="youtube">
+  <h3>Watch Full Songs on YouTube</h3>
+  <p class="sub">
+   Enjoy original songs, romantic music and emotional melodies.
+  </p>
+  <a class="btn"
+   href="https://youtube.com/@rlofi01"
+   target="_blank">Visit R LOFI 01</a>
  </div>
 </section>
 
@@ -135,20 +254,116 @@ footer a{color:#d6a5ff;margin:10px}
  <h2>About R LOFI 01</h2>
  <div class="about">
   Welcome to R LOFI 01 Official Music Website.
+
   Discover original music, romantic melodies,
-  emotional songs and relaxing Lofi vibes.
+  emotional songs, sad songs and relaxing Lofi vibes.
+
   <br><br>
   Listen • Relax • Feel • Remember 🎧
  </div>
 </section>
 
 <footer>
- <h3>R LOFI 01</h3>
+ <h3>R LOFI 01 🎧</h3>
  <p>Feel Every Beat. Remember Every Moment.</p>
- <a href="https://youtube.com/@rlofi01" target="_blank">YouTube</a>
+ <a href="https://youtube.com/@rlofi01"
+ target="_blank">YouTube</a>
  <p>© 2026 R LOFI 01. All Rights Reserved.</p>
 </footer>
 
+<script>
+const tracks = [
+ {
+  name:"Romantic Memories",
+  file:"songs/song1.mp3",
+  icon:"💜"
+ },
+ {
+  name:"Sad Memories",
+  file:"songs/song2.mp3",
+  icon:"🌧️"
+ },
+ {
+  name:"Lofi Collection",
+  file:"songs/song3.mp3",
+  icon:"🌙"
+ }
+];
+
+let index=0;
+const audio=document.getElementById("audio");
+const playBtn=document.getElementById("play");
+
+function playSong(i){
+ index=i;
+ audio.src=tracks[index].file;
+ document.getElementById("songName").textContent=tracks[index].name;
+ document.getElementById("cover").textContent=tracks[index].icon;
+ audio.play().then(()=>{
+  playBtn.textContent="Ⅱ";
+ }).catch(()=>{
+  playBtn.textContent="▶";
+  alert("Please upload the MP3 song to the songs folder.");
+ });
+}
+
+playBtn.onclick=()=>{
+ if(!audio.src){
+  playSong(0);
+ }else if(audio.paused){
+  audio.play();
+  playBtn.textContent="Ⅱ";
+ }else{
+  audio.pause();
+  playBtn.textContent="▶";
+ }
+};
+
+document.getElementById("prev").onclick=()=>{
+ playSong((index-1+tracks.length)%tracks.length);
+};
+
+document.getElementById("next").onclick=()=>{
+ playSong((index+1)%tracks.length);
+};
+
+audio.onended=()=>{
+ playSong((index+1)%tracks.length);
+};
+
+audio.ontimeupdate=()=>{
+ if(audio.duration){
+  document.getElementById("seek").value=
+   (audio.currentTime/audio.duration)*100;
+  document.getElementById("current").textContent=
+   formatTime(audio.currentTime);
+ }
+};
+
+audio.onloadedmetadata=()=>{
+ document.getElementById("duration").textContent=
+  formatTime(audio.duration);
+};
+
+document.getElementById("seek").oninput=e=>{
+ if(audio.duration){
+  audio.currentTime=(e.target.value/100)*audio.duration;
+ }
+};
+
+document.getElementById("volume").oninput=e=>{
+ audio.volume=e.target.value;
+};
+
+function formatTime(t){
+ if(!isFinite(t))return "0:00";
+ let m=Math.floor(t/60);
+ let s=Math.floor(t%60);
+ return m+":"+String(s).padStart(2,"0");
+}
+
+audio.volume=0.8;
+</script>
+
 </body>
 </html>
-
