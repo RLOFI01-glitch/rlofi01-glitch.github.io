@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel | R LOFI 01</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#100b19;color:#fff;font-family:Arial,sans-serif;padding:20px}
+.container{max-width:550px;margin:20px auto;background:#1b1326;padding:25px;border-radius:18px;border:1px solid #3c2852;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+h2{color:#d8a8ff;text-align:center;margin-top:0}
+label{display:block;margin:14px 0 6px;font-size:13px;color:#cbb8d9}
+input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #452e5e;background:#261b35;color:#fff;font-size:14px}
+button{width:100%;padding:14px;margin-top:18px;border:0;border-radius:25px;background:#a45ce1;color:#fff;font-size:15px;font-weight:bold;cursor:pointer}
+button:hover{background:#8e44ce}
+.danger{background:#d9385a;padding:7px 14px;width:auto;margin:0;font-size:12px}
+.song-item{display:flex;justify-content:space-between;align-items:center;background:#261b35;padding:12px;border-radius:10px;margin-top:10px;border:1px solid #3a2652}
+.status{margin-top:15px;padding:12px;border-radius:10px;text-align:center;font-size:14px;display:none}
+.hidden{display:none}
+a.back{display:block;text-align:center;margin-top:18px;color:#c78aff;text-decoration:none;font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="container" id="loginBox">
+ <h2>🔐 R LOFI 01 Admin</h2>
+ <p style="text-align:center;color:#b9a9c5;font-size:13px">লগইন করতে আপনার GitHub Access Token দিন</p>
+ <label>GitHub Token (Password)</label>
+ <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+ <button onclick="login()">Login to Dashboard</button>
+ <div id="loginStatus" class="status"></div>
+ <a class="back" href="index.html">← ওয়েবসাইটে ফিরে যান</a>
+</div>
+
+<div class="container hidden" id="dashboard">
+ <h2>🎛️ Admin Control Panel</h2>
+ <p style="text-align:center;color:#a5f3fc;font-size:13px">নতুন গান আপলোড করুন (কোনো কোড ছাড়াই)</p>
+
+ <label>গানের নাম (Song Title)</label>
+ <input type="text" id="songTitle" placeholder="যেমন: Teri Yaad">
+
+ <label>মুড / ক্যাটাগরি (Mood)</label>
+ <select id="songMood">
+  <option value="romantic">💜 Romantic</option>
+  <option value="sad">🌧️ Sad</option>
+  <option value="lofi">🌙 Lofi</option>
+ </select>
+
+ <label>ছোট বর্ণনা (Subtitle)</label>
+ <input type="text" id="songDesc" placeholder="যেমন: Romantic • Heart Touching">
+
+ <label>অডিও ফাইল সিলেক্ট করুন (.mp3)</label>
+ <input type="file" id="audioFile" accept="audio/*">
+
+ <label>কভার ফটো সিলেক্ট করুন (.png / .jpg)</label>
+ <input type="file" id="coverFile" accept="image/*">
+
+ <button id="uploadBtn" onclick="publishSong()">🚀 Publish Song Now</button>
+ <div id="statusBox" class="status"></div>
+
+ <hr style="border-color:#322344;margin:25px 0">
+ <h3 style="color:#d8a8ff;font-size:16px">📋 বর্তমান গানের তালিকা</h3>
+ <div id="manageList">লোড হচ্ছে...</div>
+
+ <button style="background:#3a2652;margin-top:20px" onclick="logout()">Logout</button>
+ <a class="back" href="index.html">🌐 Live ওয়েবসাইট দেখুন</a>
+</div>
+
+<script>
+const OWNER = "RLOFI01-glitch";
+const REPO = "rlofi01-glitch.github.io";
+let TOKEN = localStorage.getItem("rlofi_admin_token") || "";
+let songsData = [];
+let songsSha = "";
+
+if(TOKEN){ showDashboard(); }
+
+function showStatus(elId, msg, isError=false){
+ const el = document.getElementById(elId);
+ el.style.display = "block";
+ el.style.background = isError ? "#4c1d2b" : "#1e3a3a";
+ el.style.color = isError ? "#fda4af" : "#6ee7b7";
+ el.textContent = msg;
+}
+
+async function login(){
+ const val = document.getElementById("tokenInput").value.trim();
+ if(!val) return showStatus("loginStatus", "দয়া করে টোকেন দিন!", true);
+ showStatus("loginStatus", "যাচাই করা হচ্ছে...");
+ const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}`, {
+  headers: { Authorization: `token ${val}` }
+ });
+ if(res.ok){
+  TOKEN = val;
+  localStorage.setItem("rlofi_admin_token", TOKEN);
+  showDashboard();
+ }else{
+  showStatus("loginStatus", "ভুল টোকেন! আবার চেষ্টা করুন।", true);
+ }
+}
+
+function logout(){
+ localStorage.removeItem("rlofi_admin_token");
+ location.reload();
+}
+
+async function showDashboard(){
+ document.getElementById("loginBox").classList.add("hidden");
+ document.getElementById("dashboard").classList.remove("hidden");
+ await loadSongsList();
+}
+
+async function loadSongsList(){
+ const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/songs.json?v=${Date.now()}`, {
+  headers: { Authorization: `token ${TOKEN}` }
+ });
+ if(res.ok){
+  const data = await res.json();
+  songsSha = data.sha;
+  songsData = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+  renderManageList();
+ }
+}
+
+function renderManageList(){
+ const box = document.getElementById("manageList");
+ box.innerHTML = "";
+ songsData.forEach((s, idx) => {
+  box.innerHTML += `
+   <div class="song-item">
+    <div>
+     <strong>${s.name}</strong><br>
+     <small style="color:#bcaacb">${s.desc}</small>
+    </div>
+    <button class="danger" onclick="deleteSong(${idx})">🗑 Delete</button>
+   </div>`;
+ });
+}
+
+function fileToBase64(file){
+ return new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.onload = () => resolve(reader.result.split(",")[1]);
+  reader.onerror = reject;
+  reader.readAsDataURL(file);
+ });
+}
+
+async function uploadToGitHub(path, base64Content, message){
+ let sha = "";
+ const check = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}`, {
+  headers: { Authorization: `token ${TOKEN}` }
+ });
+ if(check.ok){
+  const existing = await check.json();
+  sha = existing.sha;
+ }
+ const body = { message, content: base64Content };
+ if(sha) body.sha = sha;
+
+ const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}`, {
+  method: "PUT",
+  headers: {
+   Authorization: `token ${TOKEN}`,
+   "Content-Type": "application/json"
+  },
+  body: JSON.stringify(body)
+ });
+ return res.ok;
+}
+
+async function publishSong(){
+ const name = document.getElementById("songTitle").value.trim();
+ const mood = document.getElementById("songMood").value;
+ const desc = document.getElementById("songDesc").value.trim() || "Original • R LOFI 01";
+ const audioInput = document.getElementById("audioFile").files[0];
+ const coverInput = document.getElementById("coverFile").files[0];
+
+ if(!name || !audioInput || !coverInput){
+  return showStatus("statusBox", "গানের নাম, অডিও ফাইল এবং কভার ফটো তিনটিই দিন!", true);
+ }
+
+ const btn = document.getElementById("uploadBtn");
+ btn.disabled = true;
+ showStatus("statusBox", "⏳ অডিও এবং ছবি আপলোড হচ্ছে... একটু অপেক্ষা করুন...");
+
+ try{
+  const audioExt = audioInput.name.split(".").pop();
+  const coverExt = coverInput.name.split(".").pop();
+  const audioFileName = `${name}.${audioExt}`;
+  const coverFileName = `${name}.${coverExt}`;
+
+  const audioB64 = await fileToBase64(audioInput);
+  const coverB64 = await fileToBase64(coverInput);
+
+  const up1 = await uploadToGitHub(audioFileName, audioB64, `Upload song ${audioFileName}`);
+  const up2 = await uploadToGitHub(coverFileName, coverB64, `Upload cover ${coverFileName}`);
+
+  if(!up1 || !up2) throw new Error("Upload failed");
+
+  songsData.unshift({
+   name: name,
+   file: audioFileName,
+   cover: coverFileName,
+   mood: mood,
+   desc: desc
+  });
+
+  const jsonStr = JSON.stringify(songsData, null, 2);
+  const jsonB64 = btoa(unescape(encodeURIComponent(jsonStr)));
+  await uploadToGitHub("songs.json", jsonB64, `Add ${name} to playlist`);
+
+  showStatus("statusBox", "✅ সফলভাবে পাবলিশ হয়েছে! ১ মিনিটের মধ্যে ওয়েবসাইটে দেখাবে।");
+  document.getElementById("songTitle").value = "";
+  document.getElementById("songDesc").value = "";
+  await loadSongsList();
+ }catch(e){
+  showStatus("statusBox", "❌ আপলোড ব্যর্থ হয়েছে! ফাইলের সাইজ ২৫ MB-এর কম রাখুন।", true);
+ }
+ btn.disabled = false;
+}
+
+async function deleteSong(idx){
+ if(!confirm(`আপনি কি "${songsData[idx].name}" গানটি তালিকা থেকে সরাতে চান?`)) return;
+ showStatus("statusBox", "⏳ ডিলিট করা হচ্ছে...");
+ songsData.splice(idx, 1);
+ const jsonStr = JSON.stringify(songsData, null, 2);
+ const jsonB64 = btoa(unescape(encodeURIComponent(jsonStr)));
+ await uploadToGitHub("songs.json", jsonB64, "Remove song from playlist");
+ showStatus("statusBox", "✅ গানটি তালিকা থেকে সরানো হয়েছে।");
+ await loadSongsList();
+}
+</script>
+</body>
+</html>
