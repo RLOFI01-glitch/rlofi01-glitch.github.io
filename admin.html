@@ -53,6 +53,23 @@ a.back{display:block;text-align:center;margin-top:16px;color:#c78aff;text-decora
   <div class="stat-card"><h4 id="statDownloads">...</h4><p>⬇ মোট প্লে ও ডাউনলোড</p></div>
  </div>
 
+ <!-- Profile & Background Photo Updater -->
+ <div class="box-section">
+  <h3>🖼️ প্রোফাইল ফটো ও ব্যাকগ্রাউন্ড পরিবর্তন</h3>
+  
+  <label>১. নতুন প্রোফাইল ফটো / লোগো সিলেক্ট করুন (.png / .jpg)</label>
+  <input type="file" id="profileFile" accept="image/*">
+  <button id="profileBtn" onclick="updateSiteImage('profile')" style="background:#10b981">Update Profile Photo</button>
+  <div id="profileStatus" class="status"></div>
+
+  <hr style="border-color:#322344;margin:18px 0">
+
+  <label>২. নতুন ব্যাকগ্রাউন্ড ছবি সিলেক্ট করুন (.png / .jpg)</label>
+  <input type="file" id="bgFile" accept="image/*">
+  <button id="bgBtn" onclick="updateSiteImage('bg')" style="background:#0ea5e9">Update Background Photo</button>
+  <div id="bgStatus" class="status"></div>
+ </div>
+
  <!-- YouTube Video Updater -->
  <div class="box-section">
   <h3>📺 YouTube ভিডিও পরিবর্তন করুন</h3>
@@ -123,6 +140,7 @@ const OWNER = "RLOFI01-glitch";
 const REPO = "rlofi01-glitch.github.io";
 let TOKEN = localStorage.getItem("rlofi_admin_token") || "";
 let songsData = [];
+let siteConfig = { youtubeId: "5G5vla1XpWE", profileImg: "r lofi 01.png", bgImg: "r lofi 01.png" };
 
 if(TOKEN){ showDashboard(); }
 
@@ -188,11 +206,44 @@ async function loadConfig(){
  });
  if(res.ok){
   const data = await res.json();
-  const cfg = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-  if(cfg.youtubeId){
-   document.getElementById("ytLinkInput").value = `https://youtu.be/${cfg.youtubeId}`;
+  siteConfig = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+  if(siteConfig.youtubeId){
+   document.getElementById("ytLinkInput").value = `https://youtu.be/${siteConfig.youtubeId}`;
   }
  }
+}
+
+async function updateSiteImage(type){
+ const isProfile = type === "profile";
+ const fileInput = document.getElementById(isProfile ? "profileFile" : "bgFile");
+ const statusId = isProfile ? "profileStatus" : "bgStatus";
+ const btn = document.getElementById(isProfile ? "profileBtn" : "bgBtn");
+
+ const file = fileInput.files[0];
+ if(!file) return showStatus(statusId, "আগে একটি ছবি সিলেক্ট করুন!", true);
+
+ btn.disabled = true;
+ showStatus(statusId, "⏳ ছবি আপলোড হচ্ছে... একটু অপেক্ষা করুন...");
+
+ try{
+  const ext = file.name.split(".").pop();
+  const fileName = `${type}_${Date.now()}.${ext}`;
+  const b64 = await fileToBase64(file);
+
+  const up = await uploadToGitHub(fileName, b64, `Upload new ${type} image`);
+  if(!up) throw new Error("Failed");
+
+  if(isProfile) siteConfig.profileImg = fileName;
+  else siteConfig.bgImg = fileName;
+
+  const cfgB64 = btoa(unescape(encodeURIComponent(JSON.stringify(siteConfig, null, 2))));
+  await uploadToGitHub("config.json", cfgB64, `Update ${type} image config`);
+
+  showStatus(statusId, `✅ ${isProfile ? "প্রোফাইল ফটো" : "ব্যাকগ্রাউন্ড ছবি"} সফলভাবে পরিবর্তন হয়েছে! ১ মিনিটের মধ্যে ওয়েবসাইটে দেখাবে।`);
+ }catch(e){
+  showStatus(statusId, "❌ আপলোড ব্যর্থ হয়েছে! আবার চেষ্টা করুন।", true);
+ }
+ btn.disabled = false;
 }
 
 function extractYouTubeID(url){
@@ -206,7 +257,8 @@ async function updateYouTube(){
  const ytId = extractYouTubeID(raw);
  if(!ytId) return showStatus("ytStatus", "সঠিক YouTube ভিডিও লিংক দিন!", true);
  showStatus("ytStatus", "⏳ YouTube ভিডিও আপডেট হচ্ছে...");
- const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify({ youtubeId: ytId }, null, 2))));
+ siteConfig.youtubeId = ytId;
+ const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(siteConfig, null, 2))));
  const ok = await uploadToGitHub("config.json", jsonB64, "Update YouTube video");
  if(ok) showStatus("ytStatus", "✅ YouTube ভিডিও সফলভাবে পরিবর্তন হয়েছে!");
  else showStatus("ytStatus", "❌ আপডেট ব্যর্থ হয়েছে!", true);
