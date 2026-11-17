@@ -22,7 +22,7 @@ header{
  background:#171020;
  position:sticky;
  top:0;
- z-index:5;
+ z-index:10;
  border-bottom:1px solid #2b1d3d;
 }
 .logo{
@@ -46,9 +46,55 @@ nav a{
  margin-left:15px;
  font-size:14px;
 }
+
+/* Search Bar Styling */
+.search-bar-wrap{
+ background:#140e1d;
+ padding:12px 7%;
+ border-bottom:1px solid #261936;
+ position:sticky;
+ top:66px;
+ z-index:9;
+}
+.search-box{
+ max-width:600px;
+ margin:auto;
+ position:relative;
+ display:flex;
+ align-items:center;
+}
+.search-box input{
+ width:100%;
+ padding:12px 42px 12px 18px;
+ border-radius:25px;
+ border:1.5px solid #3c2852;
+ background:#21182c;
+ color:#fff;
+ font-size:14px;
+ outline:none;
+ transition:0.3s;
+}
+.search-box input:focus{
+ border-color:#a45ce1;
+ box-shadow:0 0 12px rgba(164,92,225,0.4);
+}
+.search-box input::placeholder{
+ color:#a896b8;
+}
+.clear-btn{
+ position:absolute;
+ right:14px;
+ background:none;
+ border:none;
+ color:#c78aff;
+ font-size:18px;
+ cursor:pointer;
+ display:none;
+}
+
 .hero{
- min-height:430px;
- padding:65px 20px;
+ min-height:410px;
+ padding:55px 20px;
  text-align:center;
  display:flex;
  flex-direction:column;
@@ -146,6 +192,7 @@ input[type=range]{width:100%;accent-color:#c78aff}
  display:grid;
  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
  gap:17px;
+ margin-top:15px;
 }
 .card{
  background:#21182c;
@@ -199,6 +246,14 @@ input[type=range]{width:100%;accent-color:#c78aff}
  background:#a45ce1;
  color:white;
 }
+.no-result{
+ text-align:center;
+ padding:30px;
+ color:#bcaacb;
+ background:#21182c;
+ border-radius:15px;
+ display:none;
+}
 .about{
  background:#1c1425;
  padding:25px;
@@ -235,6 +290,7 @@ footer a{
 }
 @media(max-width:500px){
  header{padding:14px 4%}
+ .search-bar-wrap{top:64px;padding:10px 4%}
  nav a{margin-left:8px;font-size:12px}
  section{padding:30px 5%}
 }
@@ -256,6 +312,14 @@ footer a{
  </nav>
 </header>
 
+<!-- Top Search Bar -->
+<div class="search-bar-wrap">
+ <div class="search-box">
+  <input type="text" id="songSearch" placeholder="🔍 Search songs (e.g. Ek Naam, Rihai, Lofi)..." onkeyup="filterSongs()">
+  <button class="clear-btn" id="clearSearch" onclick="resetSearch()">✕</button>
+ </div>
+</div>
+
 <div class="hero" id="home">
  <img class="hero-logo" src="r lofi 01.png" alt="R LOFI 01">
  <h1>R LOFI 01</h1>
@@ -266,6 +330,51 @@ footer a{
   <a class="btn yt-btn" href="https://youtube.com/@rlofi01" target="_blank">YouTube Channel</a>
  </div>
 </div>
+
+<section id="music">
+ <h2>🎵 Latest Releases</h2>
+ <p class="sub">Discover & search music by R LOFI 01</p>
+
+ <div class="songs" id="songList">
+  <div class="card" data-title="ek naam tha romantic emotional">
+   <div class="art">
+    <img src="Ek Naam Tha.png" alt="Ek Naam Tha">
+   </div>
+   <h3>Ek Naam Tha</h3>
+   <p>Romantic • Emotional</p>
+   <div class="card-btns">
+    <button onclick="playSong(0)">▶ Play</button>
+    <a class="dl-btn" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3">⬇ Download</a>
+   </div>
+  </div>
+
+  <div class="card" data-title="rihai sad emotional lofi">
+   <div class="art">
+    <img src="RIHAI.png" alt="RIHAI">
+   </div>
+   <h3>RIHAI</h3>
+   <p>Sad • Emotional • Lofi</p>
+   <div class="card-btns">
+    <button onclick="playSong(1)">▶ Play</button>
+    <a class="dl-btn" href="RIHAI.mp3" download="RIHAI - R LOFI 01.mp3">⬇ Download</a>
+   </div>
+  </div>
+
+  <div class="card" data-title="lofi collection relax chill">
+   <div class="art">🌙</div>
+   <h3>Lofi Collection</h3>
+   <p>Relax • Chill • Lofi (Coming Soon)</p>
+   <div class="card-btns">
+    <button onclick="playSong(2)">▶ Play</button>
+    <a class="dl-btn" href="song3.mp3" download="Lofi Collection.mp3">⬇ Download</a>
+   </div>
+  </div>
+ </div>
+
+ <div class="no-result" id="noResult">
+  😔 এই নামে কোনো গান খুঁজে পাওয়া যায়নি। অন্য কোনো শব্দ লিখে চেষ্টা করুন।
+ </div>
+</section>
 
 <section id="player">
  <h2>🎧 Music Player</h2>
@@ -299,45 +408,6 @@ footer a{
 
   <p class="sub">🔊 Volume</p>
   <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8">
- </div>
-</section>
-
-<section id="music">
- <h2>🎵 Latest Releases</h2>
- <p class="sub">Discover music by R LOFI 01</p>
-
- <div class="songs">
-  <div class="card">
-   <div class="art">
-    <img src="Ek Naam Tha.png" alt="Ek Naam Tha">
-   </div>
-   <h3>Ek Naam Tha</h3>
-   <p>Romantic • Emotional</p>
-   <div class="card-btns">
-    <button onclick="playSong(0)">▶ Play</button>
-    <a class="dl-btn" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3">⬇ Download</a>
-   </div>
-  </div>
-
-  <div class="card">
-   <div class="art">🌧️</div>
-   <h3>Sad Memories</h3>
-   <p>Sad • Heart Touching (Coming Soon)</p>
-   <div class="card-btns">
-    <button onclick="playSong(1)">▶ Play</button>
-    <a class="dl-btn" href="song2.mp3" download="Sad Memories.mp3">⬇ Download</a>
-   </div>
-  </div>
-
-  <div class="card">
-   <div class="art">🌙</div>
-   <h3>Lofi Collection</h3>
-   <p>Relax • Chill • Lofi (Coming Soon)</p>
-   <div class="card-btns">
-    <button onclick="playSong(2)">▶ Play</button>
-    <a class="dl-btn" href="song3.mp3" download="Lofi Collection.mp3">⬇ Download</a>
-   </div>
-  </div>
  </div>
 </section>
 
@@ -389,9 +459,9 @@ const tracks = [
   icon:"💜"
  },
  {
-  name:"Sad Memories",
-  file:"song2.mp3",
-  cover:"",
+  name:"RIHAI",
+  file:"RIHAI.mp3",
+  cover:"RIHAI.png",
   icon:"🌧️"
  },
  {
@@ -421,12 +491,47 @@ function playSong(i){
 
  playerDownload.href=tracks[index].file;
  playerDownload.download=tracks[index].name + " - R LOFI 01.mp3";
+ 
+ document.getElementById("player").scrollIntoView({behavior:"smooth"});
+
  audio.play().then(()=>{
   playBtn.textContent="Ⅱ";
  }).catch(()=>{
   playBtn.textContent="▶";
   alert("এই গানটি এখনো আপলোড করা হয়নি।");
  });
+}
+
+/* Search Function */
+function filterSongs(){
+ const input = document.getElementById("songSearch").value.toLowerCase().trim();
+ const cards = document.querySelectorAll("#songList .card");
+ const clearBtn = document.getElementById("clearSearch");
+ const noResult = document.getElementById("noResult");
+ let visibleCount = 0;
+
+ clearBtn.style.display = input.length > 0 ? "block" : "none";
+
+ if(input.length > 0){
+  document.getElementById("music").scrollIntoView({behavior:"smooth", block:"nearest"});
+ }
+
+ cards.forEach(card => {
+  const title = card.getAttribute("data-title");
+  if(title.includes(input)){
+   card.style.display = "block";
+   visibleCount++;
+  }else{
+   card.style.display = "none";
+  }
+ });
+
+ noResult.style.display = visibleCount === 0 ? "block" : "none";
+}
+
+function resetSearch(){
+ document.getElementById("songSearch").value = "";
+ filterSongs();
 }
 
 playBtn.onclick=()=>{
@@ -490,3 +595,4 @@ audio.volume=0.8;
 
 </body>
 </html>
+
