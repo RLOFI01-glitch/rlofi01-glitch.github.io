@@ -7,14 +7,13 @@
 <meta name="theme-color" content="#100b19">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="r lofi 01.png">
-
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#100b19;color:#fff;font-family:Arial,sans-serif;padding-bottom:135px}
 header{display:flex;justify-content:space-between;align-items:center;padding:14px 7%;background:#171020;position:sticky;top:0;z-index:10;border-bottom:1px solid #2b1d3d}
 .logo{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:bold;color:#d7a4ff}
 .logo img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid #a45ce1}
-nav a{color:#ddd;text-decoration:none;margin-left:15px;font-size:14px}
+.header-social{color:#d8a8ff;text-decoration:none;font-size:13px;border:1px solid #3c2852;padding:6px 14px;border-radius:20px;background:#21182c}
 .hero{position:relative;overflow:hidden;min-height:420px;padding:60px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(to bottom,rgba(16,11,25,0.65),rgba(16,11,25,0.92)),url('r lofi 01.png') center/cover no-repeat}
 .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:0.45;display:none}
 .hero-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center}
@@ -52,29 +51,15 @@ h2{color:#d8a8ff}
 .social-links{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:15px}
 footer{text-align:center;background:#171020;padding:30px 15px;color:#c4b4d0;border-top:1px solid #2b1d3d}
 footer a{color:#d8a8ff;margin:0 10px;text-decoration:none;font-size:14px}
-
-/* Search & Library Views */
-.tab-view{display:none}
-.tab-view.active{display:block}
+.tab-view{display:none}.tab-view.active{display:block}
 .search-input-box{width:100%;padding:14px 18px;border-radius:25px;border:1.5px solid #a45ce1;background:#21182c;color:#fff;font-size:15px;outline:none;margin-bottom:15px}
-
-/* Mini Player Bar (Above Bottom Nav) */
 .mini-player{position:fixed;bottom:62px;left:0;right:0;background:linear-gradient(90deg,#261936,#1b1226);border-top:1px solid #a45ce1;padding:8px 14px;display:none;align-items:center;justify-content:space-between;gap:10px;z-index:30;box-shadow:0 -4px 20px rgba(0,0,0,0.7);cursor:pointer}
 .mini-info{display:flex;align-items:center;gap:10px;overflow:hidden;flex:1}
 .mini-info img{width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid #c78aff;flex-shrink:0}
-.mini-text{overflow:hidden}
-.mini-text h4{margin:0;font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mini-text p{margin:2px 0 0;font-size:11px;color:#d8a8ff}
-.mini-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.mini-actions button{background:transparent;border:0;color:#fff;font-size:20px;cursor:pointer;padding:6px}
-
-/* Bottom Navigation Bar (Home, Search, Library) */
+.mini-text{overflow:hidden}.mini-text h4{margin:0;font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-text p{margin:2px 0 0;font-size:11px;color:#d8a8ff}
+.mini-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}.mini-actions button{background:transparent;border:0;color:#fff;font-size:20px;cursor:pointer;padding:6px}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:62px;background:#171020;border-top:1px solid #322344;display:flex;justify-content:space-around;align-items:center;z-index:35}
-.nav-item{background:transparent;border:0;color:#b9a9c5;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;gap:4px;cursor:pointer;flex:1;height:100%}
-.nav-item span.icon{font-size:20px}
-.nav-item.active{color:#d8a8ff;font-weight:bold}
-
-/* Full-Screen Neon Player Modal */
+.nav-item{background:transparent;border:0;color:#b9a9c5;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;gap:4px;cursor:pointer;flex:1;height:100%}.nav-item span.icon{font-size:20px}.nav-item.active{color:#d8a8ff;font-weight:bold}
 .full-player-modal{position:fixed;inset:0;background:rgba(16,11,25,0.97);z-index:60;display:none;flex-direction:column;overflow-y:auto;padding:15px}
 .fp-top-bar{display:flex;justify-content:space-between;align-items:center;max-width:600px;width:100%;margin:0 auto 10px}
 .fp-top-btn{background:#21182c;border:1px solid #3c2852;color:#fff;width:40px;height:40px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -89,37 +74,21 @@ footer a{color:#d8a8ff;margin:0 10px;text-decoration:none;font-size:14px}
 .player.playing .bar{animation:wave 0.8s infinite ease-in-out alternate}
 .player.playing .bar:nth-child(1){animation-delay:0.1s}.player.playing .bar:nth-child(2){animation-delay:0.3s}.player.playing .bar:nth-child(3){animation-delay:0.5s}.player.playing .bar:nth-child(4){animation-delay:0.2s}.player.playing .bar:nth-child(5){animation-delay:0.4s}.player.playing .bar:nth-child(6){animation-delay:0.6s}.player.playing .bar:nth-child(7){animation-delay:0.15s}
 @keyframes wave{0%{height:6px}100%{height:26px}}
-.player h3{margin:8px}
-.controls button{border:0;border-radius:50%;width:45px;height:45px;margin:8px;background:#a45ce1;color:white;font-size:19px;cursor:pointer}
-#play{width:58px;height:58px;font-size:24px}
-input[type=range]{width:100%;accent-color:#c78aff}
-.time{display:flex;justify-content:space-between;font-size:12px;color:#c8b5d5}
-
-/* Sleep Timer Menu */
+.player h3{margin:8px}.controls button{border:0;border-radius:50%;width:45px;height:45px;margin:8px;background:#a45ce1;color:white;font-size:19px;cursor:pointer}#play{width:58px;height:58px;font-size:24px}
+input[type=range]{width:100%;accent-color:#c78aff}.time{display:flex;justify-content:space-between;font-size:12px;color:#c8b5d5}
 .sleep-menu{display:none;justify-content:center;gap:6px;flex-wrap:wrap;margin-top:10px;background:#171020;padding:10px;border-radius:14px;border:1px solid #3c2852}
 .sleep-opt{background:#261b35;color:#e0aaff;border:1px solid #452e5e;padding:6px 12px;border-radius:15px;font-size:12px;cursor:pointer}
-.sleep-opt.active{background:#a45ce1;color:#fff}
-
 .toast-hint{position:fixed;bottom:135px;left:50%;transform:translateX(-50%);background:rgba(27,19,38,0.96);color:#f3e8ff;border:1px solid #a45ce1;padding:10px 18px;border-radius:25px;font-size:13px;z-index:70;box-shadow:0 5px 20px rgba(0,0,0,0.6);display:none;text-align:center;max-width:90%}
-@media(max-width:500px){header{padding:14px 4%}nav a{margin-left:8px;font-size:12px}section{padding:28px 5%}}
+@media(max-width:500px){header{padding:14px 4%}section{padding:28px 5%}}
 </style>
 </head>
 <body>
 
 <header>
- <div class="logo">
-  <img id="navLogo" src="r lofi 01.png" alt="R LOFI 01 Logo">
-  <span>R LOFI 01</span>
- </div>
- <nav>
-  <a href="javascript:void(0)" onclick="switchTab('home')">Home</a>
-  <a href="javascript:void(0)" onclick="switchTab('search')">Search</a>
-  <a href="javascript:void(0)" onclick="openFullPlayer()">Player</a>
-  <a href="#social" onclick="switchTab('home')">Social</a>
- </nav>
+ <div class="logo"><img id="navLogo" src="r lofi 01.png" alt="R LOFI 01 Logo"><span>R LOFI 01</span></div>
+ <a class="header-social" href="https://youtube.com/@rlofi01" target="_blank">▶ YouTube</a>
 </header>
 
-<!-- TAB 1: HOME VIEW -->
 <div id="tab-home" class="tab-view active">
  <div class="hero" id="home">
   <video class="hero-video" id="heroVideo" autoplay loop muted playsinline></video>
@@ -129,9 +98,9 @@ input[type=range]{width:100%;accent-color:#c78aff}
    <p>LISTEN • RELAX • FEEL • REMEMBER</p>
    <p>Original Music | Romantic | Sad | Lofi</p>
    <div>
-    <button class="btn" onclick="playSong(0)">Listen Now ▶</button>
+    <button class="btn" id="heroListenBtn">Listen Now ▶</button>
     <a class="btn yt-btn" href="https://youtube.com/@rlofi01" target="_blank">YouTube Channel</a>
-    <button class="btn app-btn" id="installAppBtn" style="display:none" onclick="installPWA()">📲 Install App</button>
+    <button class="btn app-btn" id="installAppBtn" style="display:none">📲 Install App</button>
    </div>
   </div>
  </div>
@@ -139,28 +108,21 @@ input[type=range]{width:100%;accent-color:#c78aff}
  <section id="music">
   <h2>🎵 Latest Releases</h2>
   <p class="sub">Filter by mood • Thumbnail par double tap karke YouTube video dekhein</p>
-
-  <div class="mood-filters">
-   <button class="mood-btn active" onclick="setMood('all', this)">All Songs</button>
-   <button class="mood-btn" onclick="setMood('romantic', this)">💜 Romantic</button>
-   <button class="mood-btn" onclick="setMood('sad', this)">🌧️ Sad</button>
-   <button class="mood-btn" onclick="setMood('lofi', this)">🌙 Lofi</button>
+  <div class="mood-filters" id="moodFilters">
+   <button class="mood-btn active" data-mood="all">All Songs</button>
+   <button class="mood-btn" data-mood="romantic">💜 Romantic</button>
+   <button class="mood-btn" data-mood="sad">🌧️ Sad</button>
+   <button class="mood-btn" data-mood="lofi">🌙 Lofi</button>
   </div>
-
   <div class="songs" id="songList"></div>
-
-  <div class="no-result" id="noResult">
-   😔 Is category mein abhi koi song add nahi hua hai.
-  </div>
+  <div class="no-result" id="noResult">😔 Is category mein abhi koi song add nahi hua hai.</div>
  </section>
 
  <section id="youtube">
   <h2>📺 Watch on YouTube</h2>
   <p class="sub">Featured Music Video from R LOFI 01</p>
   <div class="video-box">
-   <div class="video-frame">
-    <iframe id="ytIframe" src="https://www.youtube.com/embed/5G5vla1XpWE" title="R LOFI 01 YouTube Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-   </div>
+   <div class="video-frame"><iframe id="ytIframe" src="https://www.youtube.com/embed/5G5vla1XpWE" title="R LOFI 01 YouTube Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
    <p class="sub">Subscribe to our official YouTube channel for full HD music videos.</p>
    <a class="btn yt-btn" href="https://youtube.com/@rlofi01" target="_blank">▶ Subscribe @rlofi01</a>
   </div>
@@ -181,183 +143,86 @@ input[type=range]{width:100%;accent-color:#c78aff}
 
  <section id="about">
   <h2>About R LOFI 01</h2>
-  <div class="about">
-   Welcome to R LOFI 01 Official Music Website. Discover original music, romantic melodies, emotional songs, sad songs and relaxing Lofi vibes.
-   <br><br>Listen • Relax • Feel • Remember 🎧
-  </div>
+  <div class="about">Welcome to R LOFI 01 Official Music Website. Discover original music, romantic melodies, emotional songs, sad songs and relaxing Lofi vibes.<br><br>Listen • Relax • Feel • Remember 🎧</div>
  </section>
 
  <footer>
   <h3>R LOFI 01 🎧</h3>
   <p>Feel Every Beat. Remember Every Moment.</p>
-  <div style="margin:15px 0">
-   <a href="https://youtube.com/@rlofi01" target="_blank">YouTube</a> •
-   <a href="https://www.instagram.com/r_lofi_01" target="_blank">@r_lofi_01</a> •
-   <a href="https://www.instagram.com/rohitzz7" target="_blank">@rohitzz7</a>
-  </div>
+  <div style="margin:15px 0"><a href="https://youtube.com/@rlofi01" target="_blank">YouTube</a> • <a href="https://www.instagram.com/r_lofi_01" target="_blank">@r_lofi_01</a> • <a href="https://www.instagram.com/rohitzz7" target="_blank">@rohitzz7</a></div>
   <p>© 2026 R LOFI 01. All Rights Reserved.</p>
  </footer>
 </div>
 
-<!-- TAB 2: SEARCH VIEW -->
 <div id="tab-search" class="tab-view">
  <section>
   <h2>🔍 Search Songs</h2>
   <p class="sub">Song ka naam ya mood (Romantic, Sad, Lofi) likhkar search karein</p>
-  <input type="text" class="search-input-box" id="searchInput" placeholder="Search song name..." oninput="renderSearch()">
+  <input type="text" class="search-input-box" id="searchInput" placeholder="Search song name...">
   <div class="songs" id="searchResults"></div>
  </section>
 </div>
 
-<!-- TAB 3: LIBRARY (FAVORITES) VIEW -->
 <div id="tab-library" class="tab-view">
  <section>
   <h2>🔖 Your Saved Library</h2>
   <p class="sub">Aapke pasandida saved songs yahan dikhenge</p>
   <div class="songs" id="libraryList"></div>
-  <div class="no-result" id="emptyLibrary" style="display:block">
-   ❤️ Abhi tak koi song save nahi kiya hai. Song card par ❤️ dabakar Library mein save karein!
-  </div>
+  <div class="no-result" id="emptyLibrary" style="display:block">❤️ Abhi tak koi song save nahi kiya hai. Song card par ❤️ dabakar Library mein save karein!</div>
  </section>
 </div>
 
-<!-- FLOATING MINI PLAYER BAR -->
-<div class="mini-player" id="miniPlayer" onclick="openFullPlayer()">
- <div class="mini-info">
+<div class="mini-player" id="miniPlayer">
+ <div class="mini-info" id="miniOpenArea">
   <img id="miniCover" src="Ek Naam Tha.png" alt="Cover">
-  <div class="mini-text">
-   <h4 id="miniTitle">Ek Naam Tha</h4>
-   <p id="miniSub">Tap to open Full Player • R LOFI 01</p>
-  </div>
+  <div class="mini-text"><h4 id="miniTitle">Ek Naam Tha</h4><p id="miniSub">Tap to open Full Player • R LOFI 01</p></div>
  </div>
- <div class="mini-actions" onclick="event.stopPropagation()">
-  <button id="miniPlayBtn" onclick="togglePlay()">▶</button>
-  <button onclick="nextTrack()">⏭</button>
-  <button onclick="closeMiniPlayer()" style="font-size:16px;color:#bcaacb">✕</button>
+ <div class="mini-actions">
+  <button id="miniPlayBtn">▶</button>
+  <button id="miniNextBtn">⏭</button>
+  <button id="miniCloseBtn" style="font-size:16px;color:#bcaacb">✕</button>
  </div>
 </div>
 
-<!-- BOTTOM NAVIGATION BAR -->
 <div class="bottom-nav">
- <button class="nav-item active" id="nav-home" onclick="switchTab('home')">
-  <span class="icon">🏠</span><span>Home</span>
- </button>
- <button class="nav-item" id="nav-search" onclick="switchTab('search')">
-  <span class="icon">🔍</span><span>Search</span>
- </button>
- <button class="nav-item" id="nav-library" onclick="switchTab('library')">
-  <span class="icon">🔖</span><span>Library</span>
- </button>
+ <button class="nav-item active" id="nav-home" data-tab="home"><span class="icon">🏠</span><span>Home</span></button>
+ <button class="nav-item" id="nav-search" data-tab="search"><span class="icon">🔍</span><span>Search</span></button>
+ <button class="nav-item" id="nav-library" data-tab="library"><span class="icon">🔖</span><span>Library</span></button>
 </div>
 
-<!-- FULL-SCREEN NEON PLAYER MODAL -->
 <div class="full-player-modal" id="fullPlayerModal">
  <div class="fp-top-bar">
-  <button class="fp-top-btn" onclick="closeFullPlayer()" title="Minimize">⌄</button>
+  <button class="fp-top-btn" id="fpMinimizeBtn" title="Minimize">⌄</button>
   <span style="font-size:13px;color:#d8a8ff;font-weight:bold">NOW PLAYING • R LOFI 01</span>
-  <button class="fp-top-btn" id="fpFavBtn" onclick="toggleFavorite(index)" title="Save to Library">🤍</button>
+  <button class="fp-top-btn" id="fpFavBtn" title="Save to Library">🤍</button>
  </div>
-
  <div class="player" id="playerBox">
-  <div class="cover" id="cover" onclick="handleThumbTap(index)">
-   <img src="Ek Naam Tha.png" alt="Ek Naam Tha">
-  </div>
-  <div class="visualizer">
-   <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-  </div>
+  <div class="cover" id="cover"><img src="Ek Naam Tha.png" alt="Ek Naam Tha"></div>
+  <div class="visualizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
   <h3 id="songName">Ek Naam Tha</h3>
   <p class="sub" id="artist">R LOFI 01</p>
   <audio id="audio" src="Ek Naam Tha.mp3"></audio>
   <div class="time"><span id="current">0:00</span><span id="duration">0:00</span></div>
   <input type="range" id="seek" value="0" min="0" max="100">
-  <div class="controls">
-   <button id="prev">⏮</button>
-   <button id="play">▶</button>
-   <button id="next">⏭</button>
-  </div>
+  <div class="controls"><button id="prev">⏮</button><button id="play">▶</button><button id="next">⏭</button></div>
   <div style="margin:14px 0;display:flex;justify-content:center;gap:8px;flex-wrap:wrap">
-   <a id="playerDownload" class="dl-btn" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3" onclick="trackPlay()">⬇ Download Song</a>
-   <button class="share-btn" onclick="shareCurrentSong()">🔗 Share Song</button>
-   <button class="share-btn" id="sleepBtn" onclick="toggleSleepMenu()">🌙 Sleep Timer</button>
+   <a id="playerDownload" class="dl-btn" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3">⬇ Download Song</a>
+   <button class="share-btn" id="fpShareBtn">🔗 Share Song</button>
+   <button class="share-btn" id="sleepBtn">🌙 Sleep Timer</button>
   </div>
-
-  <!-- Sleep Timer Options -->
   <div class="sleep-menu" id="sleepMenu">
-   <button class="sleep-opt" onclick="setSleepTimer(15)">15 Min</button>
-   <button class="sleep-opt" onclick="setSleepTimer(30)">30 Min</button>
-   <button class="sleep-opt" onclick="setSleepTimer(45)">45 Min</button>
-   <button class="sleep-opt" onclick="setSleepTimer(60)">60 Min</button>
-   <button class="sleep-opt" onclick="setSleepTimer(0)" style="color:#fda4af">Off</button>
+   <button class="sleep-opt" data-mins="15">15 Min</button>
+   <button class="sleep-opt" data-mins="30">30 Min</button>
+   <button class="sleep-opt" data-mins="45">45 Min</button>
+   <button class="sleep-opt" data-mins="60">60 Min</button>
+   <button class="sleep-opt" data-mins="0" style="color:#fda4af">Off</button>
   </div>
-
   <p class="sub">🔊 Volume</p>
   <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8">
  </div>
 </div>
 
 <div class="toast-hint" id="toastHint">💡 YouTube par video dekhne ke liye thumbnail par double tap karein</div>
-
-<script>
-/* PWA Service Worker & Install Prompt */
-if("serviceWorker" in navigator){
- navigator.serviceWorker.register("sw.js").catch(()=>{});
-}
-let deferredPrompt;
-window.addEventListener("beforeinstallprompt", (e) => {
- e.preventDefault();
- deferredPrompt = e;
- document.getElementById("installAppBtn").style.display = "inline-block";
-});
-async function installPWA(){
- if(deferredPrompt){
-  deferredPrompt.prompt();
-  await deferredPrompt.userChoice;
-  deferredPrompt = null;
-  document.getElementById("installAppBtn").style.display = "none";
- }
-}
-
-let tracks = [
- {name:"Ek Naam Tha",file:"Ek Naam Tha.mp3",cover:"Ek Naam Tha.png",mood:"romantic",desc:"Romantic • Emotional",youtube:""},
- {name:"RIHAI",file:"RIHAI.mp3",cover:"RIHAI.png",mood:"sad",desc:"Sad • Emotional • Lofi",youtube:""}
-];
-
-let savedFavorites = JSON.parse(localStorage.getItem("rlofi_favorites") || "[]");
-let index = 0;
-let currentMood = "all";
-const audio = document.getElementById("audio");
-const playBtn = document.getElementById("play");
-const miniPlayBtn = document.getElementById("miniPlayBtn");
-const playerBox = document.getElementById("playerBox");
-const playerDownload = document.getElementById("playerDownload");
-const coverBox = document.getElementById("cover");
-
-/* Tab Navigation (Home, Search, Library) */
-function switchTab(tab){
- document.querySelectorAll(".tab-view").forEach(v => v.classList.remove("active"));
- document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
- document.getElementById(`tab-${tab}`).classList.add("active");
- document.getElementById(`nav-${tab}`).classList.add("active");
- window.scrollTo({top: 0, behavior: "smooth"});
- if(tab === "search") renderSearch();
- if(tab === "library") renderLibrary();
-}
-
-/* Full Screen Player Open/Close */
-function openFullPlayer(){
- document.getElementById("fullPlayerModal").style.display = "flex";
- updateFavButtonUI();
-}
-function closeFullPlayer(){
- document.getElementById("fullPlayerModal").style.display = "none";
-}
-function closeMiniPlayer(){
- audio.pause();
- setPlayingState(false);
- document.getElementById("miniPlayer").style.display = "none";
-}
-
-/* Double Tap + Single Tap Hinglish Hint */
-let lastTapTime = 0;
-let lastTapIdx = -1;
-let toa
+<script src="app.js?v=2"></script>
+</body>
+</html>
