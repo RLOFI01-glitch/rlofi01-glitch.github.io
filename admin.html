@@ -53,29 +53,37 @@ a.back{display:block;text-align:center;margin-top:16px;color:#c78aff;text-decora
   <div class="stat-card"><h4 id="statDownloads">...</h4><p>⬇ মোট প্লে ও ডাউনলোড</p></div>
  </div>
 
- <!-- Profile & Background Photo Updater -->
+ <!-- Profile, Background Photo & Animated Video Updater -->
  <div class="box-section">
-  <h3>🖼️ প্রোফাইল ফটো ও ব্যাকগ্রাউন্ড পরিবর্তন</h3>
+  <h3>🖼️ প্রোফাইল ফটো, ব্যাকগ্রাউন্ড ও অ্যানিমেটেড ভিডিও</h3>
   
   <label>১. নতুন প্রোফাইল ফটো / লোগো সিলেক্ট করুন (.png / .jpg)</label>
   <input type="file" id="profileFile" accept="image/*">
-  <button id="profileBtn" onclick="updateSiteImage('profile')" style="background:#10b981">Update Profile Photo</button>
+  <button id="profileBtn" onclick="updateSiteMedia('profile')" style="background:#10b981">Update Profile Photo</button>
   <div id="profileStatus" class="status"></div>
 
   <hr style="border-color:#322344;margin:18px 0">
 
   <label>২. নতুন ব্যাকগ্রাউন্ড ছবি সিলেক্ট করুন (.png / .jpg)</label>
   <input type="file" id="bgFile" accept="image/*">
-  <button id="bgBtn" onclick="updateSiteImage('bg')" style="background:#0ea5e9">Update Background Photo</button>
+  <button id="bgBtn" onclick="updateSiteMedia('bg')" style="background:#0ea5e9">Update Background Photo</button>
   <div id="bgStatus" class="status"></div>
+
+  <hr style="border-color:#322344;margin:18px 0">
+
+  <label>৩. অ্যানিমেটেড ব্যাকগ্রাউন্ড ভিডিও আপলোড করুন (.mp4 - ১০ MB-এর নিচে)</label>
+  <input type="file" id="videoFile" accept="video/mp4,video/*">
+  <button id="videoBtn" onclick="updateSiteMedia('video')" style="background:#8b5cf6">🎬 Update Animated Video</button>
+  <button onclick="removeBgVideo()" style="background:#475569;margin-top:8px;font-size:12px;padding:10px">Remove Video (Use Background Photo)</button>
+  <div id="videoStatus" class="status"></div>
  </div>
 
- <!-- YouTube Video Updater -->
+ <!-- Featured YouTube Video Updater -->
  <div class="box-section">
-  <h3>📺 YouTube ভিডিও পরিবর্তন করুন</h3>
+  <h3>📺 হোমপেজ Featured YouTube ভিডিও পরিবর্তন</h3>
   <label>নতুন YouTube ভিডিওর লিংক দিন</label>
   <input type="text" id="ytLinkInput" placeholder="https://youtu.be/...">
-  <button onclick="updateYouTube()" style="background:#e11d48">Update YouTube Video</button>
+  <button onclick="updateYouTube()" style="background:#e11d48">Update Featured Video</button>
   <div id="ytStatus" class="status"></div>
  </div>
 
@@ -95,10 +103,13 @@ a.back{display:block;text-align:center;margin-top:16px;color:#c78aff;text-decora
   <label>ছোট বর্ণনা (Subtitle)</label>
   <input type="text" id="songDesc" placeholder="যেমন: Romantic • Heart Touching">
 
+  <label>গানের YouTube লিংক (থাম্বনেইলে ডাবল ট্যাপ করলে খুলবে - ঐচ্ছিক)</label>
+  <input type="text" id="songYtLink" placeholder="https://youtu.be/...">
+
   <label>অডিও ফাইল সিলেক্ট করুন (.mp3)</label>
   <input type="file" id="audioFile" accept="audio/*">
 
-  <label>কভার ফটো সিলেক্ট করুন (.png / .jpg)</label>
+  <label>কভার ফটো / থাম্বনেইল সিলেক্ট করুন (.png / .jpg)</label>
   <input type="file" id="coverFile" accept="image/*">
 
   <button id="uploadBtn" onclick="publishSong()">Publish Song Now</button>
@@ -130,6 +141,8 @@ a.back{display:block;text-align:center;margin-top:16px;color:#c78aff;text-decora
   </select>
   <label>ছোট বর্ণনা</label>
   <input type="text" id="editDesc">
+  <label>গানের YouTube লিংক (Double Tap-এ খুলবে)</label>
+  <input type="text" id="editYtLink" placeholder="https://youtu.be/...">
   <button onclick="saveEdit()">Save Changes</button>
   <button onclick="closeModal()" style="background:#3a2652;margin-top:8px">Cancel</button>
  </div>
@@ -140,7 +153,7 @@ const OWNER = "RLOFI01-glitch";
 const REPO = "rlofi01-glitch.github.io";
 let TOKEN = localStorage.getItem("rlofi_admin_token") || "";
 let songsData = [];
-let siteConfig = { youtubeId: "5G5vla1XpWE", profileImg: "r lofi 01.png", bgImg: "r lofi 01.png" };
+let siteConfig = { youtubeId: "5G5vla1XpWE", profileImg: "r lofi 01.png", bgImg: "r lofi 01.png", bgVideo: "" };
 
 if(TOKEN){ showDashboard(); }
 
@@ -213,37 +226,48 @@ async function loadConfig(){
  }
 }
 
-async function updateSiteImage(type){
- const isProfile = type === "profile";
- const fileInput = document.getElementById(isProfile ? "profileFile" : "bgFile");
- const statusId = isProfile ? "profileStatus" : "bgStatus";
- const btn = document.getElementById(isProfile ? "profileBtn" : "bgBtn");
+async function updateSiteMedia(type){
+ const map = {
+  profile: { input: "profileFile", status: "profileStatus", btn: "profileBtn", label: "প্রোফাইল ফটো" },
+  bg: { input: "bgFile", status: "bgStatus", btn: "bgBtn", label: "ব্যাকগ্রাউন্ড ছবি" },
+  video: { input: "videoFile", status: "videoStatus", btn: "videoBtn", label: "অ্যানিমেটেড ভিডিও" }
+ };
+ const cfg = map[type];
+ const file = document.getElementById(cfg.input).files[0];
+ if(!file) return showStatus(cfg.status, "আগে একটি ফাইল সিলেক্ট করুন!", true);
 
- const file = fileInput.files[0];
- if(!file) return showStatus(statusId, "আগে একটি ছবি সিলেক্ট করুন!", true);
-
+ const btn = document.getElementById(cfg.btn);
  btn.disabled = true;
- showStatus(statusId, "⏳ ছবি আপলোড হচ্ছে... একটু অপেক্ষা করুন...");
+ showStatus(cfg.status, `⏳ ${cfg.label} আপলোড হচ্ছে... একটু অপেক্ষা করুন...`);
 
  try{
   const ext = file.name.split(".").pop();
   const fileName = `${type}_${Date.now()}.${ext}`;
   const b64 = await fileToBase64(file);
 
-  const up = await uploadToGitHub(fileName, b64, `Upload new ${type} image`);
+  const up = await uploadToGitHub(fileName, b64, `Upload new ${type}`);
   if(!up) throw new Error("Failed");
 
-  if(isProfile) siteConfig.profileImg = fileName;
-  else siteConfig.bgImg = fileName;
+  if(type === "profile") siteConfig.profileImg = fileName;
+  else if(type === "bg") siteConfig.bgImg = fileName;
+  else if(type === "video") siteConfig.bgVideo = fileName;
 
   const cfgB64 = btoa(unescape(encodeURIComponent(JSON.stringify(siteConfig, null, 2))));
-  await uploadToGitHub("config.json", cfgB64, `Update ${type} image config`);
+  await uploadToGitHub("config.json", cfgB64, `Update ${type} config`);
 
-  showStatus(statusId, `✅ ${isProfile ? "প্রোফাইল ফটো" : "ব্যাকগ্রাউন্ড ছবি"} সফলভাবে পরিবর্তন হয়েছে! ১ মিনিটের মধ্যে ওয়েবসাইটে দেখাবে।`);
+  showStatus(cfg.status, `✅ ${cfg.label} সফলভাবে পরিবর্তন হয়েছে! ১ মিনিটের মধ্যে ওয়েবসাইটে দেখাবে।`);
  }catch(e){
-  showStatus(statusId, "❌ আপলোড ব্যর্থ হয়েছে! আবার চেষ্টা করুন।", true);
+  showStatus(cfg.status, "❌ আপলোড ব্যর্থ হয়েছে! ফাইলের সাইজ ২০ MB-এর কম রাখুন।", true);
  }
  btn.disabled = false;
+}
+
+async function removeBgVideo(){
+ showStatus("videoStatus", "⏳ অ্যানিমেটেড ভিডিও সরানো হচ্ছে...");
+ siteConfig.bgVideo = "";
+ const cfgB64 = btoa(unescape(encodeURIComponent(JSON.stringify(siteConfig, null, 2))));
+ await uploadToGitHub("config.json", cfgB64, "Remove animated video");
+ showStatus("videoStatus", "✅ ভিডিও সরানো হয়েছে! এখন ব্যাকগ্রাউন্ড ফটো দেখাবে।");
 }
 
 function extractYouTubeID(url){
@@ -288,11 +312,12 @@ function renderManageList(){
  const box = document.getElementById("manageList");
  box.innerHTML = "";
  songsData.forEach((s, idx) => {
+  const ytBadge = s.youtube ? ` • <span style="color:#fb7185">▶ YT Linked</span>` : "";
   box.innerHTML += `
    <div class="song-item">
     <div>
      <strong>${s.name}</strong><br>
-     <small style="color:#bcaacb">${s.desc} (${s.mood})</small>
+     <small style="color:#bcaacb">${s.desc} (${s.mood})${ytBadge}</small>
     </div>
     <div class="item-btns">
      <button class="edit-btn" onclick="openEdit(${idx})">✏️ Edit</button>
@@ -307,6 +332,7 @@ function openEdit(idx){
  document.getElementById("editTitle").value = songsData[idx].name;
  document.getElementById("editMood").value = songsData[idx].mood;
  document.getElementById("editDesc").value = songsData[idx].desc;
+ document.getElementById("editYtLink").value = songsData[idx].youtube || "";
  document.getElementById("editModal").style.display = "flex";
 }
 
@@ -319,11 +345,12 @@ async function saveEdit(){
  songsData[idx].name = document.getElementById("editTitle").value.trim();
  songsData[idx].mood = document.getElementById("editMood").value;
  songsData[idx].desc = document.getElementById("editDesc").value.trim();
+ songsData[idx].youtube = document.getElementById("editYtLink").value.trim();
  closeModal();
  showStatus("statusBox", "⏳ পরিবর্তন সেভ হচ্ছে...");
  const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(songsData, null, 2))));
  await uploadToGitHub("songs.json", jsonB64, "Edit song details");
- showStatus("statusBox", "✅ গানের তথ্য আপডেট হয়েছে!");
+ showStatus("statusBox", "✅ গানের তথ্য ও YouTube লিংক আপডেট হয়েছে!");
  updateSongStats();
  renderManageList();
 }
@@ -361,6 +388,7 @@ async function publishSong(){
  const name = document.getElementById("songTitle").value.trim();
  const mood = document.getElementById("songMood").value;
  const desc = document.getElementById("songDesc").value.trim() || "Original • R LOFI 01";
+ const youtube = document.getElementById("songYtLink").value.trim();
  const audioInput = document.getElementById("audioFile").files[0];
  const coverInput = document.getElementById("coverFile").files[0];
 
@@ -385,13 +413,14 @@ async function publishSong(){
   const up2 = await uploadToGitHub(coverFileName, coverB64, `Upload ${coverFileName}`);
   if(!up1 || !up2) throw new Error("Failed");
 
-  songsData.unshift({ name, file: audioFileName, cover: coverFileName, mood, desc });
+  songsData.unshift({ name, file: audioFileName, cover: coverFileName, mood, desc, youtube });
   const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(songsData, null, 2))));
   await uploadToGitHub("songs.json", jsonB64, `Add ${name}`);
 
   showStatus("statusBox", "✅ সফলভাবে পাবলিশ হয়েছে!");
   document.getElementById("songTitle").value = "";
   document.getElementById("songDesc").value = "";
+  document.getElementById("songYtLink").value = "";
   await loadSongsList();
  }catch(e){
   showStatus("statusBox", "❌ আপলোড ব্যর্থ হয়েছে! ফাইলের সাইজ ২৫ MB-এর কম রাখুন।", true);
@@ -411,4 +440,3 @@ async function deleteSong(idx){
 </script>
 </body>
 </html>
-
