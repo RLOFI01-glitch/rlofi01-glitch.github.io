@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", function(){
  if("serviceWorker" in navigator){
   navigator.serviceWorker.register("sw.js").catch(function(){});
@@ -57,7 +58,6 @@ document.addEventListener("DOMContentLoaded", function(){
   btn.onclick = function(){ switchTab(btn.getAttribute("data-tab")); };
  });
 
- /* Full Player Open, Minimize & Swipe Down */
  var fpModal = document.getElementById("fullPlayerModal");
  function openFullPlayer(){
   fpModal.style.display = "flex";
@@ -86,7 +86,6 @@ document.addEventListener("DOMContentLoaded", function(){
   }
  }, {passive: true});
 
- /* Double Tap + Single Tap Hinglish Hint */
  var lastTapTime = 0;
  var lastTapIdx = -1;
  var toastTimer;
@@ -114,7 +113,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
  coverBox.onclick = function(){ handleThumbTap(index); };
 
- /* Liked Songs & Custom Playlists ("Save to...") */
  function isFavorite(songName){
   return savedFavorites.indexOf(songName) !== -1;
  }
@@ -218,6 +216,7 @@ document.addEventListener("DOMContentLoaded", function(){
  function trackPlay(){ fetch("https://api.counterapi.dev/v1/rlofi01/plays/up").catch(function(){}); }
  playerDownload.onclick = trackPlay;
 
+ /* Load dynamic Config: Static Photo on Hero, Animated Video below Latest Releases */
  fetch("config.json?v=" + Date.now())
   .then(function(r){ return r.json(); })
   .then(function(cfg){
@@ -232,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function(){
     document.getElementById("home").style.background = "linear-gradient(to bottom,rgba(16,11,25,0.65),rgba(16,11,25,0.92)),url('" + cfg.bgImg + "') center/cover no-repeat";
    }
    if(cfg.bgVideo){
-    var vid = document.getElementById("heroVideo");
+    var vid = document.getElementById("lowerBgVideo");
     vid.src = cfg.bgVideo;
     vid.style.display = "block";
    }
@@ -527,4 +526,4 @@ document.addEventListener("DOMContentLoaded", function(){
  }
  audio.volume = 0.8;
 });
- 
+               
