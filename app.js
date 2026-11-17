@@ -23,10 +23,19 @@ document.addEventListener("DOMContentLoaded", function(){
  ];
 
  var savedFavorites = [];
- try{ savedFavorites = JSON.parse(localStorage.getItem("rlofi_favorites") || "[]"); }catch(e){}
+ var customPlaylists = {};
+ try{
+  savedFavorites = JSON.parse(localStorage.getItem("rlofi_favorites") || "[]");
+  customPlaylists = JSON.parse(localStorage.getItem("rlofi_playlists") || "{}");
+ }catch(e){}
 
  var index = 0;
  var currentMood = "all";
+ var activePlaylistFilter = "liked";
+ var isShuffle = false;
+ var isLoop = false;
+ var saveTargetSong = "";
+
  var audio = document.getElementById("audio");
  var playBtn = document.getElementById("play");
  var miniPlayBtn = document.getElementById("miniPlayBtn");
@@ -48,22 +57,36 @@ document.addEventListener("DOMContentLoaded", function(){
   btn.onclick = function(){ switchTab(btn.getAttribute("data-tab")); };
  });
 
+ /* Full Player Open, Minimize & Swipe Down */
+ var fpModal = document.getElementById("fullPlayerModal");
  function openFullPlayer(){
-  document.getElementById("fullPlayerModal").style.display = "flex";
+  fpModal.style.display = "flex";
   updateFavButtonUI();
  }
  function closeFullPlayer(){
-  document.getElementById("fullPlayerModal").style.display = "none";
+  fpModal.style.display = "none";
  }
 
  document.getElementById("miniOpenArea").onclick = openFullPlayer;
- document.getElementById("fpMinimizeBtn").onclick = closeFullPlayer;
+ document.getElementById("fpDragHandle").onclick = closeFullPlayer;
  document.getElementById("miniCloseBtn").onclick = function(){
   audio.pause();
   setPlayingState(false);
   document.getElementById("miniPlayer").style.display = "none";
  };
 
+ var touchStartY = 0;
+ fpModal.addEventListener("touchstart", function(e){
+  touchStartY = e.touches[0].clientY;
+ }, {passive: true});
+ fpModal.addEventListener("touchend", function(e){
+  var touchEndY = e.changedTouches[0].clientY;
+  if(touchEndY - touchStartY > 95 && fpModal.scrollTop <= 10){
+   closeFullPlayer();
+  }
+ }, {passive: true});
+
+ /* Double Tap + Single Tap Hinglish Hint */
  var lastTapTime = 0;
  var lastTapIdx = -1;
  var toastTimer;
@@ -91,8 +114,16 @@ document.addEventListener("DOMContentLoaded", function(){
 
  coverBox.onclick = function(){ handleThumbTap(index); };
 
+ /* Liked Songs & Custom Playlists ("Save to...") */
  function isFavorite(songName){
   return savedFavorites.indexOf(songName) !== -1;
+ }
+
+ function saveStorage(){
+  try{
+   localStorage.setItem("rlofi_favorites", JSON.stringify(savedFavorites));
+   localStorage.setItem("rlofi_playlists", JSON.stringify(customPlaylists));
+  }catch(e){}
  }
 
  function toggleFavorite(i){
@@ -100,12 +131,12 @@ document.addEventListener("DOMContentLoaded", function(){
   var name = tracks[i].name;
   if(isFavorite(name)){
    savedFavorites = savedFavorites.filter(function(s){ return s !== name; });
-   showHinglishHint("💔 Library se remove kiya gaya");
+   showHinglishHint("💔 Liked Songs se remove kiya gaya");
   }else{
    savedFavorites.push(name);
-   showHinglishHint("❤️ Library mein save ho gaya!");
+   showHinglishHint("❤️ Liked Songs mein save ho gaya!");
   }
-  try{ localStorage.setItem("rlofi_favorites", JSON.stringify(savedFavorites)); }catch(e){}
+  saveStorage();
   updateFavButtonUI();
   renderSongs();
   renderSearch();
@@ -117,6 +148,70 @@ document.addEventListener("DOMContentLoaded", function(){
  function updateFavButtonUI(){
   var btn = document.getElementById("fpFavBtn");
   btn.textContent = (tracks[index] && isFavorite(tracks[index].name)) ? "❤️" : "🤍";
+ }
+
+ function openSaveModal(songName){
+  saveTargetSong = songName;
+  document.getElementById("saveModalSongName").textContent = songName;
+  renderPlaylistOptions();
+  document.getElementById("saveModal").style.display = "flex";
+ }
+
+ function closeSaveModal(){
+  document.getElementById("saveModal").style.display = "none";
+ }
+
+ document.getElementById("closeSaveModalBtn").onclick = closeSaveModal;
+ document.getElementById("saveModal").onclick = function(e){
+  if(e.target === this) closeSaveModal();
+ };
+ document.getElementById("fpSavePlaylistBtn").onclick = function(){
+  if(tracks[index]) openSaveModal(tracks[index].name);
+ };
+
+ document.getElementById("createPlaylistBtn").onclick = function(){
+  var pName = prompt("Apne naye folder / playlist ka naam likhein:");
+  if(pName && pName.trim()){
+   var cleanName = pName.trim();
+   if(!customPlaylists[cleanName]) customPlaylists[cleanName] = [];
+   if(saveTargetSong && customPlaylists[cleanName].indexOf(saveTargetSong) === -1){
+    customPlaylists[cleanName].push(saveTargetSong);
+   }
+   saveStorage();
+   renderPlaylistOptions();
+   renderLibrary();
+   showHinglishHint('📁 "' + cleanName + '" mein save ho gaya!');
+  }
+ };
+
+ function renderPlaylistOptions(){
+  var container = document.getElementById("playlistOptionsList");
+  container.innerHTML = "";
+  var keys = Object.keys(customPlaylists);
+  if(keys.length === 0){
+   container.innerHTML = '<p class="sub" style="text-align:center;margin:15px 0">Abhi koi folder nahi bana hai. Niche "+ New playlist" dabayein!</p>';
+   return;
+  }
+  keys.forEach(function(folder){
+   var list = customPlaylists[folder] || [];
+   var exists = list.indexOf(saveTargetSong) !== -1;
+   var row = document.createElement("div");
+   row.className = "pl-row";
+   row.innerHTML = '<div><strong>📁 ' + folder + '</strong><br><small style="color:#bcaacb">' + list.length + ' songs</small></div><span style="font-size:20px">' + (exists ? "✅" : "🔖") + '</span>';
+   row.onclick = function(){
+    if(exists){
+     customPlaylists[folder] = list.filter(function(s){ return s !== saveTargetSong; });
+     showHinglishHint('Removed from "' + folder + '"');
+    }else{
+     customPlaylists[folder].push(saveTargetSong);
+     showHinglishHint('Saved to "' + folder + '" ✅');
+    }
+    saveStorage();
+    renderPlaylistOptions();
+    renderLibrary();
+   };
+   container.appendChild(row);
+  });
  }
 
  fetch("https://api.counterapi.dev/v1/rlofi01/visits/up").catch(function(){});
@@ -172,6 +267,11 @@ document.addEventListener("DOMContentLoaded", function(){
   pBtn.textContent = "▶ Play";
   pBtn.onclick = function(){ playSong(i); };
 
+  var saveFolderBtn = document.createElement("button");
+  saveFolderBtn.className = "share-btn";
+  saveFolderBtn.textContent = "➕ Save";
+  saveFolderBtn.onclick = function(){ openSaveModal(t.name); };
+
   var dBtn = document.createElement("a");
   dBtn.className = "dl-btn";
   dBtn.href = t.file;
@@ -185,6 +285,7 @@ document.addEventListener("DOMContentLoaded", function(){
   sBtn.onclick = function(){ shareSong(t.name); };
 
   btns.appendChild(pBtn);
+  btns.appendChild(saveFolderBtn);
   btns.appendChild(dBtn);
   btns.appendChild(sBtn);
 
@@ -224,12 +325,32 @@ document.addEventListener("DOMContentLoaded", function(){
  document.getElementById("searchInput").oninput = renderSearch;
 
  function renderLibrary(){
+  var tabsBar = document.getElementById("libraryFoldersBar");
+  tabsBar.innerHTML = "";
+
+  var likedChip = document.createElement("button");
+  likedChip.className = "mood-btn" + (activePlaylistFilter === "liked" ? " active" : "");
+  likedChip.textContent = "❤️ Liked (" + savedFavorites.length + ")";
+  likedChip.onclick = function(){ activePlaylistFilter = "liked"; renderLibrary(); };
+  tabsBar.appendChild(likedChip);
+
+  var folders = Object.keys(customPlaylists);
+  folders.forEach(function(f){
+   var chip = document.createElement("button");
+   chip.className = "mood-btn" + (activePlaylistFilter === f ? " active" : "");
+   chip.textContent = "📁 " + f + " (" + customPlaylists[f].length + ")";
+   chip.onclick = function(){ activePlaylistFilter = f; renderLibrary(); };
+   tabsBar.appendChild(chip);
+  });
+
   var box = document.getElementById("libraryList");
   var emptyMsg = document.getElementById("emptyLibrary");
   box.innerHTML = "";
   var count = 0;
+
+  var targetList = activePlaylistFilter === "liked" ? savedFavorites : (customPlaylists[activePlaylistFilter] || []);
   tracks.forEach(function(t, i){
-   if(isFavorite(t.name)){
+   if(targetList.indexOf(t.name) !== -1){
     count++;
     box.appendChild(createCardElement(t, i));
    }
@@ -292,8 +413,28 @@ document.addEventListener("DOMContentLoaded", function(){
   }
  }
 
- function nextTrack(){ playSong((index + 1) % tracks.length); }
+ function nextTrack(){
+  if(isShuffle && tracks.length > 1){
+   var rand = Math.floor(Math.random() * tracks.length);
+   playSong(rand);
+  }else{
+   playSong((index + 1) % tracks.length);
+  }
+ }
  function prevTrack(){ playSong((index - 1 + tracks.length) % tracks.length); }
+
+ document.getElementById("shuffleBtn").onclick = function(){
+  isShuffle = !isShuffle;
+  this.classList.toggle("active-ctrl", isShuffle);
+  showHinglishHint(isShuffle ? "🔀 Shuffle On" : "🔀 Shuffle Off");
+ };
+
+ document.getElementById("loopBtn").onclick = function(){
+  isLoop = !isLoop;
+  audio.loop = isLoop;
+  this.classList.toggle("active-ctrl", isLoop);
+  showHinglishHint(isLoop ? "🔁 Repeat Song On" : "🔁 Repeat Off");
+ };
 
  document.querySelectorAll(".mood-btn").forEach(function(btn){
   btn.onclick = function(){
@@ -332,7 +473,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
    if(mins === 0){
     sleepSecondsLeft = 0;
-    btn.textContent = "🌙 Sleep Timer";
+    btn.textContent = "🌙 Sleep";
     showHinglishHint("🌙 Sleep Timer off kar diya gaya");
     return;
    }
@@ -356,7 +497,7 @@ document.addEventListener("DOMContentLoaded", function(){
      audio.pause();
      audio.volume = initialVol;
      setPlayingState(false);
-     btn.textContent = "🌙 Sleep Timer";
+     btn.textContent = "🌙 Sleep";
      showHinglishHint("😴 Sleep Timer khatam — Music band ho gaya");
     }
    }, 1000);
@@ -368,7 +509,7 @@ document.addEventListener("DOMContentLoaded", function(){
  document.getElementById("miniNextBtn").onclick = nextTrack;
  document.getElementById("prev").onclick = prevTrack;
  document.getElementById("next").onclick = nextTrack;
- audio.onended = nextTrack;
+ audio.onended = function(){ if(!isLoop) nextTrack(); };
 
  audio.ontimeupdate = function(){
   if(audio.duration){
@@ -386,4 +527,4 @@ document.addEventListener("DOMContentLoaded", function(){
  }
  audio.volume = 0.8;
 });
-   
+ 
