@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,7 +16,7 @@ header{display:flex;justify-content:space-between;align-items:center;padding:14p
 .logo{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:bold;color:#d7a4ff}
 .logo img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid #a45ce1}
 nav a{color:#ddd;text-decoration:none;margin-left:15px;font-size:14px}
-.hero{min-height:430px;padding:65px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(to bottom,rgba(16,11,25,0.65),rgba(16,11,25,0.92)),url('r lofi 01.jpg') center/cover no-repeat,url('r lofi 01.png') center/cover no-repeat}
+.hero{min-height:430px;padding:65px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(to bottom,rgba(16,11,25,0.65),rgba(16,11,25,0.92)),url('r lofi 01.png') center/cover no-repeat}
 .hero-logo{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #c78aff;box-shadow:0 0 25px rgba(164,92,225,0.7);margin-bottom:12px}
 .hero h1{font-size:clamp(38px,8vw,68px);margin:8px 0;text-shadow:0 4px 15px rgba(0,0,0,0.8)}
 .hero p{color:#ebd9f8;letter-spacing:2px;margin:6px 0}
@@ -71,7 +72,7 @@ footer a{color:#d8a8ff;margin:0 10px;text-decoration:none;font-size:14px}
 
 <header>
  <div class="logo">
-  <img src="r lofi 01.png" alt="R LOFI 01 Logo">
+  <img id="navLogo" src="r lofi 01.png" alt="R LOFI 01 Logo">
   <span>R LOFI 01</span>
  </div>
  <nav>
@@ -83,7 +84,7 @@ footer a{color:#d8a8ff;margin:0 10px;text-decoration:none;font-size:14px}
 </header>
 
 <div class="hero" id="home">
- <img class="hero-logo" src="r lofi 01.png" alt="R LOFI 01">
+ <img class="hero-logo" id="heroProfileImg" src="r lofi 01.png" alt="R LOFI 01">
  <h1>R LOFI 01</h1>
  <p>LISTEN • RELAX • FEEL • REMEMBER</p>
  <p>Original Music | Romantic | Sad | Lofi</p>
@@ -223,12 +224,19 @@ const coverBox = document.getElementById("cover");
 fetch("https://api.counterapi.dev/v1/rlofi01/visits/up").catch(()=>{});
 function trackPlay(){ fetch("https://api.counterapi.dev/v1/rlofi01/plays/up").catch(()=>{}); }
 
-/* Load dynamic YouTube Video */
+/* Load dynamic Config (YouTube Video, Profile Photo & Background) */
 fetch("config.json?v=" + Date.now())
  .then(r => r.json())
  .then(cfg => {
   if(cfg.youtubeId){
    document.getElementById("ytIframe").src = `https://www.youtube.com/embed/${cfg.youtubeId}`;
+  }
+  if(cfg.profileImg){
+   document.getElementById("navLogo").src = cfg.profileImg;
+   document.getElementById("heroProfileImg").src = cfg.profileImg;
+  }
+  if(cfg.bgImg){
+   document.getElementById("home").style.background = `linear-gradient(to bottom,rgba(16,11,25,0.65),rgba(16,11,25,0.92)),url('${cfg.bgImg}') center/cover no-repeat`;
   }
  }).catch(()=>{});
 
