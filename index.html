@@ -130,7 +130,7 @@ footer a{color:#d8a8ff;margin:0 10px;text-decoration:none;font-size:14px}
    <button id="next">⏭</button>
   </div>
   <div style="margin:14px 0;display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
-   <a id="playerDownload" class="dl-btn" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3">⬇ Download Song</a>
+   <a id="playerDownload" class="dl-btn" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3" onclick="trackPlay()">⬇ Download Song</a>
    <button class="share-btn" onclick="shareCurrentSong()">🔗 Share Song</button>
   </div>
   <p class="sub">🔊 Volume</p>
@@ -143,7 +143,7 @@ footer a{color:#d8a8ff;margin:0 10px;text-decoration:none;font-size:14px}
  <p class="sub">Featured Music Video from R LOFI 01</p>
  <div class="video-box">
   <div class="video-frame">
-   <iframe src="https://www.youtube.com/embed/5G5vla1XpWE" title="R LOFI 01 YouTube Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+   <iframe id="ytIframe" src="https://www.youtube.com/embed/5G5vla1XpWE" title="R LOFI 01 YouTube Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
   </div>
   <p class="sub">Subscribe to our official YouTube channel for full HD music videos.</p>
   <a class="btn yt-btn" href="https://youtube.com/@rlofi01" target="_blank">▶ Subscribe @rlofi01</a>
@@ -196,6 +196,19 @@ const playerBox = document.getElementById("playerBox");
 const playerDownload = document.getElementById("playerDownload");
 const coverBox = document.getElementById("cover");
 
+/* Count Visits & Plays silently */
+fetch("https://api.counterapi.dev/v1/rlofi01/visits/up").catch(()=>{});
+function trackPlay(){ fetch("https://api.counterapi.dev/v1/rlofi01/plays/up").catch(()=>{}); }
+
+/* Load dynamic YouTube Video */
+fetch("config.json?v=" + Date.now())
+ .then(r => r.json())
+ .then(cfg => {
+  if(cfg.youtubeId){
+   document.getElementById("ytIframe").src = `https://www.youtube.com/embed/${cfg.youtubeId}`;
+  }
+ }).catch(()=>{});
+
 function renderSongs(){
  const list = document.getElementById("songList");
  const noResult = document.getElementById("noResult");
@@ -213,7 +226,7 @@ function renderSongs(){
      <p>${t.desc}</p>
      <div class="card-btns">
       <button class="play-btn" onclick="playSong(${i})">▶ Play</button>
-      <a class="dl-btn" href="${t.file}" download="${t.name} - R LOFI 01.mp3">⬇ Download</a>
+      <a class="dl-btn" href="${t.file}" download="${t.name} - R LOFI 01.mp3" onclick="trackPlay()">⬇ Download</a>
       <button class="share-btn" onclick="shareSong('${t.name}')">🔗 Share</button>
      </div>
     </div>`;
@@ -251,6 +264,7 @@ function setPlayingState(isPlaying){
 
 function playSong(i){
  loadTrackUI(i);
+ trackPlay();
  document.getElementById("player").scrollIntoView({behavior:"smooth"});
  audio.play().then(() => setPlayingState(true)).catch(() => {
   setPlayingState(false);
@@ -278,6 +292,7 @@ function shareCurrentSong(){ shareSong(tracks[index].name); }
 
 playBtn.onclick = () => {
  if(audio.paused){
+  trackPlay();
   audio.play().then(() => setPlayingState(true)).catch(() => alert("গানটি লোড হচ্ছে।"));
  }else{
   audio.pause();
@@ -306,5 +321,4 @@ function formatTime(t){
 audio.volume = 0.8;
 </script>
 </body>
- </html>
- 
+</html>
