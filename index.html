@@ -8,352 +8,62 @@
 
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;
- background:#100b19;
- color:#fff;
- font-family:Arial,sans-serif;
-}
-header{
- display:flex;
- justify-content:space-between;
- align-items:center;
- padding:14px 7%;
- background:#171020;
- position:sticky;
- top:0;
- z-index:10;
- border-bottom:1px solid #2b1d3d;
-}
-.logo{
- display:flex;
- align-items:center;
- gap:10px;
- font-size:21px;
- font-weight:bold;
- color:#d7a4ff;
-}
-.logo img{
- width:38px;
- height:38px;
- border-radius:50%;
- object-fit:cover;
- border:2px solid #a45ce1;
-}
-nav a{
- color:#ddd;
- text-decoration:none;
- margin-left:15px;
- font-size:14px;
-}
-
-.hero{
- min-height:430px;
- padding:65px 20px;
- text-align:center;
- display:flex;
- flex-direction:column;
- align-items:center;
- justify-content:center;
- background:
- linear-gradient(to bottom, rgba(16,11,25,0.65), rgba(16,11,25,0.92)),
- url('r lofi 01.jpg') center/cover no-repeat,
- url('r lofi 01.png') center/cover no-repeat;
-}
-.hero-logo{
- width:100px;
- height:100px;
- border-radius:50%;
- object-fit:cover;
- border:3px solid #c78aff;
- box-shadow:0 0 25px rgba(164,92,225,0.7);
- margin-bottom:12px;
-}
-.hero h1{
- font-size:clamp(38px,8vw,68px);
- margin:8px 0;
- text-shadow:0 4px 15px rgba(0,0,0,0.8);
-}
+body{margin:0;background:#100b19;color:#fff;font-family:Arial,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 7%;background:#171020;position:sticky;top:0;z-index:10;border-bottom:1px solid #2b1d3d}
+.logo{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:bold;color:#d7a4ff}
+.logo img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid #a45ce1}
+nav a{color:#ddd;text-decoration:none;margin-left:15px;font-size:14px}
+.hero{min-height:430px;padding:65px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(to bottom,rgba(16,11,25,0.65),rgba(16,11,25,0.92)),url('r lofi 01.jpg') center/cover no-repeat,url('r lofi 01.png') center/cover no-repeat}
+.hero-logo{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid #c78aff;box-shadow:0 0 25px rgba(164,92,225,0.7);margin-bottom:12px}
+.hero h1{font-size:clamp(38px,8vw,68px);margin:8px 0;text-shadow:0 4px 15px rgba(0,0,0,0.8)}
 .hero p{color:#ebd9f8;letter-spacing:2px;margin:6px 0}
-.btn{
- display:inline-block;
- background:#a45ce1;
- color:white;
- padding:13px 24px;
- border-radius:30px;
- text-decoration:none;
- margin:8px 5px;
- font-weight:bold;
- font-size:14px;
-}
-.insta-btn{
- background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-}
-.yt-btn{
- background:#ff0033;
-}
+.btn{display:inline-block;background:#a45ce1;color:white;padding:13px 24px;border-radius:30px;text-decoration:none;margin:8px 5px;font-weight:bold;font-size:14px}
+.insta-btn{background:linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%)}
+.yt-btn{background:#ff0033}
 section{padding:40px 7%}
 h2{color:#d8a8ff}
 .sub{color:#b9a9c5;font-size:14px}
-
-/* Mood Filter Buttons */
-.mood-filters{
- display:flex;
- gap:10px;
- flex-wrap:wrap;
- margin:18px 0;
-}
-.mood-btn{
- background:#21182c;
- color:#d8a8ff;
- border:1.5px solid #3c2852;
- padding:8px 18px;
- border-radius:20px;
- cursor:pointer;
- font-size:13px;
- font-weight:bold;
- transition:0.3s;
-}
-.mood-btn.active, .mood-btn:hover{
- background:#a45ce1;
- color:#fff;
- border-color:#c78aff;
- box-shadow:0 0 12px rgba(164,92,225,0.5);
-}
-
-/* Player & Neon Visualizer */
-.player{
- background:linear-gradient(145deg,#30203f,#191321);
- padding:25px 22px;
- border-radius:18px;
- max-width:600px;
- margin:auto;
- text-align:center;
- border:1px solid #3c2852;
- transition:0.4s;
-}
-.player.playing{
- border-color:#c78aff;
- box-shadow:0 0 30px rgba(164,92,225,0.45);
-}
-.cover{
- width:100%;
- max-width:300px;
- aspect-ratio:16/10;
- margin:0 auto 16px;
- border-radius:15px;
- background:linear-gradient(135deg,#70458f,#24182f);
- display:flex;
- justify-content:center;
- align-items:center;
- font-size:65px;
- overflow:hidden;
- box-shadow:0 8px 20px rgba(0,0,0,0.5);
- transition:0.4s;
-}
-.player.playing .cover{
- animation:neonPulse 2s infinite alternate;
-}
-@keyframes neonPulse{
- 0%{box-shadow:0 0 12px #a45ce1, 0 0 24px rgba(164,92,225,0.4); transform:scale(1);}
- 100%{box-shadow:0 0 22px #e0aaff, 0 0 40px rgba(199,138,255,0.7); transform:scale(1.02);}
-}
-.cover img{
- width:100%;
- height:100%;
- object-fit:cover;
-}
-
-/* Equalizer Bars */
-.visualizer{
- display:flex;
- justify-content:center;
- align-items:flex-end;
- gap:5px;
- height:26px;
- margin:10px auto;
-}
-.bar{
- width:5px;
- height:6px;
- background:linear-gradient(to top, #a45ce1, #f0abfc);
- border-radius:3px;
- transition:height 0.2s;
-}
-.player.playing .bar{
- animation:wave 0.8s infinite ease-in-out alternate;
-}
-.player.playing .bar:nth-child(1){animation-delay:0.1s}
-.player.playing .bar:nth-child(2){animation-delay:0.3s}
-.player.playing .bar:nth-child(3){animation-delay:0.5s}
-.player.playing .bar:nth-child(4){animation-delay:0.2s}
-.player.playing .bar:nth-child(5){animation-delay:0.4s}
-.player.playing .bar:nth-child(6){animation-delay:0.6s}
-.player.playing .bar:nth-child(7){animation-delay:0.15s}
-@keyframes wave{
- 0%{height:6px;}
- 100%{height:26px;}
-}
-
+.mood-filters{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.mood-btn{background:#21182c;color:#d8a8ff;border:1.5px solid #3c2852;padding:8px 18px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:bold;transition:0.3s}
+.mood-btn.active,.mood-btn:hover{background:#a45ce1;color:#fff;border-color:#c78aff;box-shadow:0 0 12px rgba(164,92,225,0.5)}
+.player{background:linear-gradient(145deg,#30203f,#191321);padding:25px 22px;border-radius:18px;max-width:600px;margin:auto;text-align:center;border:1px solid #3c2852;transition:0.4s}
+.player.playing{border-color:#c78aff;box-shadow:0 0 30px rgba(164,92,225,0.45)}
+.cover{width:100%;max-width:300px;aspect-ratio:16/10;margin:0 auto 16px;border-radius:15px;background:linear-gradient(135deg,#70458f,#24182f);display:flex;justify-content:center;align-items:center;font-size:65px;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,0.5);transition:0.4s}
+.player.playing .cover{animation:neonPulse 2s infinite alternate}
+@keyframes neonPulse{0%{box-shadow:0 0 12px #a45ce1,0 0 24px rgba(164,92,225,0.4);transform:scale(1)}100%{box-shadow:0 0 22px #e0aaff,0 0 40px rgba(199,138,255,0.7);transform:scale(1.02)}}
+.cover img{width:100%;height:100%;object-fit:cover}
+.visualizer{display:flex;justify-content:center;align-items:flex-end;gap:5px;height:26px;margin:10px auto}
+.bar{width:5px;height:6px;background:linear-gradient(to top,#a45ce1,#f0abfc);border-radius:3px}
+.player.playing .bar{animation:wave 0.8s infinite ease-in-out alternate}
+.player.playing .bar:nth-child(1){animation-delay:0.1s}.player.playing .bar:nth-child(2){animation-delay:0.3s}.player.playing .bar:nth-child(3){animation-delay:0.5s}.player.playing .bar:nth-child(4){animation-delay:0.2s}.player.playing .bar:nth-child(5){animation-delay:0.4s}.player.playing .bar:nth-child(6){animation-delay:0.6s}.player.playing .bar:nth-child(7){animation-delay:0.15s}
+@keyframes wave{0%{height:6px}100%{height:26px}}
 .player h3{margin:8px}
-.controls button{
- border:0;
- border-radius:50%;
- width:45px;
- height:45px;
- margin:8px;
- background:#a45ce1;
- color:white;
- font-size:19px;
- cursor:pointer;
-}
+.controls button{border:0;border-radius:50%;width:45px;height:45px;margin:8px;background:#a45ce1;color:white;font-size:19px;cursor:pointer}
 #play{width:58px;height:58px;font-size:24px}
 input[type=range]{width:100%;accent-color:#c78aff}
-.time{
- display:flex;
- justify-content:space-between;
- font-size:12px;
- color:#c8b5d5;
-}
-
-.songs{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
- gap:17px;
- margin-top:15px;
-}
-.card{
- background:#21182c;
- padding:18px;
- border-radius:15px;
- border:1px solid #322344;
-}
-.art{
- height:145px;
- border-radius:12px;
- display:flex;
- justify-content:center;
- align-items:center;
- font-size:45px;
- background:linear-gradient(135deg,#694381,#25172f);
- overflow:hidden;
-}
-.art img{
- width:100%;
- height:100%;
- object-fit:cover;
-}
+.time{display:flex;justify-content:space-between;font-size:12px;color:#c8b5d5}
+.songs{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:17px;margin-top:15px}
+.card{background:#21182c;padding:18px;border-radius:15px;border:1px solid #322344}
+.art{height:145px;border-radius:12px;display:flex;justify-content:center;align-items:center;font-size:45px;background:linear-gradient(135deg,#694381,#25172f);overflow:hidden}
+.art img{width:100%;height:100%;object-fit:cover}
 .card h3{margin-bottom:5px}
 .card p{color:#bcaacb;font-size:13px}
-.card-btns{
- display:flex;
- gap:7px;
- flex-wrap:wrap;
- margin-top:12px;
-}
-.card button.play-btn{
- background:#a45ce1;
- color:white;
- border:0;
- padding:9px 14px;
- border-radius:20px;
- cursor:pointer;
- font-size:13px;
-}
-.dl-btn, .share-btn{
- display:inline-block;
- background:transparent;
- color:#d8a8ff;
- border:1.5px solid #a45ce1;
- padding:7px 12px;
- border-radius:20px;
- text-decoration:none;
- font-size:12px;
- cursor:pointer;
-}
-.dl-btn:hover, .share-btn:hover{
- background:#a45ce1;
- color:white;
-}
-.no-result{
- text-align:center;
- padding:30px;
- color:#bcaacb;
- background:#21182c;
- border-radius:15px;
- display:none;
-}
-
-/* YouTube Video Embed Box */
-.video-box{
- background:#21182c;
- padding:22px;
- border-radius:15px;
- border:1px solid #322344;
- text-align:center;
- max-width:750px;
- margin:auto;
-}
-.video-frame{
- position:relative;
- width:100%;
- padding-bottom:56.25%;
- border-radius:12px;
- overflow:hidden;
- background:#100b19;
- margin:15px 0;
-}
-.video-frame iframe{
- position:absolute;
- top:0;
- left:0;
- width:100%;
- height:100%;
- border:0;
-}
-
-.about{
- background:#1c1425;
- padding:25px;
- border-radius:15px;
- line-height:1.8;
- color:#d4c4df;
-}
-.youtube{
- background:#21182c;
- padding:28px 20px;
- border-radius:15px;
- text-align:center;
- border:1px solid #322344;
-}
-.social-links{
- display:flex;
- justify-content:center;
- flex-wrap:wrap;
- gap:10px;
- margin-top:15px;
-}
-footer{
- text-align:center;
- background:#171020;
- padding:30px 15px;
- color:#c4b4d0;
- border-top:1px solid #2b1d3d;
-}
-footer a{
- color:#d8a8ff;
- margin:0 10px;
- text-decoration:none;
- font-size:14px;
-}
-@media(max-width:500px){
- header{padding:14px 4%}
- nav a{margin-left:8px;font-size:12px}
- section{padding:30px 5%}
-}
+.card-btns{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.card button.play-btn{background:#a45ce1;color:white;border:0;padding:9px 14px;border-radius:20px;cursor:pointer;font-size:13px}
+.dl-btn,.share-btn{display:inline-block;background:transparent;color:#d8a8ff;border:1.5px solid #a45ce1;padding:7px 12px;border-radius:20px;text-decoration:none;font-size:12px;cursor:pointer}
+.dl-btn:hover,.share-btn:hover{background:#a45ce1;color:white}
+.no-result{text-align:center;padding:30px;color:#bcaacb;background:#21182c;border-radius:15px;display:none}
+.video-box{background:#21182c;padding:22px;border-radius:15px;border:1px solid #322344;text-align:center;max-width:750px;margin:auto}
+.video-frame{position:relative;width:100%;padding-bottom:56.25%;border-radius:12px;overflow:hidden;background:#100b19;margin:15px 0}
+.video-frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.about{background:#1c1425;padding:25px;border-radius:15px;line-height:1.8;color:#d4c4df}
+.youtube{background:#21182c;padding:28px 20px;border-radius:15px;text-align:center;border:1px solid #322344}
+.social-links{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:15px}
+footer{text-align:center;background:#171020;padding:30px 15px;color:#c4b4d0;border-top:1px solid #2b1d3d}
+footer a{color:#d8a8ff;margin:0 10px;text-decoration:none;font-size:14px}
+@media(max-width:500px){header{padding:14px 4%}nav a{margin-left:8px;font-size:12px}section{padding:30px 5%}}
 </style>
 </head>
-
 <body>
 
 <header>
@@ -384,7 +94,6 @@ footer a{
  <h2>🎵 Latest Releases</h2>
  <p class="sub">Filter by mood & listen to music by R LOFI 01</p>
 
- <!-- Mood Filter Buttons -->
  <div class="mood-filters">
   <button class="mood-btn active" onclick="setMood('all', this)">All Songs</button>
   <button class="mood-btn" onclick="setMood('romantic', this)">💜 Romantic</button>
@@ -392,44 +101,7 @@ footer a{
   <button class="mood-btn" onclick="setMood('lofi', this)">🌙 Lofi</button>
  </div>
 
- <div class="songs" id="songList">
-  <div class="card" data-mood="romantic">
-   <div class="art">
-    <img src="Ek Naam Tha.png" alt="Ek Naam Tha">
-   </div>
-   <h3>Ek Naam Tha</h3>
-   <p>Romantic • Emotional</p>
-   <div class="card-btns">
-    <button class="play-btn" onclick="playSong(0)">▶ Play</button>
-    <a class="dl-btn" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3">⬇ Download</a>
-    <button class="share-btn" onclick="shareSong('Ek Naam Tha')">🔗 Share</button>
-   </div>
-  </div>
-
-  <div class="card" data-mood="sad">
-   <div class="art">
-    <img src="RIHAI.png" alt="RIHAI">
-   </div>
-   <h3>RIHAI</h3>
-   <p>Sad • Emotional • Lofi</p>
-   <div class="card-btns">
-    <button class="play-btn" onclick="playSong(1)">▶ Play</button>
-    <a class="dl-btn" href="RIHAI.mp3" download="RIHAI - R LOFI 01.mp3">⬇ Download</a>
-    <button class="share-btn" onclick="shareSong('RIHAI')">🔗 Share</button>
-   </div>
-  </div>
-
-  <div class="card" data-mood="lofi">
-   <div class="art">🌙</div>
-   <h3>Lofi Collection</h3>
-   <p>Relax • Chill • Lofi (Coming Soon)</p>
-   <div class="card-btns">
-    <button class="play-btn" onclick="playSong(2)">▶ Play</button>
-    <a class="dl-btn" href="song3.mp3" download="Lofi Collection.mp3">⬇ Download</a>
-    <button class="share-btn" onclick="shareSong('Lofi Collection')">🔗 Share</button>
-   </div>
-  </div>
- </div>
+ <div class="songs" id="songList"></div>
 
  <div class="no-result" id="noResult">
   😔 এই ক্যাটাগরিতে এখনো কোনো গান যোগ করা হয়নি।
@@ -440,52 +112,32 @@ footer a{
  <h2>🎧 Music Player</h2>
  <p class="sub">Listen to R LOFI 01 Original Music</p>
 
- <!-- Player with Visualizer -->
  <div class="player" id="playerBox">
   <div class="cover" id="cover">
    <img src="Ek Naam Tha.png" alt="Ek Naam Tha">
   </div>
-
-  <!-- Equalizer Wave Animation -->
   <div class="visualizer">
-   <div class="bar"></div>
-   <div class="bar"></div>
-   <div class="bar"></div>
-   <div class="bar"></div>
-   <div class="bar"></div>
-   <div class="bar"></div>
-   <div class="bar"></div>
+   <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
   </div>
-
   <h3 id="songName">Ek Naam Tha</h3>
   <p class="sub" id="artist">R LOFI 01</p>
-
   <audio id="audio" src="Ek Naam Tha.mp3"></audio>
-
-  <div class="time">
-   <span id="current">0:00</span>
-   <span id="duration">0:00</span>
-  </div>
-
+  <div class="time"><span id="current">0:00</span><span id="duration">0:00</span></div>
   <input type="range" id="seek" value="0" min="0" max="100">
-
   <div class="controls">
    <button id="prev">⏮</button>
    <button id="play">▶</button>
    <button id="next">⏭</button>
   </div>
-
-  <div style="margin: 14px 0; display:flex; justify-content:center; gap:10px; flex-wrap:wrap;">
+  <div style="margin:14px 0;display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
    <a id="playerDownload" class="dl-btn" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3">⬇ Download Song</a>
    <button class="share-btn" onclick="shareCurrentSong()">🔗 Share Song</button>
   </div>
-
   <p class="sub">🔊 Volume</p>
   <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8">
  </div>
 </section>
 
-<!-- YouTube Video Player Section -->
 <section id="youtube">
  <h2>📺 Watch on YouTube</h2>
  <p class="sub">Featured Music Video from R LOFI 01</p>
@@ -502,9 +154,7 @@ footer a{
  <h2>🌐 Follow & Connect</h2>
  <div class="youtube">
   <h3>Join the R LOFI 01 Community</h3>
-  <p class="sub">
-   Follow our official channel and personal updates on YouTube & Instagram.
-  </p>
+  <p class="sub">Follow our official channel and personal updates on YouTube & Instagram.</p>
   <div class="social-links">
    <a class="btn yt-btn" href="https://youtube.com/@rlofi01" target="_blank">▶ YouTube (@rlofi01)</a>
    <a class="btn insta-btn" href="https://www.instagram.com/r_lofi_01" target="_blank">📸 Channel IG (@r_lofi_01)</a>
@@ -516,20 +166,15 @@ footer a{
 <section id="about">
  <h2>About R LOFI 01</h2>
  <div class="about">
-  Welcome to R LOFI 01 Official Music Website.
-
-  Discover original music, romantic melodies,
-  emotional songs, sad songs and relaxing Lofi vibes.
-
-  <br><br>
-  Listen • Relax • Feel • Remember 🎧
+  Welcome to R LOFI 01 Official Music Website. Discover original music, romantic melodies, emotional songs, sad songs and relaxing Lofi vibes.
+  <br><br>Listen • Relax • Feel • Remember 🎧
  </div>
 </section>
 
 <footer>
  <h3>R LOFI 01 🎧</h3>
  <p>Feel Every Beat. Remember Every Moment.</p>
- <div style="margin: 15px 0;">
+ <div style="margin:15px 0">
   <a href="https://youtube.com/@rlofi01" target="_blank">YouTube</a> •
   <a href="https://www.instagram.com/r_lofi_01" target="_blank">@r_lofi_01</a> •
   <a href="https://www.instagram.com/rohitzz7" target="_blank">@rohitzz7</a>
@@ -538,167 +183,128 @@ footer a{
 </footer>
 
 <script>
-const tracks = [
- {
-  name:"Ek Naam Tha",
-  file:"Ek Naam Tha.mp3",
-  cover:"Ek Naam Tha.png",
-  icon:"💜"
- },
- {
-  name:"RIHAI",
-  file:"RIHAI.mp3",
-  cover:"RIHAI.png",
-  icon:"🌧️"
- },
- {
-  name:"Lofi Collection",
-  file:"song3.mp3",
-  cover:"",
-  icon:"🌙"
- }
+let tracks = [
+ {name:"Ek Naam Tha",file:"Ek Naam Tha.mp3",cover:"Ek Naam Tha.png",mood:"romantic",desc:"Romantic • Emotional"},
+ {name:"RIHAI",file:"RIHAI.mp3",cover:"RIHAI.png",mood:"sad",desc:"Sad • Emotional • Lofi"}
 ];
 
-let index=0;
-const audio=document.getElementById("audio");
-const playBtn=document.getElementById("play");
-const playerBox=document.getElementById("playerBox");
-const playerDownload=document.getElementById("playerDownload");
-const coverBox=document.getElementById("cover");
+let index = 0;
+let currentMood = "all";
+const audio = document.getElementById("audio");
+const playBtn = document.getElementById("play");
+const playerBox = document.getElementById("playerBox");
+const playerDownload = document.getElementById("playerDownload");
+const coverBox = document.getElementById("cover");
+
+function renderSongs(){
+ const list = document.getElementById("songList");
+ const noResult = document.getElementById("noResult");
+ list.innerHTML = "";
+ let count = 0;
+
+ tracks.forEach((t, i) => {
+  if(currentMood === "all" || t.mood === currentMood){
+   count++;
+   const artHTML = t.cover ? `<img src="${t.cover}" alt="${t.name}">` : `🎵`;
+   list.innerHTML += `
+    <div class="card">
+     <div class="art">${artHTML}</div>
+     <h3>${t.name}</h3>
+     <p>${t.desc}</p>
+     <div class="card-btns">
+      <button class="play-btn" onclick="playSong(${i})">▶ Play</button>
+      <a class="dl-btn" href="${t.file}" download="${t.name} - R LOFI 01.mp3">⬇ Download</a>
+      <button class="share-btn" onclick="shareSong('${t.name}')">🔗 Share</button>
+     </div>
+    </div>`;
+  }
+ });
+ noResult.style.display = count === 0 ? "block" : "none";
+}
+
+fetch("songs.json?v=" + Date.now())
+ .then(r => r.json())
+ .then(data => {
+  if(Array.isArray(data) && data.length > 0){
+   tracks = data;
+   renderSongs();
+   loadTrackUI(0);
+  }
+ })
+ .catch(() => renderSongs());
+
+renderSongs();
+
+function loadTrackUI(i){
+ index = i;
+ audio.src = tracks[index].file;
+ document.getElementById("songName").textContent = tracks[index].name;
+ coverBox.innerHTML = tracks[index].cover ? `<img src="${tracks[index].cover}" alt="${tracks[index].name}">` : "🎵";
+ playerDownload.href = tracks[index].file;
+ playerDownload.download = tracks[index].name + " - R LOFI 01.mp3";
+}
 
 function setPlayingState(isPlaying){
- if(isPlaying){
-  playBtn.textContent="Ⅱ";
-  playerBox.classList.add("playing");
- }else{
-  playBtn.textContent="▶";
-  playerBox.classList.remove("playing");
- }
+ playBtn.textContent = isPlaying ? "Ⅱ" : "▶";
+ playerBox.classList.toggle("playing", isPlaying);
 }
 
 function playSong(i){
- index=i;
- audio.src=tracks[index].file;
- document.getElementById("songName").textContent=tracks[index].name;
- 
- if(tracks[index].cover){
-  coverBox.innerHTML=`<img src="${tracks[index].cover}" alt="${tracks[index].name}">`;
- }else{
-  coverBox.textContent=tracks[index].icon;
- }
-
- playerDownload.href=tracks[index].file;
- playerDownload.download=tracks[index].name + " - R LOFI 01.mp3";
- 
+ loadTrackUI(i);
  document.getElementById("player").scrollIntoView({behavior:"smooth"});
-
- audio.play().then(()=>{
-  setPlayingState(true);
- }).catch(()=>{
+ audio.play().then(() => setPlayingState(true)).catch(() => {
   setPlayingState(false);
-  alert("এই গানটি এখনো আপলোড করা হয়নি।");
+  alert("গানটি লোড হচ্ছে, একটু পর আবার চেষ্টা করুন।");
  });
 }
 
-/* Mood Filter */
 function setMood(mood, btn){
+ currentMood = mood;
  document.querySelectorAll(".mood-btn").forEach(b => b.classList.remove("active"));
  btn.classList.add("active");
-
- const cards = document.querySelectorAll("#songList .card");
- const noResult = document.getElementById("noResult");
- let visibleCount = 0;
-
- cards.forEach(card => {
-  const cardMood = card.getAttribute("data-mood");
-  if(mood === "all" || cardMood === mood){
-   card.style.display = "block";
-   visibleCount++;
-  }else{
-   card.style.display = "none";
-  }
- });
-
- noResult.style.display = visibleCount === 0 ? "block" : "none";
+ renderSongs();
 }
 
-/* Share Song Feature */
 function shareSong(songTitle){
  const shareText = `🎧 Listen & Download "${songTitle}" by R LOFI 01:\nhttps://rlofi01-glitch.github.io/`;
  if(navigator.share){
-  navigator.share({
-   title: `${songTitle} - R LOFI 01`,
-   text: `🎧 Listen & Download "${songTitle}" by R LOFI 01`,
-   url: "https://rlofi01-glitch.github.io/"
-  }).catch(()=>{});
+  navigator.share({title:`${songTitle} - R LOFI 01`,text:shareText,url:"https://rlofi01-glitch.github.io/"}).catch(()=>{});
  }else{
   window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`, "_blank");
  }
 }
 
-function shareCurrentSong(){
- shareSong(tracks[index].name);
-}
+function shareCurrentSong(){ shareSong(tracks[index].name); }
 
-playBtn.onclick=()=>{
+playBtn.onclick = () => {
  if(audio.paused){
-  audio.play().then(()=>{
-   setPlayingState(true);
-  }).catch(()=>{
-   alert("গানটি লোড হচ্ছে, একটু পর আবার চেষ্টা করুন।");
-  });
+  audio.play().then(() => setPlayingState(true)).catch(() => alert("গানটি লোড হচ্ছে।"));
  }else{
   audio.pause();
   setPlayingState(false);
  }
 };
 
-document.getElementById("prev").onclick=()=>{
- playSong((index-1+tracks.length)%tracks.length);
-};
+document.getElementById("prev").onclick = () => playSong((index - 1 + tracks.length) % tracks.length);
+document.getElementById("next").onclick = () => playSong((index + 1) % tracks.length);
+audio.onended = () => playSong((index + 1) % tracks.length);
 
-document.getElementById("next").onclick=()=>{
- playSong((index+1)%tracks.length);
-};
-
-audio.onended=()=>{
- playSong((index+1)%tracks.length);
-};
-
-audio.ontimeupdate=()=>{
+audio.ontimeupdate = () => {
  if(audio.duration){
-  document.getElementById("seek").value=
-   (audio.currentTime/audio.duration)*100;
-  document.getElementById("current").textContent=
-   formatTime(audio.currentTime);
+  document.getElementById("seek").value = (audio.currentTime / audio.duration) * 100;
+  document.getElementById("current").textContent = formatTime(audio.currentTime);
  }
 };
-
-audio.onloadedmetadata=()=>{
- document.getElementById("duration").textContent=
-  formatTime(audio.duration);
-};
-
-document.getElementById("seek").oninput=e=>{
- if(audio.duration){
-  audio.currentTime=(e.target.value/100)*audio.duration;
- }
-};
-
-document.getElementById("volume").oninput=e=>{
- audio.volume=e.target.value;
-};
+audio.onloadedmetadata = () => document.getElementById("duration").textContent = formatTime(audio.duration);
+document.getElementById("seek").oninput = e => { if(audio.duration) audio.currentTime = (e.target.value / 100) * audio.duration; };
+document.getElementById("volume").oninput = e => audio.volume = e.target.value;
 
 function formatTime(t){
- if(!isFinite(t))return "0:00";
- let m=Math.floor(t/60);
- let s=Math.floor(t%60);
- return m+":"+String(s).padStart(2,"0");
+ if(!isFinite(t)) return "0:00";
+ return Math.floor(t / 60) + ":" + String(Math.floor(t % 60)).padStart(2, "0");
 }
-
-audio.volume=0.8;
+audio.volume = 0.8;
 </script>
-
 </body>
-</html>
-
+ </html>
+ 
