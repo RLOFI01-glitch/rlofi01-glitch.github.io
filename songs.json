@@ -1,0 +1,16 @@
+[
+  {
+    "name": "Ek Naam Tha",
+    "file": "Ek Naam Tha.mp3",
+    "cover": "Ek Naam Tha.png",
+    "mood": "romantic",
+    "desc": "Romantic • Emotional"
+  },
+  {
+    "name": "RIHAI",
+    "file": "RIHAI.mp3",
+    "cover": "RIHAI.png",
+    "mood": "sad",
+    "desc": "Sad • Emotional • Lofi"
+  }
+]
