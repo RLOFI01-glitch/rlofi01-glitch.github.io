@@ -6,18 +6,28 @@
 <title>Admin Panel | R LOFI 01</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#100b19;color:#fff;font-family:Arial,sans-serif;padding:20px}
-.container{max-width:550px;margin:20px auto;background:#1b1326;padding:25px;border-radius:18px;border:1px solid #3c2852;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
+body{margin:0;background:#100b19;color:#fff;font-family:Arial,sans-serif;padding:15px}
+.container{max-width:600px;margin:15px auto;background:#1b1326;padding:22px;border-radius:18px;border:1px solid #3c2852;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
 h2{color:#d8a8ff;text-align:center;margin-top:0}
-label{display:block;margin:14px 0 6px;font-size:13px;color:#cbb8d9}
-input,select{width:100%;padding:12px;border-radius:10px;border:1px solid #452e5e;background:#261b35;color:#fff;font-size:14px}
-button{width:100%;padding:14px;margin-top:18px;border:0;border-radius:25px;background:#a45ce1;color:#fff;font-size:15px;font-weight:bold;cursor:pointer}
+h3{color:#d8a8ff;font-size:16px;margin-bottom:10px}
+label{display:block;margin:12px 0 5px;font-size:13px;color:#cbb8d9}
+input,select{width:100%;padding:11px;border-radius:10px;border:1px solid #452e5e;background:#261b35;color:#fff;font-size:14px}
+button{width:100%;padding:13px;margin-top:15px;border:0;border-radius:25px;background:#a45ce1;color:#fff;font-size:14px;font-weight:bold;cursor:pointer}
 button:hover{background:#8e44ce}
-.danger{background:#d9385a;padding:7px 14px;width:auto;margin:0;font-size:12px}
-.song-item{display:flex;justify-content:space-between;align-items:center;background:#261b35;padding:12px;border-radius:10px;margin-top:10px;border:1px solid #3a2652}
-.status{margin-top:15px;padding:12px;border-radius:10px;text-align:center;font-size:14px;display:none}
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:#261b35;padding:14px;border-radius:12px;text-align:center;border:1px solid #3c2852}
+.stat-card h4{margin:0;font-size:22px;color:#e0aaff}
+.stat-card p{margin:4px 0 0;font-size:12px;color:#bcaacb}
+.song-item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#261b35;padding:12px;border-radius:10px;margin-top:10px;border:1px solid #3a2652}
+.item-btns{display:flex;gap:6px;flex-shrink:0}
+.edit-btn{background:#3b82f6;padding:7px 12px;width:auto;margin:0;font-size:12px}
+.danger{background:#d9385a;padding:7px 12px;width:auto;margin:0;font-size:12px}
+.status{margin-top:14px;padding:11px;border-radius:10px;text-align:center;font-size:13px;display:none}
 .hidden{display:none}
-a.back{display:block;text-align:center;margin-top:18px;color:#c78aff;text-decoration:none;font-size:14px}
+.box-section{background:#20162d;padding:16px;border-radius:14px;border:1px solid #322344;margin-bottom:20px}
+a.back{display:block;text-align:center;margin-top:16px;color:#c78aff;text-decoration:none;font-size:14px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,0.8);display:none;justify-content:center;align-items:center;padding:15px;z-index:20}
+.modal-box{background:#1b1326;padding:22px;border-radius:16px;width:100%;max-width:450px;border:1px solid #a45ce1}
 </style>
 </head>
 <body>
@@ -34,36 +44,78 @@ a.back{display:block;text-align:center;margin-top:18px;color:#c78aff;text-decora
 
 <div class="container hidden" id="dashboard">
  <h2>🎛️ Admin Control Panel</h2>
- <p style="text-align:center;color:#a5f3fc;font-size:13px">নতুন গান আপলোড করুন (কোনো কোড ছাড়াই)</p>
 
- <label>গানের নাম (Song Title)</label>
- <input type="text" id="songTitle" placeholder="যেমন: Teri Yaad">
+ <!-- Dashboard Stats -->
+ <div class="stats-grid">
+  <div class="stat-card"><h4 id="statTotal">0</h4><p>🎵 মোট গান</p></div>
+  <div class="stat-card"><h4 id="statVisits">...</h4><p>👁️ মোট ভিজিটর</p></div>
+  <div class="stat-card"><h4 id="statMoods">0 / 0 / 0</h4><p>💜 Rom / 🌧️ Sad / 🌙 Lofi</p></div>
+  <div class="stat-card"><h4 id="statDownloads">...</h4><p>⬇ মোট প্লে ও ডাউনলোড</p></div>
+ </div>
 
- <label>মুড / ক্যাটাগরি (Mood)</label>
- <select id="songMood">
-  <option value="romantic">💜 Romantic</option>
-  <option value="sad">🌧️ Sad</option>
-  <option value="lofi">🌙 Lofi</option>
- </select>
+ <!-- YouTube Video Updater -->
+ <div class="box-section">
+  <h3>📺 YouTube ভিডিও পরিবর্তন করুন</h3>
+  <label>নতুন YouTube ভিডিওর লিংক দিন</label>
+  <input type="text" id="ytLinkInput" placeholder="https://youtu.be/...">
+  <button onclick="updateYouTube()" style="background:#e11d48">Update YouTube Video</button>
+  <div id="ytStatus" class="status"></div>
+ </div>
 
- <label>ছোট বর্ণনা (Subtitle)</label>
- <input type="text" id="songDesc" placeholder="যেমন: Romantic • Heart Touching">
+ <!-- Upload New Song -->
+ <div class="box-section">
+  <h3>🚀 নতুন গান আপলোড করুন</h3>
+  <label>গানের নাম (Song Title)</label>
+  <input type="text" id="songTitle" placeholder="যেমন: Teri Yaad">
 
- <label>অডিও ফাইল সিলেক্ট করুন (.mp3)</label>
- <input type="file" id="audioFile" accept="audio/*">
+  <label>মুড / ক্যাটাগরি (Mood)</label>
+  <select id="songMood">
+   <option value="romantic">💜 Romantic</option>
+   <option value="sad">🌧️ Sad</option>
+   <option value="lofi">🌙 Lofi</option>
+  </select>
 
- <label>কভার ফটো সিলেক্ট করুন (.png / .jpg)</label>
- <input type="file" id="coverFile" accept="image/*">
+  <label>ছোট বর্ণনা (Subtitle)</label>
+  <input type="text" id="songDesc" placeholder="যেমন: Romantic • Heart Touching">
 
- <button id="uploadBtn" onclick="publishSong()">🚀 Publish Song Now</button>
- <div id="statusBox" class="status"></div>
+  <label>অডিও ফাইল সিলেক্ট করুন (.mp3)</label>
+  <input type="file" id="audioFile" accept="audio/*">
 
- <hr style="border-color:#322344;margin:25px 0">
- <h3 style="color:#d8a8ff;font-size:16px">📋 বর্তমান গানের তালিকা</h3>
- <div id="manageList">লোড হচ্ছে...</div>
+  <label>কভার ফটো সিলেক্ট করুন (.png / .jpg)</label>
+  <input type="file" id="coverFile" accept="image/*">
 
- <button style="background:#3a2652;margin-top:20px" onclick="logout()">Logout</button>
+  <button id="uploadBtn" onclick="publishSong()">Publish Song Now</button>
+  <div id="statusBox" class="status"></div>
+ </div>
+
+ <!-- Manage Songs -->
+ <div class="box-section">
+  <h3>📋 গান এডিট ও ম্যানেজ করুন</h3>
+  <div id="manageList">লোড হচ্ছে...</div>
+ </div>
+
+ <button style="background:#3a2652" onclick="logout()">Logout</button>
  <a class="back" href="index.html">🌐 Live ওয়েবসাইট দেখুন</a>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal" id="editModal">
+ <div class="modal-box">
+  <h3>✏️ গানের তথ্য এডিট করুন</h3>
+  <input type="hidden" id="editIndex">
+  <label>গানের নাম</label>
+  <input type="text" id="editTitle">
+  <label>মুড / ক্যাটাগরি</label>
+  <select id="editMood">
+   <option value="romantic">💜 Romantic</option>
+   <option value="sad">🌧️ Sad</option>
+   <option value="lofi">🌙 Lofi</option>
+  </select>
+  <label>ছোট বর্ণনা</label>
+  <input type="text" id="editDesc">
+  <button onclick="saveEdit()">Save Changes</button>
+  <button onclick="closeModal()" style="background:#3a2652;margin-top:8px">Cancel</button>
+ </div>
 </div>
 
 <script>
@@ -71,7 +123,6 @@ const OWNER = "RLOFI01-glitch";
 const REPO = "rlofi01-glitch.github.io";
 let TOKEN = localStorage.getItem("rlofi_admin_token") || "";
 let songsData = [];
-let songsSha = "";
 
 if(TOKEN){ showDashboard(); }
 
@@ -108,6 +159,57 @@ async function showDashboard(){
  document.getElementById("loginBox").classList.add("hidden");
  document.getElementById("dashboard").classList.remove("hidden");
  await loadSongsList();
+ loadConfig();
+ loadLiveStats();
+}
+
+async function loadLiveStats(){
+ try{
+  const vRes = await fetch("https://api.counterapi.dev/v1/rlofi01/visits");
+  if(vRes.ok){
+   const vData = await vRes.json();
+   document.getElementById("statVisits").textContent = vData.count || 0;
+  }else{ document.getElementById("statVisits").textContent = "0"; }
+
+  const pRes = await fetch("https://api.counterapi.dev/v1/rlofi01/plays");
+  if(pRes.ok){
+   const pData = await pRes.json();
+   document.getElementById("statDownloads").textContent = pData.count || 0;
+  }else{ document.getElementById("statDownloads").textContent = "0"; }
+ }catch(e){
+  document.getElementById("statVisits").textContent = "0";
+  document.getElementById("statDownloads").textContent = "0";
+ }
+}
+
+async function loadConfig(){
+ const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/config.json?v=${Date.now()}`, {
+  headers: { Authorization: `token ${TOKEN}` }
+ });
+ if(res.ok){
+  const data = await res.json();
+  const cfg = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+  if(cfg.youtubeId){
+   document.getElementById("ytLinkInput").value = `https://youtu.be/${cfg.youtubeId}`;
+  }
+ }
+}
+
+function extractYouTubeID(url){
+ const reg = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+ const match = url.match(reg);
+ return match ? match[1] : (url.length === 11 ? url : null);
+}
+
+async function updateYouTube(){
+ const raw = document.getElementById("ytLinkInput").value.trim();
+ const ytId = extractYouTubeID(raw);
+ if(!ytId) return showStatus("ytStatus", "সঠিক YouTube ভিডিও লিংক দিন!", true);
+ showStatus("ytStatus", "⏳ YouTube ভিডিও আপডেট হচ্ছে...");
+ const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify({ youtubeId: ytId }, null, 2))));
+ const ok = await uploadToGitHub("config.json", jsonB64, "Update YouTube video");
+ if(ok) showStatus("ytStatus", "✅ YouTube ভিডিও সফলভাবে পরিবর্তন হয়েছে!");
+ else showStatus("ytStatus", "❌ আপডেট ব্যর্থ হয়েছে!", true);
 }
 
 async function loadSongsList(){
@@ -116,10 +218,18 @@ async function loadSongsList(){
  });
  if(res.ok){
   const data = await res.json();
-  songsSha = data.sha;
   songsData = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+  updateSongStats();
   renderManageList();
  }
+}
+
+function updateSongStats(){
+ document.getElementById("statTotal").textContent = songsData.length;
+ const rom = songsData.filter(s => s.mood === "romantic").length;
+ const sad = songsData.filter(s => s.mood === "sad").length;
+ const lofi = songsData.filter(s => s.mood === "lofi").length;
+ document.getElementById("statMoods").textContent = `${rom} / ${sad} / ${lofi}`;
 }
 
 function renderManageList(){
@@ -130,11 +240,40 @@ function renderManageList(){
    <div class="song-item">
     <div>
      <strong>${s.name}</strong><br>
-     <small style="color:#bcaacb">${s.desc}</small>
+     <small style="color:#bcaacb">${s.desc} (${s.mood})</small>
     </div>
-    <button class="danger" onclick="deleteSong(${idx})">🗑 Delete</button>
+    <div class="item-btns">
+     <button class="edit-btn" onclick="openEdit(${idx})">✏️ Edit</button>
+     <button class="danger" onclick="deleteSong(${idx})">🗑</button>
+    </div>
    </div>`;
  });
+}
+
+function openEdit(idx){
+ document.getElementById("editIndex").value = idx;
+ document.getElementById("editTitle").value = songsData[idx].name;
+ document.getElementById("editMood").value = songsData[idx].mood;
+ document.getElementById("editDesc").value = songsData[idx].desc;
+ document.getElementById("editModal").style.display = "flex";
+}
+
+function closeModal(){
+ document.getElementById("editModal").style.display = "none";
+}
+
+async function saveEdit(){
+ const idx = document.getElementById("editIndex").value;
+ songsData[idx].name = document.getElementById("editTitle").value.trim();
+ songsData[idx].mood = document.getElementById("editMood").value;
+ songsData[idx].desc = document.getElementById("editDesc").value.trim();
+ closeModal();
+ showStatus("statusBox", "⏳ পরিবর্তন সেভ হচ্ছে...");
+ const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(songsData, null, 2))));
+ await uploadToGitHub("songs.json", jsonB64, "Edit song details");
+ showStatus("statusBox", "✅ গানের তথ্য আপডেট হয়েছে!");
+ updateSongStats();
+ renderManageList();
 }
 
 function fileToBase64(file){
@@ -160,10 +299,7 @@ async function uploadToGitHub(path, base64Content, message){
 
  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}`, {
   method: "PUT",
-  headers: {
-   Authorization: `token ${TOKEN}`,
-   "Content-Type": "application/json"
-  },
+  headers: { Authorization: `token ${TOKEN}`, "Content-Type": "application/json" },
   body: JSON.stringify(body)
  });
  return res.ok;
@@ -182,7 +318,7 @@ async function publishSong(){
 
  const btn = document.getElementById("uploadBtn");
  btn.disabled = true;
- showStatus("statusBox", "⏳ অডিও এবং ছবি আপলোড হচ্ছে... একটু অপেক্ষা করুন...");
+ showStatus("statusBox", "⏳ আপলোড হচ্ছে... একটু অপেক্ষা করুন...");
 
  try{
   const audioExt = audioInput.name.split(".").pop();
@@ -193,24 +329,15 @@ async function publishSong(){
   const audioB64 = await fileToBase64(audioInput);
   const coverB64 = await fileToBase64(coverInput);
 
-  const up1 = await uploadToGitHub(audioFileName, audioB64, `Upload song ${audioFileName}`);
-  const up2 = await uploadToGitHub(coverFileName, coverB64, `Upload cover ${coverFileName}`);
+  const up1 = await uploadToGitHub(audioFileName, audioB64, `Upload ${audioFileName}`);
+  const up2 = await uploadToGitHub(coverFileName, coverB64, `Upload ${coverFileName}`);
+  if(!up1 || !up2) throw new Error("Failed");
 
-  if(!up1 || !up2) throw new Error("Upload failed");
+  songsData.unshift({ name, file: audioFileName, cover: coverFileName, mood, desc });
+  const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(songsData, null, 2))));
+  await uploadToGitHub("songs.json", jsonB64, `Add ${name}`);
 
-  songsData.unshift({
-   name: name,
-   file: audioFileName,
-   cover: coverFileName,
-   mood: mood,
-   desc: desc
-  });
-
-  const jsonStr = JSON.stringify(songsData, null, 2);
-  const jsonB64 = btoa(unescape(encodeURIComponent(jsonStr)));
-  await uploadToGitHub("songs.json", jsonB64, `Add ${name} to playlist`);
-
-  showStatus("statusBox", "✅ সফলভাবে পাবলিশ হয়েছে! ১ মিনিটের মধ্যে ওয়েবসাইটে দেখাবে।");
+  showStatus("statusBox", "✅ সফলভাবে পাবলিশ হয়েছে!");
   document.getElementById("songTitle").value = "";
   document.getElementById("songDesc").value = "";
   await loadSongsList();
@@ -221,15 +348,15 @@ async function publishSong(){
 }
 
 async function deleteSong(idx){
- if(!confirm(`আপনি কি "${songsData[idx].name}" গানটি তালিকা থেকে সরাতে চান?`)) return;
+ if(!confirm(`আপনি কি "${songsData[idx].name}" গানটি সরাতে চান?`)) return;
  showStatus("statusBox", "⏳ ডিলিট করা হচ্ছে...");
  songsData.splice(idx, 1);
- const jsonStr = JSON.stringify(songsData, null, 2);
- const jsonB64 = btoa(unescape(encodeURIComponent(jsonStr)));
- await uploadToGitHub("songs.json", jsonB64, "Remove song from playlist");
- showStatus("statusBox", "✅ গানটি তালিকা থেকে সরানো হয়েছে।");
+ const jsonB64 = btoa(unescape(encodeURIComponent(JSON.stringify(songsData, null, 2))));
+ await uploadToGitHub("songs.json", jsonB64, "Delete song");
+ showStatus("statusBox", "✅ গানটি সরানো হয়েছে।");
  await loadSongsList();
 }
 </script>
 </body>
 </html>
+
