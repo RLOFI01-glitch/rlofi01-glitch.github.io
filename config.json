@@ -2,5 +2,33 @@
   "youtubeId": "5G5vla1XpWE",
   "profileImg": "profile_1794970581989.png",
   "bgImg": "bg_1794971610787.png",
-  "bgVideo": ""
+  "bgVideo": "",
+  "texts": {
+    "brandHeader": "R LOFI 01",
+    "headerYt": "YouTube",
+    "ytUrl": "https://youtube.com/@rlofi01",
+    "heroTitle": "R LOFI 01",
+    "tagline1": "LISTEN • RELAX • FEEL • REMEMBER",
+    "tagline2": "Original Music | Romantic | Sad | Lofi",
+    "heroListen": "Listen Now",
+    "heroYt": "YouTube Channel",
+    "latestHeading": "Latest Releases",
+    "latestSub": "Filter by mood • Thumbnail par double tap karke YouTube video dekhein",
+    "moodAll": "All Songs",
+    "moodRomantic": "Romantic",
+    "moodSad": "Sad",
+    "moodLofi": "Lofi",
+    "navHome": "Home",
+    "navSearch": "Search",
+    "navLibrary": "Library"
+  },
+  "colors": {
+    "accent": "#a45ce1",
+    "bgDark": "#100b19",
+    "headingColor": "#d8a8ff",
+    "textColor": "#ffffff"
+  },
+  "icons": {
+    "home": "ico_home_1794997942072.png"
+  }
 }
