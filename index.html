@@ -4,17 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>R LOFI 01 | Official Music</title>
+  <link rel="manifest" href="manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #07070c;
-      --card: rgba(255, 255, 255, 0.045);
-      --border: rgba(255, 255, 255, 0.1);
+      --bg: #08080e;
+      --card: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.12);
       --accent: #a855f7;
-      --accent-glow: rgba(168, 85, 247, 0.35);
-      --text: #f8fafc;
-      --muted: #94a3b8;
+      --accent-glow: rgba(168, 85, 247, 0.4);
+      --text: #ffffff;
+      --muted: #cbd5e1;
       --icon-size: 22px;
     }
 
@@ -24,283 +25,366 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding-bottom: 145px; /* নিচের প্লেয়ার ও নেভিগেশন বারের জন্য জায়গা */
-      background-image:
-        radial-gradient(circle at 50% 0%, var(--accent-glow), transparent 45%),
-        radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.1), transparent 40%);
+      padding-bottom: 150px;
     }
 
-    .container { max-width: 600px; margin: 0 auto; padding: 16px 14px; }
+    /* Top Header Bar (Logo + YouTube + App Install) */
+    .top-navbar {
+      position: sticky; top: 0; z-index: 95;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px;
+      background: rgba(10, 10, 18, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .brand-left { display: flex; align-items: center; gap: 9px; text-decoration: none; color: #fff; }
+    .brand-left img {
+      width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
+      border: 1.5px solid var(--accent);
+    }
+    .brand-left span { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
 
-    /* Hero Section */
-    .hero-card {
-      background: var(--card);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+    .nav-right-btns { display: flex; align-items: center; gap: 7px; }
+    .top-pill-btn {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: 999px;
       border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 22px 16px;
+      background: rgba(255, 255, 255, 0.07);
+      color: #fff; font-family: inherit; font-size: 12px; font-weight: 600;
+      text-decoration: none; cursor: pointer;
+    }
+    .install-btn {
+      background: linear-gradient(135deg, var(--accent), #7e22ce);
+      border-color: transparent;
+    }
+
+    /* Hero Banner Section (আগের মতো ব্যানার ব্যাকগ্রাউন্ড ও মাঝখানে গোল লোগো) */
+    .hero-banner {
+      position: relative;
+      padding: 36px 16px 32px;
       text-align: center;
-      margin-bottom: 16px;
+      background:
+        linear-gradient(to bottom, rgba(8, 8, 14, 0.45), rgba(8, 8, 14, 0.96)),
+        url('bg_1794971610787.png') center/cover no-repeat;
+      border-bottom: 1px solid var(--border);
     }
-    .avatar-wrap {
-      width: 86px; height: 86px; margin: 0 auto 12px;
+    .hero-avatar {
+      width: 92px; height: 92px; margin: 0 auto 14px;
       border-radius: 50%; padding: 3px;
-      background: linear-gradient(135deg, var(--accent), #38bdf8);
-      box-shadow: 0 0 22px var(--accent-glow);
+      background: linear-gradient(135deg, var(--accent), #ec4899);
+      box-shadow: 0 0 28px var(--accent-glow);
     }
-    .avatar-wrap img {
-      width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #111;
+    .hero-avatar img {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
     }
-    .radio-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 4px 12px; border-radius: 999px; font-size: 11.5px; font-weight: 500;
-      background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.35);
-      color: #6ee7b7; margin-bottom: 8px;
+    .hero-banner h1 {
+      font-size: 28px; font-weight: 800; letter-spacing: 1px;
+      text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
+      margin-bottom: 6px;
     }
-    .pulse-dot {
-      width: 7px; height: 7px; border-radius: 50%; background: #10b981;
-      box-shadow: 0 0 8px #10b981; animation: pulse 1.6s infinite;
+    .hero-tagline {
+      font-size: 11.5px; letter-spacing: 2.5px; font-weight: 600;
+      color: #e2e8f0; text-transform: uppercase; margin-bottom: 6px;
     }
-    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } }
+    .hero-sub {
+      font-size: 13px; color: var(--muted); margin-bottom: 20px;
+    }
+    .hero-actions {
+      display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
+    }
+    .btn-listen {
+      padding: 11px 22px; border-radius: 999px; border: none;
+      background: linear-gradient(135deg, #a855f7, #7e22ce);
+      color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 600;
+      cursor: pointer; box-shadow: 0 4px 18px var(--accent-glow);
+    }
+    .btn-yt-main {
+      padding: 11px 22px; border-radius: 999px;
+      background: #ef4444; color: #fff; text-decoration: none;
+      font-size: 13.5px; font-weight: 600;
+      box-shadow: 0 4px 18px rgba(239, 68, 68, 0.35);
+    }
 
-    .hero-card h1 { font-size: 22px; font-weight: 700; letter-spacing: 0.4px; margin-bottom: 4px; }
-    .hero-card p { font-size: 13px; color: var(--muted); line-height: 1.45; }
+    .container { max-width: 600px; margin: 0 auto; padding: 18px 14px; }
 
-    /* Search Bar (নিচের Search বাটনে চাপ দিলে টগল হবে) */
-    .search-wrapper {
-      display: flex; align-items: center; gap: 8px;
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 10px 14px; margin-bottom: 14px;
+    /* Search Box (নিচের Search বাটনে চাপ দিলে খুলবে) */
+    .search-box {
+      display: none; align-items: center; gap: 8px;
+      background: rgba(255, 255, 255, 0.07); border: 1px solid var(--accent);
+      border-radius: 16px; padding: 11px 14px; margin-bottom: 16px;
     }
-    .search-wrapper input {
-      width: 100%; background: transparent; border: none; color: var(--text);
-      font-family: inherit; font-size: 13.5px; outline: none;
+    .search-box input {
+      width: 100%; background: transparent; border: none; color: #fff;
+      font-family: inherit; font-size: 14px; outline: none;
     }
 
-    /* Mood Filter Pills */
-    .mood-tabs {
-      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 14px;
+    /* Section Title & Mood Filter Pills */
+    .section-title { font-size: 19px; font-weight: 700; margin-bottom: 4px; }
+    .section-hint { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
+
+    .mood-pills {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 16px;
       scrollbar-width: none;
     }
-    .mood-tabs::-webkit-scrollbar { display: none; }
-    .tab-pill {
-      padding: 7px 14px; border-radius: 999px; border: 1px solid var(--border);
-      background: var(--card); color: var(--muted); font-family: inherit;
-      font-size: 12.5px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: 0.2s;
+    .mood-pills::-webkit-scrollbar { display: none; }
+    .pill-btn {
+      padding: 8px 16px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--card);
+      color: #e2e8f0; font-family: inherit; font-size: 13px; font-weight: 500;
+      cursor: pointer; white-space: nowrap; transition: 0.2s;
     }
-    .tab-pill.active {
-      background: var(--accent); color: #fff; border-color: var(--accent);
-      box-shadow: 0 4px 14px var(--accent-glow);
-    }
-
-    /* Songs List */
-    .section-head {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 10px; font-size: 15px; font-weight: 600;
-    }
-    .song-card {
-      display: flex; align-items: center; gap: 11px;
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 16px; padding: 10px; margin-bottom: 10px;
-      cursor: pointer; transition: 0.2s;
-    }
-    .song-card.active {
-      border-color: var(--accent);
-      background: rgba(168, 85, 247, 0.1);
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
-    }
-    .song-card-img { width: 54px; height: 54px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
-    .song-card-info { flex: 1; min-width: 0; }
-    .song-card-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .song-card-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .song-card-actions { display: flex; align-items: center; gap: 6px; }
-    .action-btn {
-      background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border);
-      color: var(--text); width: 34px; height: 34px; border-radius: 10px;
-      display: inline-flex; align-items: center; justify-content: center;
-      text-decoration: none; font-size: 14px; cursor: pointer;
-    }
-    .fav-card-btn.active { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
-    .no-tracks { text-align: center; color: var(--muted); font-size: 13px; padding: 22px; }
-
-    /* Ambient Sound Studio & Request Box */
-    .glass-box {
-      background: var(--card); border: 1px solid var(--border);
-      border-radius: 20px; padding: 16px; margin-top: 16px;
-    }
-    .glass-box h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-    .glass-box p { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
-    .slider-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
-    .slider-row span { width: 70px; }
-    .slider-row input[type="range"] { flex: 1; accent-color: var(--accent); }
-
-    .req-input {
-      width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border);
-      background: rgba(0, 0, 0, 0.35); color: var(--text); font-family: inherit;
-      font-size: 13px; margin-bottom: 9px; outline: none;
-    }
-    .req-btn {
-      width: 100%; padding: 11px; border-radius: 12px; border: none;
-      background: var(--accent); color: #fff; font-family: inherit;
-      font-size: 13.5px; font-weight: 600; cursor: pointer;
+    .pill-btn.active {
+      background: var(--accent); border-color: var(--accent); color: #fff;
       box-shadow: 0 4px 15px var(--accent-glow);
     }
 
-    /* Mini Audio Player (Above Bottom Nav) */
+    /* Large Thumbnail Song Cards (আগের মতো বড় বড় ফটো কার্ড) */
+    .big-song-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      transition: 0.25s;
+    }
+    .big-song-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 6px 24px var(--accent-glow);
+    }
+    .big-thumb-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #111;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .big-thumb-wrap img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .mood-tag {
+      position: absolute; top: 10px; left: 10px;
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px);
+      padding: 4px 11px; border-radius: 999px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .play-overlay-btn {
+      position: absolute; bottom: 10px; right: 10px;
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--accent); color: #fff; border: none;
+      font-size: 17px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6); cursor: pointer;
+    }
+    .big-card-body { padding: 13px 14px; }
+    .big-card-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .big-card-desc { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; line-height: 1.4; }
+    .big-card-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 10px;
+    }
+    .card-act-group { display: flex; align-items: center; gap: 8px; }
+    .icon-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px; border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border);
+      color: #fff; font-family: inherit; font-size: 12px; text-decoration: none; cursor: pointer;
+    }
+    .icon-pill.fav-active { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; }
+
+    /* Ambient & Request Box */
+    .glass-panel {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 16px; margin-top: 18px;
+    }
+    .glass-panel h3 { font-size: 16px; margin-bottom: 4px; }
+    .glass-panel p { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+    .slider-line { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
+    .slider-line span { width: 70px; }
+    .slider-line input[type="range"] { flex: 1; accent-color: var(--accent); }
+    .req-field {
+      width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border);
+      background: rgba(0, 0, 0, 0.35); color: #fff; font-family: inherit; font-size: 13px; margin-bottom: 9px;
+    }
+    .req-submit {
+      width: 100%; padding: 11px; border-radius: 12px; border: none;
+      background: var(--accent); color: #fff; font-family: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+    }
+
+    /* Mini Player */
     .mini-player {
-      position: fixed; bottom: 62px; left: 0; right: 0; z-index: 90;
-      background: rgba(14, 14, 22, 0.92); backdrop-filter: blur(20px);
+      position: fixed; bottom: 64px; left: 0; right: 0; z-index: 90;
+      background: rgba(12, 12, 20, 0.94); backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border);
       padding: 8px 14px;
     }
-    .player-top { display: flex; align-items: center; gap: 10px; max-width: 600px; margin: 0 auto; }
-    .player-top img { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; }
-    .player-meta { flex: 1; min-width: 0; }
-    .player-meta h4 { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .player-meta span { font-size: 11px; color: var(--muted); }
-    .player-controls { display: flex; align-items: center; gap: 6px; }
-    .ctrl-btn {
-      background: rgba(255,255,255,0.08); border: none; color: #fff;
-      width: 32px; height: 32px; border-radius: 50%; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center; font-size: 13px;
+    .mp-row { display: flex; align-items: center; gap: 10px; max-width: 600px; margin: 0 auto; }
+    .mp-row img { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; }
+    .mp-info { flex: 1; min-width: 0; }
+    .mp-info h4 { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mp-info span { font-size: 11px; color: var(--muted); }
+    .mp-ctrls { display: flex; align-items: center; gap: 6px; }
+    .mp-btn {
+      width: 32px; height: 32px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.08); color: #fff; font-size: 13px; cursor: pointer;
     }
-    .ctrl-btn.play-main { background: var(--accent); width: 36px; height: 36px; }
-    .ctrl-btn.active { color: var(--accent); background: rgba(168, 85, 247, 0.2); }
-    .progress-wrap {
+    .mp-btn.main { background: var(--accent); width: 36px; height: 36px; }
+    .mp-btn.active { color: var(--accent); background: rgba(168, 85, 247, 0.22); }
+    .mp-prog {
       display: flex; align-items: center; gap: 8px; max-width: 600px;
       margin: 5px auto 0; font-size: 10.5px; color: var(--muted);
     }
-    .progress-wrap input[type="range"] { flex: 1; height: 4px; accent-color: var(--accent); }
+    .mp-prog input { flex: 1; height: 4px; accent-color: var(--accent); }
 
-    /* Fixed Bottom Navigation Bar (Home & Search) */
+    /* Bottom Navigation Bar (Home, Search, Library - আগের মতো পিল স্টাইল) */
     .bottom-nav {
-      position: fixed; bottom: 0; left: 0; right: 0; height: 62px; z-index: 100;
-      background: rgba(9, 9, 15, 0.96); backdrop-filter: blur(20px);
+      position: fixed; bottom: 0; left: 0; right: 0; height: 64px; z-index: 100;
+      background: rgba(8, 8, 14, 0.96); backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border);
       display: flex; justify-content: space-around; align-items: center;
     }
-    .nav-item {
+    .bnav-btn {
       background: none; border: none; color: var(--muted); font-family: inherit;
-      font-size: 11.5px; font-weight: 500; display: flex; flex-direction: column;
-      align-items: center; gap: 3px; cursor: pointer; text-decoration: none;
+      font-size: 11.5px; font-weight: 600; display: flex; flex-direction: column;
+      align-items: center; gap: 3px; cursor: pointer;
     }
-    .nav-item.active { color: var(--accent); }
-    .nav-item img { width: 22px; height: 22px; object-fit: contain; }
+    .bnav-pill {
+      padding: 4px 16px; border-radius: 999px; display: flex; align-items: center; justify-content: center;
+      transition: 0.2s;
+    }
+    .bnav-btn.active { color: #fff; }
+    .bnav-btn.active .bnav-pill {
+      background: var(--accent);
+      box-shadow: 0 2px 12px var(--accent-glow);
+    }
 
-    /* Dedication Modal Overlay */
+    /* Dedication Overlay */
     .dedication-overlay {
-      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.82); z-index: 200;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 200;
       display: flex; align-items: center; justify-content: center; padding: 18px;
     }
     .dedication-modal-content {
-      background: #141420; border: 1px solid var(--accent); border-radius: 22px;
+      background: #141422; border: 1px solid var(--accent); border-radius: 22px;
       padding: 24px 18px; max-width: 380px; width: 100%; text-align: center;
-      box-shadow: 0 10px 40px var(--accent-glow);
     }
-    .ded-text { font-size: 14px; margin: 12px 0; color: #e2e8f0; }
-    .ded-msg { font-style: italic; font-size: 13px; color: #c4b5fd; margin-bottom: 16px; }
     .play-ded-btn {
-      background: var(--accent); color: #fff; border: none; padding: 11px 22px;
-      border-radius: 999px; font-weight: 600; cursor: pointer;
+      margin-top: 14px; background: var(--accent); color: #fff; border: none;
+      padding: 11px 22px; border-radius: 999px; font-weight: 600; cursor: pointer;
     }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <!-- Hero Profile Section -->
-    <header class="hero-card">
-      <div class="avatar-wrap">
-        <img id="avatarImg" src="rlofi 01.png" onerror="this.src='assets/avatar.png'" alt="R LOFI 01">
-      </div>
-      <div id="radioActiveBadge" class="radio-badge">
-        <span class="pulse-dot"></span> Lofi Radio Active
-      </div>
-      <h1 id="siteTitle">R LOFI 01</h1>
-      <p id="siteBio">Late night lofi, sad melodies & emotional Hinglish vibes.</p>
-    </header>
-
-    <!-- Search Input -->
-    <div id="searchWrapper" class="search-wrapper">
-      <span>🔍</span>
-      <input type="text" id="searchInput" placeholder="Search songs, mood or vibe...">
+  <!-- Top Bar: Left Logo + YouTube + App Install -->
+  <header class="top-navbar">
+    <a href="#" class="brand-left">
+      <img id="topLogoImg" src="profile_1794970581989.png" onerror="this.src='r.lofi.01.png'" alt="Logo">
+      <span id="topBrandName">R LOFI 01</span>
+    </a>
+    <div class="nav-right-btns">
+      <a id="topYtBtn" href="https://youtube.com/@rlofi01?si=p4i9ZYVoa45vNk4G" target="_blank" class="top-pill-btn">▶️ YouTube</a>
+      <button id="installAppBtn" class="top-pill-btn install-btn">📲 Install App</button>
     </div>
+  </header>
+
+  <!-- Hero Banner (আগের মতো ব্যানার ব্যাকগ্রাউন্ড ও মাঝখানে গোল লোগো) -->
+  <section id="heroBanner" class="hero-banner">
+    <div class="hero-avatar">
+      <img id="avatarImg" src="profile_1794970581989.png" onerror="this.src='r.lofi.01.png'" alt="R LOFI 01">
+    </div>
+    <h1 id="siteTitle">R LOFI 01</h1>
+    <div class="hero-tagline">LISTEN • RELAX • FEEL • REMEMBER</div>
+    <p id="siteBio" class="hero-sub">Original Music | Romantic | Sad | Lofi</p>
+    <div class="hero-actions">
+      <button class="btn-listen" onclick="playSongFromList(0)">Listen Now ▶️</button>
+      <a id="heroYtBtn" href="https://youtube.com/@rlofi01?si=p4i9ZYVoa45vNk4G" target="_blank" class="btn-yt-main">YouTube Channel</a>
+    </div>
+  </section>
+
+  <div class="container">
+    <!-- Search Input (নিচের Search বাটনে চাপ দিলে খুলবে) -->
+    <div id="searchWrapper" class="search-box">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Search songs, mood or lyrics...">
+    </div>
+
+    <h2 class="section-title">🎵 Latest Releases</h2>
+    <p class="section-hint">Filter by mood • Thumbnail par double tap karke YouTube video dekhein</p>
 
     <!-- Mood Filter Pills -->
-    <div class="mood-tabs">
-      <button class="tab-pill active" onclick="filterMood('all', this)">All Songs</button>
-      <button class="tab-pill" onclick="filterMood('Lofi', this)">Lofi</button>
-      <button class="tab-pill" onclick="filterMood('Sad', this)">Sad</button>
-      <button class="tab-pill" onclick="filterMood('Romantic', this)">Romantic</button>
-      <button class="tab-pill" onclick="filterMood('favorites', this)">❤️ Fav</button>
+    <div class="mood-pills">
+      <button class="pill-btn active" data-mood="all" onclick="filterMood('all', this)">All Songs</button>
+      <button class="pill-btn" data-mood="Romantic" onclick="filterMood('Romantic', this)">Romantic</button>
+      <button class="pill-btn" data-mood="Sad" onclick="filterMood('Sad', this)">Sad</button>
+      <button class="pill-btn" data-mood="Lofi" onclick="filterMood('Lofi', this)">Lofi</button>
     </div>
 
-    <!-- Songs List -->
-    <div class="section-head">
-      <span>🎵 Latest Releases</span>
-    </div>
+    <!-- Big Thumbnail Cards Container -->
     <div id="tracksList"></div>
 
     <!-- Ambient Sound Studio -->
-    <section id="ambientSection" class="glass-box">
+    <section id="ambientSection" class="glass-panel">
       <h3>🌧️ Ambient Sound Studio</h3>
-      <p>Mix soft rain & vinyl crackle independently for study, sleep or deep focus.</p>
-      <div class="slider-row">
+      <p>Mix soft rain & vinyl crackle independently for study or deep sleep.</p>
+      <div class="slider-line">
         <span>🌧️ Rain</span>
         <input type="range" id="ambientRain" min="0" max="100" value="0">
       </div>
-      <div class="slider-row">
+      <div class="slider-line">
         <span>📀 Vinyl</span>
         <input type="range" id="ambientVinyl" min="0" max="100" value="0">
       </div>
     </section>
 
     <!-- Song Request Box -->
-    <section id="requestBoxSection" class="glass-box">
+    <section id="requestBoxSection" class="glass-panel">
       <h3>📩 Request a Song / Vibe</h3>
       <p>Tell us what mood or Hinglish song you want next on R LOFI 01.</p>
       <form id="requestForm">
-        <input type="text" id="reqName" class="req-input" placeholder="Your Name" required>
-        <input type="text" id="reqVibe" class="req-input" placeholder="Song idea or mood (e.g. Rain Sad Lofi)..." required>
-        <button type="submit" class="req-btn">Send Request</button>
+        <input type="text" id="reqName" class="req-field" placeholder="Your Name" required>
+        <input type="text" id="reqVibe" class="req-field" placeholder="Song idea or mood..." required>
+        <button type="submit" class="req-submit">Send Request</button>
       </form>
     </section>
   </div>
 
-  <!-- Fixed Mini Audio Player -->
+  <!-- Mini Audio Player -->
   <div id="audioPlayer" class="mini-player">
-    <div class="player-top">
-      <img id="songCover" src="rlofi 01.png" alt="Cover">
-      <div class="player-meta">
-        <h4 id="songTitle">Select a song to play</h4>
+    <div class="mp-row">
+      <img id="songCover" src="profile_1794970581989.png" alt="Cover">
+      <div class="mp-info">
+        <h4 id="songTitle">Select a song</h4>
         <span id="songMood">R LOFI 01</span>
       </div>
-      <div class="player-controls">
-        <button id="favBtn" class="ctrl-btn" title="Favorite">❤️</button>
-        <button id="randomBtn" class="ctrl-btn" title="Shuffle">🔀</button>
-        <button id="prevBtn" class="ctrl-btn" title="Previous">⏮️</button>
-        <button id="playBtn" class="ctrl-btn play-main" onclick="togglePlay()" title="Play/Pause">▶️</button>
-        <button id="nextBtn" class="ctrl-btn" title="Next">⏭️</button>
+      <div class="mp-ctrls">
+        <button id="favBtn" class="mp-btn">❤️</button>
+        <button id="randomBtn" class="mp-btn">🔀</button>
+        <button id="prevBtn" class="mp-btn">⏮️</button>
+        <button id="playBtn" class="mp-btn main" onclick="togglePlay()">▶️</button>
+        <button id="nextBtn" class="mp-btn">⏭️</button>
       </div>
     </div>
-    <div class="progress-wrap">
+    <div class="mp-prog">
       <span id="currentTime">0:00</span>
       <input type="range" id="progressBar" value="0" min="0" max="100">
       <span id="totalDuration">0:00</span>
     </div>
   </div>
 
-  <!-- Fixed Bottom Navigation Bar (আগের মতো Home ও Search বাটন) -->
+  <!-- Bottom Navigation Bar: Home, Search, Library -->
   <nav class="bottom-nav">
-    <button class="nav-item active" onclick="window.scrollTo({top:0, behavior:'smooth'}); filterMood('all', document.querySelector('.tab-pill'));">
-      <img src="custom_home_1794979470122.png" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';" alt="Home">
-      <span style="display:none; font-size:18px;">🏠</span>
+    <button id="navHome" class="bnav-btn active" onclick="switchBottomTab('home')">
+      <div class="bnav-pill">🏠</div>
       <span>Home</span>
     </button>
-    <button class="nav-item" onclick="toggleSearchView(); window.scrollTo({top:0, behavior:'smooth'});">
-      <span style="font-size:18px;">🔍</span>
+    <button id="navSearch" class="bnav-btn" onclick="switchBottomTab('search')">
+      <div class="bnav-pill">🔍</div>
       <span>Search</span>
+    </button>
+    <button id="navLibrary" class="bnav-btn" onclick="switchBottomTab('library')">
+      <div class="bnav-pill">☰</div>
+      <span>Library</span>
     </button>
   </nav>
 
