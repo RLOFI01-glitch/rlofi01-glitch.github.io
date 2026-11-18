@@ -25,7 +25,7 @@
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      padding-bottom: 155px;
+      padding-bottom: 160px;
     }
 
     /* Top Header Bar */
@@ -41,7 +41,7 @@
     .brand-left { display: flex; align-items: center; gap: 9px; text-decoration: none; color: #fff; }
     .brand-left img {
       width: 34px; height: 34px; border-radius: 50%; object-fit: cover;
-      border: 1.5px solid var(--accent);
+      border: 1.5px solid var(--accent); background: #1e1b4b;
     }
     .brand-left span { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
 
@@ -64,9 +64,9 @@
       position: relative;
       padding: 36px 16px 32px;
       text-align: center;
-      background:
-        linear-gradient(to bottom, rgba(8, 8, 14, 0.45), rgba(8, 8, 14, 0.96)),
-        url('bg_1794971610787.png') center/cover no-repeat;
+      background: radial-gradient(circle at top, rgba(168, 85, 247, 0.25), rgba(8, 8, 14, 0.98));
+      background-size: cover;
+      background-position: center;
       border-bottom: 1px solid var(--border);
     }
     .hero-avatar {
@@ -75,7 +75,7 @@
       background: linear-gradient(135deg, var(--accent), #ec4899);
       box-shadow: 0 0 28px var(--accent-glow);
     }
-    .hero-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    .hero-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #1e1b4b; }
     .hero-banner h1 { font-size: 28px; font-weight: 800; letter-spacing: 1px; margin-bottom: 6px; }
     .hero-tagline { font-size: 11.5px; letter-spacing: 2.5px; font-weight: 600; color: #e2e8f0; margin-bottom: 6px; }
     .hero-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
@@ -147,9 +147,7 @@
       cursor: pointer;
       user-select: none;
     }
-    .big-thumb-wrap img {
-      width: 100%; height: 100%; object-fit: cover; display: block;
-    }
+    .big-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .mood-tag {
       position: absolute; top: 10px; left: 10px;
       background: rgba(0, 0, 0, 0.72); backdrop-filter: blur(8px);
@@ -159,7 +157,7 @@
     }
     .dtap-badge {
       position: absolute; top: 10px; right: 10px;
-      background: rgba(239, 68, 68, 0.88);
+      background: rgba(239, 68, 68, 0.9);
       padding: 4px 10px; border-radius: 999px;
       font-size: 10.5px; font-weight: 600; color: #fff;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.45);
@@ -178,10 +176,10 @@
       display: flex; align-items: center; justify-content: space-between;
       border-top: 1px solid rgba(255, 255, 255, 0.08); padding-top: 10px;
     }
-    .card-act-group { display: flex; align-items: center; gap: 8px; }
+    .card-act-group { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
     .icon-pill {
       display: inline-flex; align-items: center; gap: 5px;
-      padding: 6px 12px; border-radius: 999px;
+      padding: 6px 11px; border-radius: 999px;
       background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border);
       color: #fff; font-family: inherit; font-size: 12px; text-decoration: none; cursor: pointer;
     }
@@ -195,7 +193,7 @@
     .glass-panel h3 { font-size: 16px; margin-bottom: 4px; }
     .glass-panel p { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
     .slider-line { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; font-size: 13px; }
-    .slider-line span { width: 70px; }
+    .slider-line span { width: 78px; }
     .slider-line input[type="range"] { flex: 1; accent-color: var(--accent); cursor: pointer; }
     .req-field {
       width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border);
@@ -209,13 +207,13 @@
     /* Mini Player */
     .mini-player {
       position: fixed; bottom: 64px; left: 0; right: 0; z-index: 90;
-      background: rgba(12, 12, 20, 0.95); backdrop-filter: blur(20px);
+      background: rgba(12, 12, 20, 0.96); backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border);
       padding: 8px 14px;
     }
     .mp-row { display: flex; align-items: center; gap: 10px; max-width: 600px; margin: 0 auto; }
     .mp-click-area { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; cursor: pointer; }
-    .mp-click-area img { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
+    .mp-click-area img { width: 42px; height: 42px; border-radius: 10px; object-fit: cover; flex-shrink: 0; background: #1e1b4b; }
     .mp-info { flex: 1; min-width: 0; }
     .mp-info h4 { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .mp-info span { font-size: 11px; color: var(--muted); }
@@ -231,6 +229,35 @@
       margin: 5px auto 0; font-size: 10.5px; color: var(--muted);
     }
     .mp-prog input { flex: 1; height: 4px; accent-color: var(--accent); }
+
+    /* Fullscreen Player Modal (New Feature: Lyrics + Sleep Timer + Loop) */
+    .full-player-modal {
+      position: fixed; inset: 0; z-index: 180;
+      background: linear-gradient(180deg, #161028 0%, #08080e 100%);
+      display: none; flex-direction: column; padding: 18px 20px 26px;
+      overflow-y: auto;
+    }
+    .full-player-modal.open { display: flex; }
+    .fp-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .fp-close-btn {
+      background: rgba(255,255,255,0.1); border: none; color: #fff;
+      padding: 7px 14px; border-radius: 999px; font-size: 13px; cursor: pointer;
+    }
+    .fp-cover-box {
+      width: 100%; max-width: 300px; aspect-ratio: 1 / 1; margin: 0 auto 18px;
+      border-radius: 22px; overflow: hidden; box-shadow: 0 12px 35px rgba(0,0,0,0.65);
+      border: 1px solid var(--border);
+    }
+    .fp-cover-box img { width: 100%; height: 100%; object-fit: cover; }
+    .fp-title { text-align: center; font-size: 19px; font-weight: 700; margin-bottom: 4px; }
+    .fp-mood { text-align: center; font-size: 12.5px; color: var(--muted); margin-bottom: 16px; }
+    .fp-tools { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .fp-lyrics-box {
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+      border-radius: 16px; padding: 14px; max-height: 170px; overflow-y: auto;
+      font-size: 13px; line-height: 1.65; color: #e2e8f0; white-space: pre-line;
+      text-align: center; margin-top: auto;
+    }
 
     /* Bottom Navigation Bar */
     .bottom-nav {
@@ -254,10 +281,10 @@
       box-shadow: 0 2px 12px var(--accent-glow);
     }
 
-    /* Toast Notification (YouTube ডাবল ট্যাপ বা মেসেজের জন্য) */
+    /* Toast Notification */
     .toast-notif {
       position: fixed; top: 68px; left: 50%; transform: translateX(-50%) translateY(-20px);
-      background: rgba(18, 18, 28, 0.95); border: 1px solid var(--accent);
+      background: rgba(18, 18, 28, 0.96); border: 1px solid var(--accent);
       color: #fff; padding: 10px 18px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
       z-index: 250; opacity: 0; pointer-events: none; transition: 0.3s;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6); white-space: nowrap;
@@ -281,13 +308,12 @@
 </head>
 <body>
 
-  <!-- Toast Notification -->
   <div id="toastNotif" class="toast-notif"></div>
 
   <!-- Top Bar -->
   <header class="top-navbar">
     <a href="#" class="brand-left">
-      <img id="topLogoImg" src="profile_1794970581989.png" onerror="this.src='r.lofi.01.png'" alt="Logo">
+      <img id="topLogoImg" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%237e22ce'/><text x='50' y='62' font-size='44' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>R</text></svg>" alt="Logo">
       <span id="topBrandName">R LOFI 01</span>
     </a>
     <div class="nav-right-btns">
@@ -299,11 +325,11 @@
   <!-- Hero Banner -->
   <section id="heroBanner" class="hero-banner">
     <div class="hero-avatar">
-      <img id="avatarImg" src="profile_1794970581989.png" onerror="this.src='r.lofi.01.png'" alt="R LOFI 01">
+      <img id="avatarImg" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%237e22ce'/><text x='50' y='62' font-size='44' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>R</text></svg>" alt="R LOFI 01">
     </div>
     <h1 id="siteTitle">R LOFI 01</h1>
-    <div class="hero-tagline">LISTEN • RELAX • FEEL • REMEMBER</div>
-    <p id="siteBio" class="hero-sub">Original Music | Romantic | Sad | Lofi</p>
+    <div id="siteTagline" class="hero-tagline">LISTEN • RELAX • FEEL • REMEMBER</div>
+    <p id="siteBio" class="hero-sub">Late night lofi, sad melodies & emotional Hinglish vibes.</p>
     <div class="hero-actions">
       <button class="btn-listen" onclick="playSongFromList(0)">Listen Now ▶️</button>
       <a id="heroYtBtn" href="https://youtube.com/@rlofi01?si=p4i9ZYVoa45vNk4G" target="_blank" class="btn-yt-main">YouTube Channel</a>
@@ -311,7 +337,6 @@
   </section>
 
   <div class="container">
-    <!-- Search Input -->
     <div id="searchWrapper" class="search-box">
       <span>🔍</span>
       <input type="text" id="searchInput" placeholder="Search songs, mood or lyrics...">
@@ -320,7 +345,6 @@
     <h2 class="section-title">🎵 Latest Releases</h2>
     <p class="section-hint">Filter by mood • Thumbnail par double tap karke YouTube video dekhein</p>
 
-    <!-- Mood Filter Pills -->
     <div class="mood-pills">
       <button class="pill-btn active" data-mood="all" onclick="filterMood('all', this)">All Songs</button>
       <button class="pill-btn" data-mood="Romantic" onclick="filterMood('Romantic', this)">Romantic</button>
@@ -328,13 +352,12 @@
       <button class="pill-btn" data-mood="Lofi" onclick="filterMood('Lofi', this)">Lofi</button>
     </div>
 
-    <!-- Big Thumbnail Cards Container -->
     <div id="tracksList"></div>
 
-    <!-- Ambient Sound Studio -->
+    <!-- Ambient Sound Studio (3 Real-Time Sounds) -->
     <section id="ambientSection" class="glass-panel">
       <h3>🌧️ Ambient Sound Studio</h3>
-      <p>Mix soft rain & vinyl crackle independently for study or deep sleep.</p>
+      <p>Mix soft rain, vinyl crackle & night crickets for study or deep sleep.</p>
       <div class="slider-line">
         <span>🌧️ Rain</span>
         <input type="range" id="ambientRain" min="0" max="100" value="0">
@@ -342,6 +365,10 @@
       <div class="slider-line">
         <span>📀 Vinyl</span>
         <input type="range" id="ambientVinyl" min="0" max="100" value="0">
+      </div>
+      <div class="slider-line">
+        <span>🦗 Night</span>
+        <input type="range" id="ambientNight" min="0" max="100" value="0">
       </div>
     </section>
 
@@ -357,14 +384,14 @@
     </section>
   </div>
 
-  <!-- Mini Audio Player -->
+  <!-- Mini Audio Player (Click Cover/Title to open Fullscreen Player with Lyrics & Sleep Timer) -->
   <div id="audioPlayer" class="mini-player">
     <div class="mp-row">
-      <div class="mp-click-area" onclick="focusCurrentSongCard()">
-        <img id="songCover" src="profile_1794970581989.png" alt="Cover">
+      <div class="mp-click-area" onclick="openFullPlayer()">
+        <img id="songCover" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%237e22ce'/><text x='50' y='62' font-size='44' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='bold'>R</text></svg>" alt="Cover">
         <div class="mp-info">
-          <h4 id="songTitle">Select a song</h4>
-          <span id="songMood">R LOFI 01</span>
+          <h4 id="songTitle">No song selected</h4>
+          <span id="songMood">Tap to open player & lyrics ⬆️</span>
         </div>
       </div>
       <div class="mp-ctrls">
@@ -382,11 +409,36 @@
     </div>
   </div>
 
+  <!-- Fullscreen Player Modal -->
+  <div id="fullPlayerModal" class="full-player-modal">
+    <div class="fp-header">
+      <button class="fp-close-btn" onclick="closeFullPlayer()">⬇️ Close</button>
+      <span style="font-size:12px; color:var(--muted); font-weight:600;">NOW PLAYING</span>
+      <span id="sleepTimerStatus" style="font-size:11.5px; color:var(--accent); font-weight:600;"></span>
+    </div>
+    <div class="fp-cover-box">
+      <img id="fpCoverImg" src="" alt="Cover">
+    </div>
+    <div id="fpSongTitle" class="fp-title">Select a song</div>
+    <div id="fpSongMood" class="fp-mood">R LOFI 01</div>
+
+    <div class="fp-tools">
+      <button id="loopBtn" class="icon-pill" onclick="toggleLoop()">🔁 Loop: Off</button>
+      <button class="icon-pill" onclick="setSleepTimer(15)">⏲️ 15m</button>
+      <button class="icon-pill" onclick="setSleepTimer(30)">⏲️ 30m</button>
+      <button class="icon-pill" onclick="setSleepTimer(0)">❌ Timer Off</button>
+    </div>
+
+    <div id="fpLyricsBox" class="fp-lyrics-box">
+      🎵 এই গানের লিরিক্স এখনো যোগ করা হয়নি।
+    </div>
+  </div>
+
   <!-- Bottom Navigation Bar -->
   <nav class="bottom-nav">
     <button id="navHome" class="bnav-btn active" onclick="switchBottomTab('home')">
       <div class="bnav-pill">🏠</div>
-      <span>Home</span>
+     <span>Home</span>
     </button>
     <button id="navSearch" class="bnav-btn" onclick="switchBottomTab('search')">
       <div class="bnav-pill">🔍</div>
@@ -398,6 +450,6 @@
     </button>
   </nav>
 
-  <script src="app.js?v=3"></script>
+  <script src="app.js?v=1"></script>
 </body>
 </html>
