@@ -49,12 +49,29 @@ function formatTime(sec) {
   const s = Math.floor(sec % 60);
   return `${m}:${s < 10 ? "0" : ""}${s}`;
 }
+const RAW_BASE = "https://raw.githubusercontent.com/RLOFI01-glitch/rlofi01-glitch.github.io/main/";
+
+async function fetchFreshJson(fileName) {
+  const urls = [
+    `${RAW_BASE}${fileName}?t=${Date.now()}`,
+    `${fileName}?t=${Date.now()}`
+  ];
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) continue;
+      let txt = await res.text();
+      // Remove any accidental BOM or invalid control characters
+      txt = txt.replace(/^\uFEFF/, "").trim();
+      return JSON.parse(txt);
+    } catch (e) {}
+  }
+  throw new Error("Failed to parse " + fileName);
+}
 
 async function loadSiteConfig() {
   try {
-    const res = await fetch("config.json?t=" + Date.now());
-    if (!res.ok) return;
-    const cfg = await res.json();
+    const cfg = await fetchFreshJson("config.json");
 
     if (cfg.title) {
       document.getElementById("siteTitle").textContent = cfg.title;
@@ -75,12 +92,14 @@ async function loadSiteConfig() {
       document.documentElement.style.setProperty("--icon-size", cfg.iconSize + "px");
     }
     if (cfg.avatar) {
-      document.getElementById("avatarImg").src = cfg.avatar;
-      document.getElementById("topLogoImg").src = cfg.avatar;
+      const avatarUrl = cfg.avatar.startsWith("http") ? cfg.avatar : RAW_BASE + cfg.avatar;
+      document.getElementById("avatarImg").src = avatarUrl;
+      document.getElementById("topLogoImg").src = avatarUrl;
     }
     if (cfg.banner) {
+      const bannerUrl = cfg.banner.startsWith("http") ? cfg.banner : RAW_BASE + cfg.banner;
       document.getElementById("heroBanner").style.backgroundImage =
-        `linear-gradient(rgba(7,7,13,0.48), rgba(7,7,13,0.92)), url('${cfg.banner}')`;
+        `linear-gradient(rgba(7,7,13,0.48), rgba(7,7,13,0.92)), url('${bannerUrl}')`;
     }
 
     if (cfg.icons) {
@@ -91,9 +110,9 @@ async function loadSiteConfig() {
     }
 
     if (cfg.ambient) {
-      if (cfg.ambient.rain) ambientAudios.rain.src = cfg.ambient.rain;
-      if (cfg.ambient.vinyl) ambientAudios.vinyl.src = cfg.ambient.vinyl;
-      if (cfg.ambient.night) ambientAudios.night.src = cfg.ambient.night;
+      if (cfg.ambient.rain) ambientAudios.rain.src = cfg.ambient.rain.startsWith("http") ? cfg.ambient.rain : RAW_BASE + cfg.ambient.rain;
+      if (cfg.ambient.vinyl) ambientAudios.vinyl.src = cfg.ambient.vinyl.startsWith("http") ? cfg.ambient.vinyl : RAW_BASE + cfg.ambient.vinyl;
+      if (cfg.ambient.night) ambientAudios.night.src = cfg.ambient.night.startsWith("http") ? cfg.ambient.night : RAW_BASE + cfg.ambient.night;
     }
 
     const ambSec = document.getElementById("ambientSection");
@@ -106,8 +125,12 @@ async function loadSiteConfig() {
 
 async function loadSongs() {
   try {
-    const res = await fetch("songs.json?t=" + Date.now());
-    allSongs = await res.json();
+    const rawList = await fetchFreshJson("songs.json");
+    allSongs = rawList.map(song => ({
+      ...song,
+      file: song.file && !song.file.startsWith("http") ? RAW_BASE + song.file : song.file,
+      cover: song.cover && !song.cover.startsWith("http") ? RAW_BASE + song.cover : song.cover
+    }));
     filteredSongs = [...allSongs];
     renderSongs(filteredSongs);
     if (allSongs.length > 0) loadTrackIntoUI(0, false);
@@ -116,6 +139,7 @@ async function loadSongs() {
       `<p style="text-align:center;color:#94a3b8;padding:24px;">Upload your first song from Admin Panel</p>`;
   }
 }
+
 
 function isSongInAnyPlaylist(songId) {
   return userPlaylists.some(pl => pl.songIds.includes(songId));
