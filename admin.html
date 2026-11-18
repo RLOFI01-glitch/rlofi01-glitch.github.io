@@ -3,769 +3,535 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>R LOFI 01 — Premium Admin Studio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <title>R LOFI 01 | Admin Studio</title>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #06060b;
-      --card: rgba(255, 255, 255, 0.045);
-      --border: rgba(255, 255, 255, 0.11);
+      --bg: #08080e;
+      --card: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.12);
       --accent: #a855f7;
-      --accent-glow: rgba(168, 85, 247, 0.35);
-      --text: #f8fafc;
+      --text: #ffffff;
       --muted: #94a3b8;
-      --danger: #ef4444;
     }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Outfit', sans-serif;
       background: var(--bg);
       color: var(--text);
-      min-height: 100vh;
-      padding-bottom: 50px;
-      background-image:
-        radial-gradient(circle at 20% 5%, var(--accent-glow), transparent 40%),
-        radial-gradient(circle at 80% 90%, rgba(56, 189, 248, 0.12), transparent 45%);
+      padding: 16px 14px 90px;
+      max-width: 620px;
+      margin: 0 auto;
     }
+    .header-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; margin-bottom: 18px;
+    }
+    .header-bar h1 { font-size: 18px; font-weight: 700; }
+    .view-site-btn {
+      padding: 7px 14px; border-radius: 999px; background: var(--accent);
+      color: #fff; text-decoration: none; font-size: 12.5px; font-weight: 600;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 20px; padding: 16px; margin-bottom: 18px;
+    }
+    .card h2 { font-size: 16px; margin-bottom: 4px; }
+    .card p.sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
 
-    .wrap { max-width: 720px; margin: 0 auto; padding: 18px 15px; }
-    .glass {
-      background: var(--card);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border: 1px solid var(--border);
-      border-radius: 20px;
+    label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 5px; font-weight: 500; }
+    input[type="text"], input[type="password"], input[type="url"], select, textarea {
+      width: 100%; padding: 10px 12px; border-radius: 12px;
+      border: 1px solid var(--border); background: rgba(0, 0, 0, 0.4);
+      color: #fff; font-family: inherit; font-size: 13.5px; margin-bottom: 12px;
+      outline: none;
     }
-
-    .login-box { max-width: 420px; margin: 60px auto; padding: 26px 22px; text-align: center; }
-    .login-box h2 { font-size: 22px; margin-bottom: 6px; }
-    .login-box p { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
-
-    .top-bar {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 18px; margin-bottom: 16px;
+    textarea { resize: vertical; min-height: 75px; }
+    input[type="file"] {
+      width: 100%; padding: 9px; border-radius: 12px;
+      border: 1px dashed var(--accent); background: rgba(168, 85, 247, 0.08);
+      color: #e2e8f0; font-size: 12.5px; margin-bottom: 12px;
     }
-    .top-bar h1 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .badge-pro {
-      font-size: 11px; padding: 3px 9px; border-radius: 999px;
-      background: rgba(168, 85, 247, 0.2); border: 1px solid var(--accent); color: #e9d5ff;
-    }
-
-    .tab-bar {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-      margin-bottom: 18px;
-    }
-    .tab-btn {
-      padding: 11px 6px; border-radius: 14px; border: 1px solid var(--border);
-      background: var(--card); color: var(--muted); font-family: inherit;
-      font-size: 12.5px; font-weight: 600; cursor: pointer; transition: 0.25s;
-      text-align: center;
-    }
-    .tab-btn.active {
-      background: var(--accent); color: #fff; border-color: var(--accent);
-      box-shadow: 0 4px 18px var(--accent-glow);
-    }
-
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    .card-sec { padding: 18px; margin-bottom: 16px; }
-    .card-sec h3 { font-size: 16px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
-    .label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; margin-top: 10px; }
-    .input, .select, .textarea {
-      width: 100%; padding: 11px 13px; border-radius: 12px; border: 1px solid var(--border);
-      background: rgba(0, 0, 0, 0.35); color: var(--text); font-family: inherit;
-      font-size: 13.5px; outline: none;
-    }
-    .input:focus, .select:focus, .textarea:focus { border-color: var(--accent); }
-    .textarea { min-height: 85px; resize: vertical; }
-
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .btn {
-      padding: 11px 16px; border-radius: 12px; border: none; font-family: inherit;
-      font-size: 13.5px; font-weight: 600; cursor: pointer; transition: 0.2s;
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      width: 100%; padding: 12px; border-radius: 12px; border: none;
+      background: linear-gradient(135deg, var(--accent), #7e22ce);
+      color: #fff; font-family: inherit; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: 0.2s;
     }
-    .btn-primary { width: 100%; background: var(--accent); color: #fff; box-shadow: 0 4px 16px var(--accent-glow); margin-top: 14px; }
-    .btn-ghost { background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text); }
-    .btn-danger { background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; }
-    .btn-sm { padding: 7px 10px; font-size: 12px; border-radius: 10px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .btn-sm {
+      padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08); color: #fff; font-size: 12px; cursor: pointer;
+    }
+    .btn-danger { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5; }
 
-    .song-row {
-      display: flex; align-items: center; gap: 10px; padding: 11px;
-      border-radius: 15px; background: rgba(255,255,255,0.03);
+    .switch-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      font-size: 13.5px;
+    }
+    .song-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px; border-radius: 14px; background: rgba(0, 0, 0, 0.3);
       border: 1px solid var(--border); margin-bottom: 10px;
     }
-    .song-row img { width: 52px; height: 52px; border-radius: 11px; object-fit: cover; flex-shrink: 0; }
-    .song-row-info { flex: 1; min-width: 0; }
-    .song-row-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .song-row-sub { font-size: 11.5px; color: var(--muted); }
-    .song-row-btns { display: flex; gap: 5px; flex-wrap: wrap; }
+    .song-item img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: #1e1b4b; }
+    .song-item-info { flex: 1; min-width: 0; }
+    .song-item-info h4 { font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-item-info span { font-size: 11.5px; color: var(--muted); }
 
-    .toggle-row {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 13px 0; border-bottom: 1px solid var(--border);
-    }
-    .toggle-row:last-child { border-bottom: none; }
-    .toggle-title { font-size: 14px; font-weight: 500; }
-    .toggle-desc { font-size: 11.5px; color: var(--muted); }
-    .switch { position: relative; display: inline-block; width: 48px; height: 26px; flex-shrink: 0; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider-round {
-      position: absolute; cursor: pointer; inset: 0; background: rgba(255,255,255,0.14);
-      border-radius: 999px; transition: 0.3s;
-    }
-    .slider-round:before {
-      position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px;
-      background: #fff; border-radius: 50%; transition: 0.3s;
-    }
-    input:checked + .slider-round { background: var(--accent); box-shadow: 0 0 12px var(--accent-glow); }
-    input:checked + .slider-round:before { transform: translateX(22px); }
-
-    .icon-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
-    .icon-card {
-      padding: 12px; border-radius: 14px; border: 1px solid var(--border);
-      background: rgba(0,0,0,0.25); text-align: center;
-    }
-    .icon-preview {
-      width: 44px; height: 44px; margin: 0 auto 8px; border-radius: 10px;
-      background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-    }
-    .icon-preview img { width: 100%; height: 100%; object-fit: contain; }
-
-    .toast {
-      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-      background: #181824; border: 1px solid var(--accent); color: #fff;
-      padding: 11px 18px; border-radius: 999px; font-size: 13px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.7); display: none; z-index: 200;
+    .status-banner {
+      position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      background: #141424; border: 1px solid var(--accent); color: #fff;
+      padding: 10px 18px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
+      z-index: 999; display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+      white-space: nowrap;
     }
   </style>
 </head>
 <body>
 
-  <!-- Login Screen -->
-  <div id="loginScreen" class="wrap">
-    <div class="login-box glass">
-      <h2>🎛️ R LOFI 01 Studio</h2>
-      <p>Enter your GitHub Token & Repository details to manage your music platform.</p>
-      <input type="text" id="ghOwner" class="input" placeholder="GitHub Username (e.g. rlofi01)" style="margin-bottom:10px;">
-      <input type="text" id="ghRepo" class="input" placeholder="Repository Name (e.g. rlofi01.github.io)" style="margin-bottom:10px;">
-      <input type="password" id="ghToken" class="input" placeholder="GitHub Personal Access Token (ghp_...)">
-      <button id="loginBtn" class="btn btn-primary">Unlock Admin Studio 🔐</button>
+  <div id="statusBanner" class="status-banner"></div>
+
+  <div class="header-bar">
+    <h1>🎛️ R LOFI 01 Admin</h1>
+    <a href="index.html" target="_blank" class="view-site-btn">🌐 View Site</a>
+  </div>
+
+  <!-- 1. GitHub Connection -->
+  <div class="card">
+    <h2>🔑 GitHub Token Setup</h2>
+    <p class="sub">আপনার রিপোজিটরিতে সরাসরি ফাইল সেভ ও আপলোড করার জন্য টোকেন সেভ করুন।</p>
+    <label>GitHub Personal Access Token</label>
+    <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
+    <div class="row-2">
+      <div>
+        <label>GitHub Username</label>
+        <input type="text" id="ghOwner" value="RLOFI01-glitch">
+      </div>
+      <div>
+        <label>Repository Name</label>
+        <input type="text" id="ghRepo" value="rlofi01-glitch.github.io">
+      </div>
     </div>
+    <button class="btn" onclick="saveGitHubAuth()">💾 Save & Connect</button>
   </div>
-    <!-- Main Dashboard -->
-  <div id="adminDashboard" class="wrap" style="display:none;">
-    <header class="top-bar glass">
-      <h1>R LOFI 01 <span class="badge-pro">STUDIO PRO</span></h1>
-      <button id="logoutBtn" class="btn btn-ghost btn-sm">Logout</button>
-    </header>
 
-    <!-- 4 Smart Tabs -->
-    <nav class="tab-bar">
-      <button class="tab-btn active" data-tab="tabSongs">🎵 Songs</button>
-      <button class="tab-btn" data-tab="tabFeatures">🎛️ Features</button>
-      <button class="tab-btn" data-tab="tabTheme">🎨 Theme</button>
-      <button class="tab-btn" data-tab="tabRequests">📩 Inbox</button>
-    </nav>
+  <!-- 2. Upload New Song + Cover + Lyrics -->
+  <div class="card">
+    <h2>🎵 Upload New Song</h2>
+    <p class="sub">নতুন গান, কভার ফটো, YouTube লিংক এবং লিরিক্স যোগ করুন।</p>
 
-    <!-- TAB 1: SONGS -->
-    <section id="tabSongs" class="tab-panel active">
-      <div class="card-sec glass">
-        <h3 id="formModeTitle">➕ Upload New Song</h3>
-        <input type="hidden" id="editSongId">
+    <label>Song Title *</label>
+    <input type="text" id="songName" placeholder="উদাহরণ: Tere Jaane Ke Baad">
 
-        <label class="label">Song Title *</label>
-        <input type="text" id="songTitle" class="input" placeholder="e.g. Tere Jaane Ke Baad (Lofi)">
-
-        <label class="label">Mood Category</label>
-        <select id="songMood" class="select">
+    <div class="row-2">
+      <div>
+        <label>Mood / Category</label>
+        <select id="songMood">
           <option value="Lofi">Lofi</option>
-          <option value="Sad">Sad</option>
           <option value="Romantic">Romantic</option>
+          <option value="Sad">Sad</option>
         </select>
-
-        <label class="label">Short Vibe / Description (Used if Lyrics empty)</label>
-        <input type="text" id="songDesc" class="input" placeholder="e.g. Raat ki khamoshi aur ek adhoori yaad...">
-
-        <label class="label">Hinglish Lyrics (Optional — Leave blank for Auto-Shayari)</label>
-        <textarea id="songLyrics" class="textarea" placeholder="Paste Hinglish lyrics here if you want..."></textarea>
-
-        <label class="label">YouTube Video Link (For Double-Tap & YouTube Button)</label>
-        <input type="url" id="songYtUrl" class="input" placeholder="https://youtu.be/...">
-
-        <label class="label">Cover Image (JPG/PNG) *</label>
-        <input type="file" id="songCoverFile" class="input" accept="image/*">
-
-        <label class="label">Audio File (MP3/WAV) *</label>
-        <input type="file" id="songAudioFile" class="input" accept="audio/*">
-
-        <button id="saveSongBtn" class="btn btn-primary">Publish Song to Website 🚀</button>
-        <button id="cancelEditBtn" class="btn btn-ghost" style="width:100%; margin-top:8px; display:none;">Cancel Edit</button>
       </div>
-
-      <div class="card-sec glass">
-        <h3>🎶 Manage Songs <span id="adminSongCount" style="font-size:12px; color:var(--muted);">0</span></h3>
-        <div id="adminSongList"></div>
+      <div>
+        <label>YouTube Video Link</label>
+        <input type="url" id="songYoutube" placeholder="https://youtu.be/...">
       </div>
-    </section>
+    </div>
 
-    <!-- TAB 2: FEATURES -->
-    <section id="tabFeatures" class="tab-panel">
-      <div class="card-sec glass">
-        <h3>🎛️ Website Feature Controls</h3>
-        <p style="font-size:12px; color:var(--muted); margin-bottom:10px;">Turn any section or button on/off instantly.</p>
+    <label>Short Description</label>
+    <input type="text" id="songDesc" placeholder="Emotional Hinglish Lofi • R LOFI 01">
 
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-title">🟢 Lofi Radio Active Badge</div>
-            <div class="toggle-desc">Show live pulsing studio status in Hero header</div>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="togRadioBadge" checked>
-            <span class="slider-round"></span>
-          </label>
-        </div>
+    <label>Song Lyrics (Optional - Fullscreen প্লেয়ারে দেখাবে)</label>
+    <textarea id="songLyrics" placeholder="এখানে গানের লিরিক্স পেস্ট করুন..."></textarea>
 
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-title">🌧️ Ambient Sound Studio</div>
-            <div class="toggle-desc">Separate Rain & Vinyl sound mixer section</div>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="togAmbient" checked>
-            <span class="slider-round"></span>
-          </label>
-        </div>
+    <label>Select MP3 Audio File *</label>
+    <input type="file" id="songAudioFile" accept="audio/*">
 
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-title">💌 Dedicate This Song</div>
-            <div class="toggle-desc">Allow visitors to create special dedication links</div>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="togDedicate" checked>
-            <span class="slider-round"></span>
-          </label>
-        </div>
+    <label>Select Cover Thumbnail Image *</label>
+    <input type="file" id="songCoverFile" accept="image/*">
 
-        <div class="toggle-row">
-          <div>
-            <div class="toggle-title">📩 Song Request Box</div>
-            <div class="toggle-desc">Allow visitors to send song & mood ideas</div>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="togRequest" checked>
-            <span class="slider-round"></span>
-          </label>
-        </div>
-
-        <button id="saveFeaturesBtn" class="btn btn-primary">Save Feature Settings ✅</button>
-      </div>
-    </section>
-
-    <!-- TAB 3: THEME & AUTO-TRIM ICONS -->
-    <section id="tabTheme" class="tab-panel">
-      <div class="card-sec glass">
-        <h3>🎨 Branding & Theme</h3>
-        <label class="label">Website / Channel Name</label>
-        <input type="text" id="cfgTitle" class="input" value="R LOFI 01">
-
-        <label class="label">Bio / Tagline</label>
-        <input type="text" id="cfgBio" class="input" value="Late night lofi, sad melodies & emotional Hinglish vibes.">
-
-        <label class="label">Accent Glow Color</label>
-        <input type="color" id="cfgAccent" class="input" value="#a855f7" style="height:44px; padding:4px;">
-
-        <label class="label">YouTube Channel Link</label>
-        <input type="url" id="cfgYtUrl" class="input" placeholder="https://youtube.com/@RLOFI01">
-
-        <label class="label">Instagram Link</label>
-        <input type="url" id="cfgInstaUrl" class="input" placeholder="https://instagram.com/...">
-
-        <label class="label">Profile Avatar Photo (Optional)</label>
-        <input type="file" id="cfgAvatarFile" class="input" accept="image/*">
-      </div>
-
-      <div class="card-sec glass">
-        <h3>✨ Custom Icons (Auto-Trim + Size Slider)</h3>
-        <p style="font-size:12px; color:var(--muted); margin-bottom:10px;">
-          Upload any icon — black/transparent padding is automatically cropped to look bold & crisp!
-        </p>
-
-        <label class="label">Icon Display Size: <strong id="iconSizeLabel">32px</strong></label>
-        <input type="range" id="cfgIconSize" min="22" max="44" value="32" style="width:100%; accent-color:var(--accent);">
-
-        <div class="icon-grid">
-          <div class="icon-card">
-            <div class="icon-preview" id="prevDedicate">💌</div>
-            <div style="font-size:12px; margin-bottom:6px;">Dedicate Icon</div>
-            <input type="file" id="iconDedicateFile" accept="image/*" style="font-size:11px; width:100%;">
-          </div>
-          <div class="icon-card">
-            <div class="icon-preview" id="prevDownload">⬇️</div>
-            <div style="font-size:12px; margin-bottom:6px;">Download Icon</div>
-            <input type="file" id="iconDownloadFile" accept="image/*" style="font-size:11px; width:100%;">
-          </div>
-        </div>
-
-        <button id="saveThemeBtn" class="btn btn-primary">Save Theme & Icons 💾</button>
-      </div>
-    </section>
-
-    <!-- TAB 4: SONG REQUESTS INBOX -->
-    <section id="tabRequests" class="tab-panel">
-      <div class="card-sec glass">
-        <h3>📩 Listener Song Requests</h3>
-        <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">Requests submitted by visitors on your browser/device.</p>
-        <div id="requestsList"></div>
-      </div>
-    </section>
+    <button id="uploadSongBtn" class="btn" onclick="uploadNewSong()">🚀 Upload & Publish Song</button>
   </div>
 
-  <div id="toast" class="toast"></div>
-   <script>
-    let ghAuth = JSON.parse(localStorage.getItem("rlofi_gh_auth") || "null");
-    let songs = [];
-    let siteConfig = {
-      title: "R LOFI 01",
-      bio: "Late night lofi, sad melodies & emotional Hinglish vibes.",
-      avatar: "",
-      accent: "#a855f7",
-      iconSize: 32,
-      ytUrl: "https://youtube.com",
-      instaUrl: "https://instagram.com",
-      showRadioBadge: true,
-      showAmbientStudio: true,
-      showDedicateBtn: true,
-      showRequestBox: true,
-      icons: {}
-    };
+  <!-- 3. Manage Published Songs -->
+  <div class="card">
+    <h2>📂 Published Songs (<span id="songCount">0</span>)</h2>
+    <p class="sub">আপলোড করা গানগুলো এখান থেকে এডিট বা ডিলিট করতে পারবেন।</p>
+    <div id="adminSongsList">Loading...</div>
+  </div>
 
-    function showToast(msg) {
-      const t = document.getElementById("toast");
-      t.textContent = msg;
-      t.style.display = "block";
-      setTimeout(() => { t.style.display = "none"; }, 3200);
-    }
+  <!-- 4. Brand Logo, Banner & Theme Settings -->
+  <div class="card">
+    <h2>🎨 Logo, Banner & Site Settings</h2>
+    <p class="sub">চ্যানেলের লোগো, ব্যানার, নাম, থিম কালার এবং ফিচার কন্ট্রোল করুন।</p>
 
-    function checkAuth() {
-      if (ghAuth && ghAuth.token && ghAuth.owner && ghAuth.repo) {
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("adminDashboard").style.display = "block";
-        loadAllAdminData();
+    <div class="row-2">
+      <div>
+        <label>Brand / Channel Name</label>
+        <input type="text" id="cfgTitle" value="R LOFI 01">
+      </div>
+      <div>
+        <label>Accent Theme Color</label>
+        <input type="text" id="cfgAccent" value="#a855f7">
+      </div>
+    </div>
+
+    <label>Hero Tagline</label>
+    <input type="text" id="cfgTagline" value="LISTEN • RELAX • FEEL • REMEMBER">
+
+    <label>Channel Bio</label>
+    <input type="text" id="cfgBio" value="Late night lofi, sad melodies & emotional Hinglish vibes.">
+
+    <label>Main YouTube Channel URL</label>
+    <input type="url" id="cfgYoutube" value="https://youtube.com/@rlofi01?si=p4i9ZYVoa45vNk4G">
+
+    <label>Upload New Profile Logo (Optional)</label>
+    <input type="file" id="cfgAvatarFile" accept="image/*">
+
+    <label>Upload New Hero Banner Background (Optional)</label>
+    <input type="file" id="cfgBannerFile" accept="image/*">
+
+    <div class="switch-row">
+      <span>🌧️ Show Ambient Sound Studio</span>
+      <input type="checkbox" id="cfgAmbient" checked>
+    </div>
+    <div class="switch-row" style="margin-bottom: 14px;">
+      <span>📩 Show Song Request Box</span>
+      <input type="checkbox" id="cfgRequest" checked>
+    </div>
+
+    <button id="saveCfgBtn" class="btn" onclick="saveSiteConfig()">✨ Save Brand & Theme Settings</button>
+  </div>
+
+  <!-- 5. Listener Song Requests -->
+  <div class="card">
+    <h2>📩 Song Requests from Listeners</h2>
+    <p class="sub">দর্শকদের পাঠানো গানের অনুরোধগুলো এখানে জমা হয়।</p>
+    <div id="requestsList"></div>
+  </div>
+
+  <script>
+    let currentSongs = [];
+    let currentConfig = {};
+
+    function showStatus(msg, duration = 3500) {
+      const el = document.getElementById('statusBanner');
+      el.textContent = msg;
+      el.style.display = 'block';
+      clearTimeout(el._t);
+      if (duration > 0) {
+        el._t = setTimeout(() => { el.style.display = 'none'; }, duration);
       }
     }
 
-    document.getElementById("loginBtn").addEventListener("click", () => {
-      const owner = document.getElementById("ghOwner").value.trim();
-      const repo = document.getElementById("ghRepo").value.trim();
-      const token = document.getElementById("ghToken").value.trim();
-      if (!owner || !repo || !token) return showToast("⚠️ Please fill all 3 fields!");
-      ghAuth = { owner, repo, token };
-      localStorage.setItem("rlofi_gh_auth", JSON.stringify(ghAuth));
-      checkAuth();
-    });
-
-    document.getElementById("logoutBtn").addEventListener("click", () => {
-      localStorage.removeItem("rlofi_gh_auth");
-      location.reload();
-    });
-
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-        document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-        btn.classList.add("active");
-        document.getElementById(btn.dataset.tab).classList.add("active");
-      });
-    });
-
-    async function ghGetFile(path) {
-      const url = `https://api.github.com/repos/${ghAuth.owner}/${ghAuth.repo}/contents/${path}?t=${Date.now()}`;
-      const res = await fetch(url, {
-        headers: { Authorization: `token ${ghAuth.token}` }
-      });
-      if (!res.ok) return null;
-      return await res.json();
+    function getAuth() {
+      return {
+        token: localStorage.getItem('gh_token') || '',
+        owner: localStorage.getItem('gh_owner') || 'RLOFI01-glitch',
+        repo: localStorage.getItem('gh_repo') || 'rlofi01-glitch.github.io'
+      };
     }
 
-    async function ghPutFile(path, base64Content, message, sha = null) {
-      const url = `https://api.github.com/repos/${ghAuth.owner}/${ghAuth.repo}/contents/${path}`;
-      const body = { message, content: base64Content };
-      if (sha) body.sha = sha;
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          Authorization: `token ${ghAuth.token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(body)
-      });
-      if (!res.ok) throw new Error("GitHub API Error: " + res.status);
-      return await res.json();
+    function saveGitHubAuth() {
+      const token = document.getElementById('ghToken').value.trim();
+      const owner = document.getElementById('ghOwner').value.trim();
+      const repo = document.getElementById('ghRepo').value.trim();
+      if (!token) return alert("দয়া করে GitHub Token দিন!");
+      localStorage.setItem('gh_token', token);
+      localStorage.setItem('gh_owner', owner);
+      localStorage.setItem('gh_repo', repo);
+      showStatus("✅ GitHub Connected!");
+      loadAdminData();
     }
 
-    async function ghDeleteFile(path, message) {
-      try {
-        const fileData = await ghGetFile(path);
-        if (!fileData || !fileData.sha) return;
-        const url = `https://api.github.com/repos/${ghAuth.owner}/${ghAuth.repo}/contents/${path}`;
-        await fetch(url, {
-          method: "DELETE",
-          headers: {
-            Authorization: `token ${ghAuth.token}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ message, sha: fileData.sha })
-        });
-      } catch (e) { console.log("Skip delete:", path); }
-    }
-
-    function toBase64Unicode(str) {
-      return btoa(unescape(encodeURIComponent(str)));
-    }
-
-    function fromBase64Unicode(b64) {
-      return decodeURIComponent(escape(atob(b64.replace(/\n/g, ""))));
+    function cleanFileName(prefix, originalName) {
+      const ext = originalName.split('.').pop().toLowerCase();
+      return `${prefix}_${Date.now()}.${ext}`;
     }
 
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onload = () => resolve(reader.result.split(',')[1]);
         reader.onerror = reject;
         reader.readAsDataURL(file);
       });
     }
 
-    function autoTrimIconToBase64(file) {
-      return new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => {
-          const c = document.createElement("canvas");
-          c.width = img.width;
-          c.height = img.height;
-          const ctx = c.getContext("2d");
-          ctx.drawImage(img, 0, 0);
+    async function githubPutFile(path, base64Content, message) {
+      const { token, owner, repo } = getAuth();
+      if (!token) throw new Error("প্রথমে উপরে GitHub Token সেভ করুন!");
 
-          const imgData = ctx.getImageData(0, 0, c.width, c.height);
-          const d = imgData.data;
-          let minX = c.width, minY = c.height, maxX = 0, maxY = 0;
+      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+      let sha = null;
+      const checkRes = await fetch(apiUrl, {
+        headers: { Authorization: `token ${token}` }
+      });
+      if (checkRes.ok) {
+        const existing = await checkRes.json();
+        sha = existing.sha;
+      }
 
-          for (let y = 0; y < c.height; y++) {
-            for (let x = 0; x < c.width; x++) {
-              const i = (y * c.width + x) * 4;
-              const r = d[i], g = d[i+1], b = d[i+2], a = d[i+3];
-              if (a > 20 && (r > 18 || g > 18 || b > 18)) {
-                if (x < minX) minX = x;
-                if (x > maxX) maxX = x;
-                if (y < minY) minY = y;
-                if (y > maxY) maxY = y;
-              }
-            }
-          }
+      const body = { message, content: base64Content };
+      if (sha) body.sha = sha;
 
-          if (maxX <= minX || maxY <= minY) {
-            resolve(c.toDataURL("image/png").split(",")[1]);
-            return;
-          }
+      const putRes = await fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          Authorization: `token ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      });
 
-          const trimW = maxX - minX + 1;
-          const trimH = maxY - minY + 1;
-          const out = document.createElement("canvas");
-          out.width = 128;
-          out.height = 128;
-          const outCtx = out.getContext("2d");
-          outCtx.drawImage(c, minX, minY, trimW, trimH, 6, 6, 116, 116);
-          resolve(out.toDataURL("image/png").split(",")[1]);
-        };
-        img.src = URL.createObjectURL(file);
+      if (!putRes.ok) {
+        const err = await putRes.json();
+        throw new Error(err.message || "GitHub Upload Failed");
+      }
+      return await putRes.json();
+    }
+        async function githubDeleteFile(path, message) {
+      const { token, owner, repo } = getAuth();
+      if (!token || !path) return;
+      const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+      const checkRes = await fetch(apiUrl, {
+        headers: { Authorization: `token ${token}` }
+      });
+      if (!checkRes.ok) return;
+      const existing = await checkRes.json();
+
+      await fetch(apiUrl, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `token ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message, sha: existing.sha })
       });
     }
 
-    async function loadAllAdminData() {
-      showToast("⏳ Syncing with GitHub...");
+    function utf8ToBase64(str) {
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    async function loadAdminData() {
+      const auth = getAuth();
+      document.getElementById('ghToken').value = auth.token;
+      document.getElementById('ghOwner').value = auth.owner;
+      document.getElementById('ghRepo').value = auth.repo;
+
       try {
-        const cfgFile = await ghGetFile("config.json");
-        if (cfgFile && cfgFile.content) {
-          siteConfig = { ...siteConfig, ...JSON.parse(fromBase64Unicode(cfgFile.content)) };
+        const cfgRes = await fetch('config.json?t=' + Date.now());
+        if (cfgRes.ok) {
+          currentConfig = await cfgRes.json();
+          document.getElementById('cfgTitle').value = currentConfig.title || 'R LOFI 01';
+          document.getElementById('cfgAccent').value = currentConfig.accent || '#a855f7';
+          document.getElementById('cfgTagline').value = currentConfig.tagline || 'LISTEN • RELAX • FEEL • REMEMBER';
+          document.getElementById('cfgBio').value = currentConfig.bio || '';
+          document.getElementById('cfgYoutube').value = currentConfig.youtubeUrl || '';
+          document.getElementById('cfgAmbient').checked = currentConfig.showAmbientStudio !== false;
+          document.getElementById('cfgRequest').checked = currentConfig.showRequestBox !== false;
         }
       } catch (e) {}
 
       try {
-        const songsFile = await ghGetFile("songs.json");
-        if (songsFile && songsFile.content) {
-          songs = JSON.parse(fromBase64Unicode(songsFile.content));
+        const songsRes = await fetch('songs.json?t=' + Date.now());
+        if (songsRes.ok) {
+          currentSongs = await songsRes.json();
+          renderAdminSongs();
         }
-      } catch (e) { songs = []; }
+      } catch (e) {}
 
-      document.getElementById("cfgTitle").value = siteConfig.title || "R LOFI 01";
-      document.getElementById("cfgBio").value = siteConfig.bio || "";
-      document.getElementById("cfgAccent").value = siteConfig.accent || "#a855f7";
-      document.getElementById("cfgYtUrl").value = siteConfig.ytUrl || "";
-      document.getElementById("cfgInstaUrl").value = siteConfig.instaUrl || "";
-      document.getElementById("cfgIconSize").value = siteConfig.iconSize || 32;
-      document.getElementById("iconSizeLabel").textContent = (siteConfig.iconSize || 32) + "px";
-
-      document.getElementById("togRadioBadge").checked = siteConfig.showRadioBadge !== false;
-      document.getElementById("togAmbient").checked = siteConfig.showAmbientStudio !== false;
-      document.getElementById("togDedicate").checked = siteConfig.showDedicateBtn !== false;
-      document.getElementById("togRequest").checked = siteConfig.showRequestBox !== false;
-
-      if (siteConfig.icons && siteConfig.icons.dedicate) {
-        document.getElementById("prevDedicate").innerHTML = `<img src="${siteConfig.icons.dedicate}">`;
-      }
-      if (siteConfig.icons && siteConfig.icons.download) {
-        document.getElementById("prevDownload").innerHTML = `<img src="${siteConfig.icons.download}">`;
-      }
-
-      renderAdminSongs();
-      renderRequestsInbox();
-      showToast("✅ Studio Ready!");
-    }
-
-    async function syncSongsJson(msg) {
-      const existing = await ghGetFile("songs.json");
-      const sha = existing ? existing.sha : null;
-      await ghPutFile("songs.json", toBase64Unicode(JSON.stringify(songs, null, 2)), msg, sha);
-    }
-
-    document.getElementById("saveSongBtn").addEventListener("click", async () => {
-      const editId = document.getElementById("editSongId").value;
-      const title = document.getElementById("songTitle").value.trim();
-      const mood = document.getElementById("songMood").value;
-      const desc = document.getElementById("songDesc").value.trim();
-      const lyrics = document.getElementById("songLyrics").value.trim();
-      const ytUrl = document.getElementById("songYtUrl").value.trim();
-      const coverFile = document.getElementById("songCoverFile").files[0];
-      const audioFile = document.getElementById("songAudioFile").files[0];
-
-      if (!title) return showToast("⚠️ Song title is required!");
-      if (!editId && (!coverFile || !audioFile)) {
-        return showToast("⚠️ Please select both Cover image and Audio file!");
-      }
-
-      const btn = document.getElementById("saveSongBtn");
-      btn.disabled = true;
-      btn.textContent = "⏳ Uploading to GitHub...";
-
-      try {
-        const id = editId || "song_" + Date.now();
-        let oldSong = editId ? songs.find(s => s.id === editId) : null;
-        let coverPath = oldSong ? oldSong.cover : "";
-        let audioPath = oldSong ? oldSong.audio : "";
-
-        if (coverFile) {
-          if (oldSong && oldSong.cover) await ghDeleteFile(oldSong.cover, "Clean old cover");
-          const ext = coverFile.name.split(".").pop();
-          coverPath = `assets/covers/${id}.${ext}`;
-          const b64Cover = await fileToBase64(coverFile);
-          await ghPutFile(coverPath, b64Cover, `Upload cover for ${title}`);
-        }
-
-        if (audioFile) {
-          if (oldSong && oldSong.audio) await ghDeleteFile(oldSong.audio, "Clean old audio");
-          const ext = audioFile.name.split(".").pop();
-          audioPath = `assets/audio/${id}.${ext}`;
-          const b64Audio = await fileToBase64(audioFile);
-          await ghPutFile(audioPath, b64Audio, `Upload audio for ${title}`);
-        }
-
-        const songObj = { id, title, mood, desc, lyrics, ytUrl, cover: coverPath, audio: audioPath };
-
-        if (editId) {
-          const idx = songs.findIndex(s => s.id === editId);
-          if (idx !== -1) songs[idx] = songObj;
-        } else {
-          songs.unshift(songObj);
-        }
-
-        await syncSongsJson(editId ? `Edit song: ${title}` : `Add song: ${title}`);
-        resetSongForm();
-        renderAdminSongs();
-        showToast(editId ? "✅ Song Updated!" : "🚀 Song Published!");
-      } catch (err) {
-        showToast("❌ Error: " + err.message);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Publish Song to Website 🚀";
-      }
-    });
-
-    function resetSongForm() {
-      document.getElementById("editSongId").value = "";
-      document.getElementById("formModeTitle").textContent = "➕ Upload New Song";
-      document.getElementById("songTitle").value = "";
-      document.getElementById("songDesc").value = "";
-      document.getElementById("songLyrics").value = "";
-      document.getElementById("songYtUrl").value = "";
-      document.getElementById("songCoverFile").value = "";
-      document.getElementById("songAudioFile").value = "";
-      document.getElementById("cancelEditBtn").style.display = "none";
-      document.getElementById("saveSongBtn").textContent = "Publish Song to Website 🚀";
-    }
-
-    document.getElementById("cancelEditBtn").addEventListener("click", resetSongForm);
-
-    function startEditSong(id) {
-      const s = songs.find(x => x.id === id);
-      if (!s) return;
-      document.getElementById("editSongId").value = s.id;
-      document.getElementById("formModeTitle").textContent = "✏️ Edit Song: " + s.title;
-      document.getElementById("songTitle").value = s.title;
-      document.getElementById("songMood").value = s.mood || "Lofi";
-      document.getElementById("songDesc").value = s.desc || "";
-      document.getElementById("songLyrics").value = s.lyrics || "";
-      document.getElementById("songYtUrl").value = s.ytUrl || "";
-      document.getElementById("saveSongBtn").textContent = "Save Song Changes 💾";
-      document.getElementById("cancelEditBtn").style.display = "inline-flex";
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    async function moveSong(index, dir) {
-      const target = index + dir;
-      if (target < 0 || target >= songs.length) return;
-      const temp = songs[index];
-      songs[index] = songs[target];
-      songs[target] = temp;
-      renderAdminSongs();
-      await syncSongsJson("Reorder songs");
-      showToast("↕️ Order Saved!");
-    }
-
-    async function deleteSongClean(id) {
-      const s = songs.find(x => x.id === id);
-      if (!s) return;
-      if (!confirm(`Delete "${s.title}" permanently from website & GitHub?`)) return;
-
-      showToast("🗑️ Deleting song & cleaning GitHub files...");
-      try {
-        if (s.cover) await ghDeleteFile(s.cover, `Delete cover for ${s.title}`);
-        if (s.audio) await ghDeleteFile(s.audio, `Delete audio for ${s.title}`);
-        songs = songs.filter(x => x.id !== id);
-        await syncSongsJson(`Delete song: ${s.title}`);
-        renderAdminSongs();
-        showToast("✅ Cleanly Deleted!");
-      } catch (e) {
-        showToast("❌ Delete failed: " + e.message);
-      }
+      renderRequests();
     }
 
     function renderAdminSongs() {
-      document.getElementById("adminSongCount").textContent = `${songs.length} songs`;
-      const box = document.getElementById("adminSongList");
-      if (songs.length === 0) {
-        box.innerHTML = `<p style="font-size:13px; color:var(--muted); text-align:center; padding:16px;">No songs uploaded yet.</p>`;
+      const list = document.getElementById('adminSongsList');
+      document.getElementById('songCount').textContent = currentSongs.length;
+      if (currentSongs.length === 0) {
+        list.innerHTML = `<p style="font-size:12.5px; color:#94a3b8;">কোনো গান নেই। উপর থেকে নতুন গান আপলোড করুন!</p>`;
         return;
       }
-      box.innerHTML = songs.map((s, i) => `
-        <div class="song-row">
-          <img src="${s.cover}" alt="">
-          <div class="song-row-info">
-            <div class="song-row-title">${s.title}</div>
-            <div class="song-row-sub">${s.mood || "Lofi"}</div>
+      list.innerHTML = currentSongs.map((s, idx) => `
+        <div class="song-item">
+          <img src="${s.cover || ''}" alt="Cover">
+          <div class="song-item-info">
+            <h4>${s.name}</h4>
+            <span>${s.mood} ${s.lyrics ? '• 📝 Lyrics' : ''}</span>
           </div>
-          <div class="song-row-btns">
-            <button class="btn btn-ghost btn-sm" onclick="moveSong(${i}, -1)">⬆️</button>
-            <button class="btn btn-ghost btn-sm" onclick="moveSong(${i}, 1)">⬇️</button>
-            <button class="btn btn-ghost btn-sm" onclick="startEditSong('${s.id}')">✏️</button>
-            <button class="btn btn-danger btn-sm" onclick="deleteSongClean('${s.id}')">🗑️</button>
-          </div>
+          <button class="btn-sm" onclick="editSongLyrics(${idx})">📝 Lyrics</button>
+          <button class="btn-sm btn-danger" onclick="deleteSong(${idx})">🗑️</button>
         </div>
-      `).join("");
+      `).join('');
     }
 
-    async function saveConfigToGitHub(msg) {
-      const existing = await ghGetFile("config.json");
-      const sha = existing ? existing.sha : null;
-      await ghPutFile("config.json", toBase64Unicode(JSON.stringify(siteConfig, null, 2)), msg, sha);
+    async function uploadNewSong() {
+      const name = document.getElementById('songName').value.trim();
+      const mood = document.getElementById('songMood').value;
+      const youtube = document.getElementById('songYoutube').value.trim();
+      const desc = document.getElementById('songDesc').value.trim() || `${mood} • R LOFI 01`;
+      const lyrics = document.getElementById('songLyrics').value.trim();
+      const audioFile = document.getElementById('songAudioFile').files[0];
+      const coverFile = document.getElementById('songCoverFile').files[0];
+
+      if (!name || !audioFile || !coverFile) {
+        return alert("গানের নাম, MP3 অডিও ফাইল এবং কভার ফটো অবশ্যই দিতে হবে!");
+      }
+
+      const btn = document.getElementById('uploadSongBtn');
+      btn.disabled = true;
+
+      try {
+        const audioFileName = cleanFileName('track', audioFile.name);
+        const coverFileName = cleanFileName('cover', coverFile.name);
+
+        showStatus("⏳ ১/৩: অডিও ফাইল আপলোড হচ্ছে...", 0);
+        const audioB64 = await fileToBase64(audioFile);
+        await githubPutFile(audioFileName, audioB64, `Upload audio: ${name}`);
+
+        showStatus("⏳ ২/৩: কভার ফটো আপলোড হচ্ছে...", 0);
+        const coverB64 = await fileToBase64(coverFile);
+        await githubPutFile(coverFileName, coverB64, `Upload cover: ${name}`);
+
+        showStatus("⏳ ৩/৩: গানের লিস্ট আপডেট হচ্ছে...", 0);
+        const newEntry = {
+          id: "song_" + Date.now(),
+          name,
+          file: audioFileName,
+          cover: coverFileName,
+          mood,
+          desc,
+          youtube,
+          lyrics
+        };
+        currentSongs.unshift(newEntry);
+        await githubPutFile('songs.json', utf8ToBase64(JSON.stringify(currentSongs, null, 2)), `Add song: ${name}`);
+
+        showStatus("✅ গান সফলভাবে পাবলিশ হয়েছে!");
+        document.getElementById('songName').value = '';
+        document.getElementById('songYoutube').value = '';
+        document.getElementById('songDesc').value = '';
+        document.getElementById('songLyrics').value = '';
+        document.getElementById('songAudioFile').value = '';
+        document.getElementById('songCoverFile').value = '';
+        renderAdminSongs();
+      } catch (err) {
+        alert("❌ Error: " + err.message);
+        showStatus("❌ আপলোড ব্যর্থ হয়েছে");
+      } finally {
+        btn.disabled = false;
+      }
     }
 
-    document.getElementById("saveFeaturesBtn").addEventListener("click", async () => {
-      siteConfig.showRadioBadge = document.getElementById("togRadioBadge").checked;
-      siteConfig.showAmbientStudio = document.getElementById("togAmbient").checked;
-      siteConfig.showDedicateBtn = document.getElementById("togDedicate").checked;
-      siteConfig.showRequestBox = document.getElementById("togRequest").checked;
-      showToast("⏳ Saving feature settings...");
-      await saveConfigToGitHub("Update feature toggles");
-      showToast("✅ Features Updated!");
-    });
-
-    document.getElementById("cfgIconSize").addEventListener("input", e => {
-      document.getElementById("iconSizeLabel").textContent = e.target.value + "px";
-    });
-
-    document.getElementById("saveThemeBtn").addEventListener("click", async () => {
-      showToast("⏳ Processing & saving theme...");
-      siteConfig.title = document.getElementById("cfgTitle").value.trim() || "R LOFI 01";
-      siteConfig.bio = document.getElementById("cfgBio").value.trim();
-      siteConfig.accent = document.getElementById("cfgAccent").value;
-      siteConfig.ytUrl = document.getElementById("cfgYtUrl").value.trim();
-      siteConfig.instaUrl = document.getElementById("cfgInstaUrl").value.trim();
-      siteConfig.iconSize = Number(document.getElementById("cfgIconSize").value);
-
-      const avatarFile = document.getElementById("cfgAvatarFile").files[0];
-      if (avatarFile) {
-        const ext = avatarFile.name.split(".").pop();
-        const path = `assets/avatar.${ext}`;
-        const existing = await ghGetFile(path);
-        const b64 = await fileToBase64(avatarFile);
-        await ghPutFile(path, b64, "Update avatar", existing ? existing.sha : null);
-        siteConfig.avatar = `${path}?t=${Date.now()}`;
+    async function editSongLyrics(index) {
+      const song = currentSongs[index];
+      const updated = prompt(`"${song.name}" গানের লিরিক্স লিখুন বা এডিট করুন:`, song.lyrics || "");
+      if (updated === null) return;
+      try {
+        showStatus("⏳ লিরিক্স সেভ হচ্ছে...", 0);
+        currentSongs[index].lyrics = updated.trim();
+        await githubPutFile('songs.json', utf8ToBase64(JSON.stringify(currentSongs, null, 2)), `Update lyrics: ${song.name}`);
+        showStatus("✅ লিরিক্স আপডেট হয়েছে!");
+        renderAdminSongs();
+      } catch (err) {
+        alert("❌ Error: " + err.message);
       }
+    }
 
-      const dedicateIcon = document.getElementById("iconDedicateFile").files[0];
-      if (dedicateIcon) {
-        const trimmedB64 = await autoTrimIconToBase64(dedicateIcon);
-        const path = `assets/icons/dedicate.png`;
-        const existing = await ghGetFile(path);
-        await ghPutFile(path, trimmedB64, "Update trimmed dedicate icon", existing ? existing.sha : null);
-        siteConfig.icons.dedicate = `${path}?t=${Date.now()}`;
+    async function deleteSong(index) {
+      const song = currentSongs[index];
+      if (!confirm(`আপনি কি নিশ্চিত যে "${song.name}" গানটি ডিলিট করতে চান?`)) return;
+      try {
+        showStatus("⏳ গান ও ফাইল ডিলিট হচ্ছে...", 0);
+        if (song.file) await githubDeleteFile(song.file, `Delete audio: ${song.name}`);
+        if (song.cover) await githubDeleteFile(song.cover, `Delete cover: ${song.name}`);
+        currentSongs.splice(index, 1);
+        await githubPutFile('songs.json', utf8ToBase64(JSON.stringify(currentSongs, null, 2)), `Remove song: ${song.name}`);
+        showStatus("🗑️ গান ডিলিট সম্পন্ন হয়েছে!");
+        renderAdminSongs();
+      } catch (err) {
+        alert("❌ Error: " + err.message);
       }
+    }
 
-      const downloadIcon = document.getElementById("iconDownloadFile").files[0];
-      if (downloadIcon) {
-        const trimmedB64 = await autoTrimIconToBase64(downloadIcon);
-        const path = `assets/icons/download.png`;
-        const existing = await ghGetFile(path);
-        await ghPutFile(path, trimmedB64, "Update trimmed download icon", existing ? existing.sha : null);
-        siteConfig.icons.download = `${path}?t=${Date.now()}`;
+    async function saveSiteConfig() {
+      const btn = document.getElementById('saveCfgBtn');
+      btn.disabled = true;
+      try {
+        showStatus("⏳ ব্র্যান্ড ও থিম সেটিংস সেভ হচ্ছে...", 0);
+
+        const avatarFile = document.getElementById('cfgAvatarFile').files[0];
+        const bannerFile = document.getElementById('cfgBannerFile').files[0];
+
+        if (avatarFile) {
+          const avName = cleanFileName('profile', avatarFile.name);
+          const avB64 = await fileToBase64(avatarFile);
+          await githubPutFile(avName, avB64, "Update channel logo");
+          currentConfig.avatar = avName;
+        }
+
+        if (bannerFile) {
+          const bnName = cleanFileName('banner', bannerFile.name);
+          const bnB64 = await fileToBase64(bannerFile);
+          await githubPutFile(bnName, bnB64, "Update hero banner");
+          currentConfig.banner = bnName;
+        }
+
+        currentConfig.title = document.getElementById('cfgTitle').value.trim() || 'R LOFI 01';
+        currentConfig.accent = document.getElementById('cfgAccent').value.trim() || '#a855f7';
+        currentConfig.tagline = document.getElementById('cfgTagline').value.trim();
+        currentConfig.bio = document.getElementById('cfgBio').value.trim();
+        currentConfig.youtubeUrl = document.getElementById('cfgYoutube').value.trim();
+        currentConfig.showAmbientStudio = document.getElementById('cfgAmbient').checked;
+        currentConfig.showRequestBox = document.getElementById('cfgRequest').checked;
+
+        await githubPutFile('config.json', utf8ToBase64(JSON.stringify(currentConfig, null, 2)), "Update site configuration");
+
+        if (currentConfig.avatar) {
+          const manifestObj = {
+            name: currentConfig.title,
+            short_name: currentConfig.title,
+            start_url: "./index.html",
+            display: "standalone",
+            background_color: "#08080e",
+            theme_color: currentConfig.accent,
+            icons: [
+              { src: currentConfig.avatar, sizes: "192x192", type: "image/png" },
+              { src: currentConfig.avatar, sizes: "512x512", type: "image/png" }
+            ]
+          };
+          await githubPutFile('manifest.json', utf8ToBase64(JSON.stringify(manifestObj, null, 2)), "Update PWA manifest icon");
+        }
+
+        showStatus("✅ সব সেটিংস সফলভাবে সেভ হয়েছে!");
+      } catch (err) {
+        alert("❌ Error: " + err.message);
+        showStatus("❌ সেভ ব্যর্থ হয়েছে");
+      } finally {
+        btn.disabled = false;
       }
+    }
 
-      await saveConfigToGitHub("Update theme & auto-trimmed icons");
-      showToast("🎨 Theme & Icons Saved!");
-    });
-
-    function renderRequestsInbox() {
-      const list = JSON.parse(localStorage.getItem("rlofi_requests") || "[]");
-      const box = document.getElementById("requestsList");
-      if (list.length === 0) {
-        box.innerHTML = `<p style="font-size:13px; color:var(--muted); text-align:center; padding:18px;">No song requests yet.</p>`;
+    function renderRequests() {
+      const box = document.getElementById('requestsList');
+      const reqs = JSON.parse(localStorage.getItem('rlofi_requests') || '[]');
+      if (reqs.length === 0) {
+        box.innerHTML = `<p style="font-size:12px; color:#94a3b8;">এখনো কোনো গানের অনুরোধ আসেনি।</p>`;
         return;
       }
-      box.innerHTML = list.map(r => `
-        <div class="song-row" style="justify-content:space-between;">
-          <div>
-            <div class="song-row-title">${r.name} <span style="font-size:11px; color:var(--muted);">• ${r.date}</span></div>
-            <div class="song-row-sub" style="color:#e2e8f0; margin-top:3px;">"${r.text}"</div>
-          </div>
-          <button class="btn btn-danger btn-sm" onclick="deleteRequest('${r.id}')">🗑️</button>
+      box.innerHTML = reqs.map(r => `
+        <div style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.08); font-size:13px;">
+          <strong>${r.name}</strong> <span style="font-size:11px; color:#94a3b8;">(${r.date})</span>
+          <p style="color:#cbd5e1; margin-top:3px;">${r.text}</p>
         </div>
-      `).join("");
+      `).join('');
     }
 
-    function deleteRequest(id) {
-      let list = JSON.parse(localStorage.getItem("rlofi_requests") || "[]");
-      list = list.filter(x => x.id !== id);
-      localStorage.setItem("rlofi_requests", JSON.stringify(list));
-      renderRequestsInbox();
-      showToast("🗑️ Request removed");
-    }
-
-    checkAuth();
+    loadAdminData();
   </script>
 </body>
 </html>
