@@ -5,12 +5,15 @@ let isLooping = false;
 let currentMood = "all";
 let sleepTimerId = null;
 let sleepMinutes = 0;
+let saveTargetSongId = null;
+
+// Stored User Data (Zero pre-made folders)
 let favorites = JSON.parse(localStorage.getItem("rlofi_favs") || "[]");
+let userPlaylists = JSON.parse(localStorage.getItem("rlofi_playlists") || "[]");
 
 const audio = new Audio();
 audio.preload = "metadata";
 
-// Custom Uploaded Ambient MP3 Loops
 const ambientAudios = {
   rain: new Audio(),
   vinyl: new Audio(),
@@ -18,11 +21,17 @@ const ambientAudios = {
 };
 Object.values(ambientAudios).forEach(a => { a.loop = true; a.volume = 0; });
 
-const SVG_ICONS = {
+const SVG = {
   playMini: `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`,
   pauseMini: `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`,
   playBig: `<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`,
-  pauseBig: `<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`
+  pauseBig: `<svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`,
+  playPill: `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`,
+  pausePill: `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`,
+  heartOutline: `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`,
+  heartFill: `<svg width="15" height="15" viewBox="0 0 24 24" fill="#f43f5e"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`,
+  bookmarkOff: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`,
+  bookmarkOn: `<svg width="20" height="20" viewBox="0 0 24 24" fill="#a855f7" stroke="#a855f7" stroke-width="2.2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`
 };
 
 function showToast(msg) {
@@ -41,7 +50,6 @@ function formatTime(sec) {
   return `${m}:${s < 10 ? "0" : ""}${s}`;
 }
 
-// 1. Load Site Config, Custom Icons & Ambient MP3 Files
 async function loadSiteConfig() {
   try {
     const res = await fetch("config.json?t=" + Date.now());
@@ -75,21 +83,13 @@ async function loadSiteConfig() {
         `linear-gradient(rgba(7,7,13,0.48), rgba(7,7,13,0.92)), url('${cfg.banner}')`;
     }
 
-    // Custom Uploaded PNG Icons
     if (cfg.icons) {
-      if (cfg.icons.home) {
-        document.getElementById("pillHome").innerHTML = `<img src="${cfg.icons.home}" class="bnav-icon-img" alt="Home">`;
-      }
-      if (cfg.icons.search) {
-        document.getElementById("pillSearch").innerHTML = `<img src="${cfg.icons.search}" class="bnav-icon-img" alt="Search">`;
-      }
-      if (cfg.icons.library) {
-        document.getElementById("pillLibrary").innerHTML = `<img src="${cfg.icons.library}" class="bnav-icon-img" alt="Library">`;
-      }
+      if (cfg.icons.home) document.getElementById("pillHome").innerHTML = `<img src="${cfg.icons.home}" class="bnav-icon-img" alt="Home">`;
+      if (cfg.icons.search) document.getElementById("pillSearch").innerHTML = `<img src="${cfg.icons.search}" class="bnav-icon-img" alt="Search">`;
+      if (cfg.icons.library) document.getElementById("pillLibrary").innerHTML = `<img src="${cfg.icons.library}" class="bnav-icon-img" alt="Library">`;
       window.customDownloadIcon = cfg.icons.download || "";
     }
 
-    // Custom Uploaded Ambient MP3 Loops
     if (cfg.ambient) {
       if (cfg.ambient.rain) ambientAudios.rain.src = cfg.ambient.rain;
       if (cfg.ambient.vinyl) ambientAudios.vinyl.src = cfg.ambient.vinyl;
@@ -101,69 +101,81 @@ async function loadSiteConfig() {
 
     const reqSec = document.getElementById("requestBoxSection");
     if (reqSec) reqSec.style.display = cfg.showRequestBox === false ? "none" : "block";
-  } catch (e) {
-    console.warn("Config load skipped:", e);
-  }
+  } catch (e) {}
 }
 
-// 2. Load Songs
 async function loadSongs() {
   try {
     const res = await fetch("songs.json?t=" + Date.now());
     allSongs = await res.json();
     filteredSongs = [...allSongs];
     renderSongs(filteredSongs);
-
-    if (allSongs.length > 0) {
-      loadTrackIntoUI(0, false);
-    }
+    if (allSongs.length > 0) loadTrackIntoUI(0, false);
   } catch (err) {
     document.getElementById("tracksList").innerHTML =
-      `<p style="text-align:center;color:#94a3b8;padding:24px;">Admin Panel se pehla song upload karein 🎵</p>`;
+      `<p style="text-align:center;color:#94a3b8;padding:24px;">Upload your first song from Admin Panel</p>`;
   }
 }
 
-// 3. Render Galaxy Song Cards (No Dedicate Button, Subtle Double-Tap Hint)
+function isSongInAnyPlaylist(songId) {
+  return userPlaylists.some(pl => pl.songIds.includes(songId));
+}
+
+// Render Exact Reference Premium Card (Zero Emojis, Single Tap Safe)
 function renderSongs(list) {
   const container = document.getElementById("tracksList");
   if (!list || list.length === 0) {
-    container.innerHTML = `<p style="text-align:center;color:#94a3b8;padding:20px;">Koi song nahi mila.</p>`;
+    container.innerHTML = `<p style="text-align:center;color:#94a3b8;padding:20px;">No songs found.</p>`;
     return;
   }
 
   const dlIconHtml = window.customDownloadIcon
     ? `<img src="${window.customDownloadIcon}" style="width:14px;height:14px;object-fit:contain;">`
-    : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+    : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>`;
 
   container.innerHTML = list.map((song, idx) => {
     const isFav = favorites.includes(song.id);
+    const isSavedInFolder = isSongInAnyPlaylist(song.id);
     const isCurrent = allSongs[currentIndex] && allSongs[currentIndex].id === song.id;
+    const isPlayingThis = isCurrent && !audio.paused;
 
     return `
       <article class="galaxy-song-card ${isCurrent ? "active" : ""}" id="card_${song.id}">
-        <div class="thumb-box" onclick="handleThumbTap(event, ${idx}, '${song.youtube || ""}')">
+        <div class="thumb-box" onclick="handleThumbDoubleTapOnly('${song.youtube || ""}')">
           <img src="${song.cover}" alt="${song.name}" loading="lazy">
-          <span class="mood-chip">${song.mood || "Lofi"}</span>
-          <div class="thumb-play-circle">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-          </div>
+          <button class="thumb-fav-circle ${isFav ? "fav-on" : ""}" onclick="event.stopPropagation(); toggleFav('${song.id}')" title="Favorite">
+            ${isFav ? SVG.heartFill : SVG.heartOutline}
+          </button>
+          ${song.youtube ? `
+            <span class="yt-2x-pill">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+              2x Tap YT
+            </span>` : ""}
         </div>
+
         <div class="card-body">
-          <div class="card-title-row">
-            <div>
-              <h3 class="card-title">${song.name}</h3>
-              <span class="subtle-dtap-hint">Double tap thumbnail for YouTube</span>
-            </div>
-          </div>
+          <h3 class="card-title">${song.name}</h3>
           <p class="card-desc">${song.desc || ""}</p>
-          <div class="card-actions">
-            <button class="pill-act ${isFav ? "fav-on" : ""}" onclick="toggleFav('${song.id}')">
-              ${isFav ? "❤️ Saved" : "🤍 Fav"}
+
+          <div class="card-pills-wrap">
+            <button class="pill-play-solid" onclick="playOrToggleFromCard(${idx})">
+              ${isPlayingThis ? `${SVG.pausePill} Pause` : `${SVG.playPill} Play`}
             </button>
-            <div style="display:flex; gap:8px;">
-              ${song.youtube ? `<a href="${song.youtube}" target="_blank" class="pill-act">▶ Video</a>` : ""}
-              <a href="${song.file}" download class="pill-act" title="Download MP3">${dlIconHtml}</a>
-            </div>
+
+            <button class="pill-outline-glow ${isSavedInFolder ? "saved-state" : ""}" onclick="openSaveModal('${song.id}')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              ${isSavedInFolder ? "Saved" : "Save"}
+            </button>
+
+            <a href="${song.file}" download class="pill-outline-glow">
+              ${dlIconHtml}
+              Download
+            </a>
+
+            <button class="pill-outline-glow" onclick="shareSongByIndex(${idx})">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+              Share
+            </button>
           </div>
         </div>
       </article>
@@ -171,22 +183,28 @@ function renderSongs(list) {
   }).join("");
 }
 
+// Single tap does NOTHING so song never accidentally restarts; Double tap opens YouTube
 let lastTapTime = 0;
-function handleThumbTap(e, idx, ytUrl) {
+function handleThumbDoubleTapOnly(ytUrl) {
   const now = Date.now();
-  if (now - lastTapTime < 320 && ytUrl) {
+  if (now - lastTapTime < 340 && ytUrl) {
     window.open(ytUrl, "_blank");
-  } else {
-    playSongFromList(idx);
   }
   lastTapTime = now;
 }
 
-function playSongFromList(filteredIdx) {
+// Smart Play/Pause Button: Resumes if same song, never restarts unintentionally
+function playOrToggleFromCard(filteredIdx) {
   const song = filteredSongs[filteredIdx];
   if (!song) return;
   const realIdx = allSongs.findIndex(s => s.id === song.id);
-  loadTrackIntoUI(realIdx >= 0 ? realIdx : 0, true);
+  if (realIdx < 0) return;
+
+  if (currentIndex === realIdx && audio.src) {
+    togglePlay();
+  } else {
+    loadTrackIntoUI(realIdx, true);
+  }
 }
 
 function loadTrackIntoUI(idx, autoPlay = true) {
@@ -202,16 +220,12 @@ function loadTrackIntoUI(idx, autoPlay = true) {
   document.getElementById("fpCoverImg").src = song.cover;
   document.getElementById("fpDownloadBtn").href = song.file;
   document.getElementById("fpLyricsBox").textContent =
-    song.lyrics && song.lyrics.trim() ? song.lyrics : "🎵 এই গানের লিরিক্স এখনো যোগ করা হয়নি।";
+    song.lyrics && song.lyrics.trim() ? song.lyrics : "Lyrics not added yet.";
 
   updateFavButtons(song.id);
 
   audio.src = song.file;
   audio.load();
-
-  document.querySelectorAll(".galaxy-song-card").forEach(c => c.classList.remove("active"));
-  const activeCard = document.getElementById("card_" + song.id);
-  if (activeCard) activeCard.classList.add("active");
 
   if (autoPlay) {
     audio.play().then(() => {
@@ -219,15 +233,16 @@ function loadTrackIntoUI(idx, autoPlay = true) {
     }).catch(() => {
       updatePlayIcons(false);
     });
+  } else {
+    renderSongs(filteredSongs);
   }
-}
+    }
 function updatePlayIcons(isPlaying) {
-  document.getElementById("playBtn").innerHTML = isPlaying ? SVG_ICONS.pauseMini : SVG_ICONS.playMini;
-  document.getElementById("fpPlayBigBtn").innerHTML = isPlaying ? SVG_ICONS.pauseBig : SVG_ICONS.playBig;
+  document.getElementById("playBtn").innerHTML = isPlaying ? SVG.pauseMini : SVG.playMini;
+  document.getElementById("fpPlayBigBtn").innerHTML = isPlaying ? SVG.pauseBig : SVG.playBig;
   const wave = document.getElementById("fpWaveform");
-  if (wave) {
-    isPlaying ? wave.classList.add("playing") : wave.classList.remove("playing");
-  }
+  if (wave) isPlaying ? wave.classList.add("playing") : wave.classList.remove("playing");
+  renderSongs(filteredSongs);
 }
 
 function togglePlay() {
@@ -247,7 +262,7 @@ function stopAndResetMini() {
   audio.pause();
   audio.currentTime = 0;
   updatePlayIcons(false);
-  showToast("⏹️ Player stopped");
+  showToast("Player stopped");
 }
 
 function toggleLoop() {
@@ -255,7 +270,7 @@ function toggleLoop() {
   audio.loop = isLooping;
   const btn = document.getElementById("loopBtn");
   isLooping ? btn.classList.add("active-ctrl") : btn.classList.remove("active-ctrl");
-  showToast(isLooping ? "🔁 Repeat: ON" : "➡️ Repeat: OFF");
+  showToast(isLooping ? "Repeat: ON" : "Repeat: OFF");
 }
 
 document.getElementById("nextBtn").onclick = () => {
@@ -272,7 +287,7 @@ document.getElementById("randomBtn").onclick = () => {
   if (allSongs.length === 0) return;
   const rnd = Math.floor(Math.random() * allSongs.length);
   loadTrackIntoUI(rnd, true);
-  showToast("🔀 Shuffle Play");
+  showToast("Shuffle Play");
 };
 
 audio.addEventListener("ended", () => {
@@ -294,9 +309,7 @@ audio.addEventListener("timeupdate", () => {
   }
 });
 progressBar.addEventListener("input", () => {
-  if (audio.duration) {
-    audio.currentTime = (progressBar.value / 100) * audio.duration;
-  }
+  if (audio.duration) audio.currentTime = (progressBar.value / 100) * audio.duration;
 });
 
 document.getElementById("volumeBar").addEventListener("input", (e) => {
@@ -306,19 +319,20 @@ document.getElementById("volumeBar").addEventListener("input", (e) => {
 // Favorites
 function updateFavButtons(songId) {
   const isFav = favorites.includes(songId);
-  document.getElementById("fpFavBtn").textContent = isFav ? "❤️" : "🤍";
+  document.getElementById("fpFavBtn").innerHTML = isFav ? SVG.heartFill : SVG.heartOutline;
+  const isSaved = isSongInAnyPlaylist(songId);
   const saveBtn = document.getElementById("fpSaveBtn");
-  saveBtn.textContent = isFav ? "✓ Saved" : "+ Save";
-  isFav ? saveBtn.classList.add("active-pill") : saveBtn.classList.remove("active-pill");
+  saveBtn.textContent = isSaved ? "Saved" : "+ Save";
+  isSaved ? saveBtn.classList.add("active-pill") : saveBtn.classList.remove("active-pill");
 }
 
 function toggleFav(songId) {
   if (favorites.includes(songId)) {
     favorites = favorites.filter(id => id !== songId);
-    showToast("💔 Removed from Favorites");
+    showToast("Removed from Favorites");
   } else {
     favorites.push(songId);
-    showToast("❤️ Saved to Favorites");
+    showToast("Added to Favorites");
   }
   localStorage.setItem("rlofi_favs", JSON.stringify(favorites));
   if (allSongs[currentIndex]) updateFavButtons(allSongs[currentIndex].id);
@@ -329,29 +343,162 @@ function toggleCurrentFav() {
   if (allSongs[currentIndex]) toggleFav(allSongs[currentIndex].id);
 }
 
+// Custom "Save to..." Playlist Folder System (Starts completely empty)
+function savePlaylistsStorage() {
+  localStorage.setItem("rlofi_playlists", JSON.stringify(userPlaylists));
+}
+
+function openSaveModal(songId) {
+  saveTargetSongId = songId || (allSongs[currentIndex] ? allSongs[currentIndex].id : null);
+  document.getElementById("newPlaylistForm").style.display = userPlaylists.length === 0 ? "flex" : "none";
+  renderSaveSheetList();
+  document.getElementById("saveSheetBackdrop").classList.add("open");
+}
+
+function closeSaveModal() {
+  document.getElementById("saveSheetBackdrop").classList.remove("open");
+  document.getElementById("newPlaylistInput").value = "";
+}
+
+function toggleNewPlaylistInput() {
+  const box = document.getElementById("newPlaylistForm");
+  box.style.display = box.style.display === "flex" ? "none" : "flex";
+  if (box.style.display === "flex") document.getElementById("newPlaylistInput").focus();
+}
+
+function createNewPlaylistFolder() {
+  const input = document.getElementById("newPlaylistInput");
+  const name = input.value.trim();
+  if (!name) return showToast("Enter a playlist name");
+
+  const newFolder = {
+    id: "pl_" + Date.now(),
+    name,
+    songIds: saveTargetSongId ? [saveTargetSongId] : []
+  };
+  userPlaylists.unshift(newFolder);
+  savePlaylistsStorage();
+  input.value = "";
+  document.getElementById("newPlaylistForm").style.display = "none";
+
+  renderSaveSheetList();
+  renderLibraryFolders();
+  if (allSongs[currentIndex]) updateFavButtons(allSongs[currentIndex].id);
+  renderSongs(filteredSongs);
+  showToast(`Saved to "${name}"`);
+}
+
+function toggleSongInPlaylist(plId) {
+  if (!saveTargetSongId) return;
+  const pl = userPlaylists.find(p => p.id === plId);
+  if (!pl) return;
+
+  if (pl.songIds.includes(saveTargetSongId)) {
+    pl.songIds = pl.songIds.filter(id => id !== saveTargetSongId);
+    showToast(`Removed from "${pl.name}"`);
+  } else {
+    pl.songIds.push(saveTargetSongId);
+    showToast(`Saved to "${pl.name}"`);
+  }
+  savePlaylistsStorage();
+  renderSaveSheetList();
+  renderLibraryFolders();
+  if (allSongs[currentIndex]) updateFavButtons(allSongs[currentIndex].id);
+  renderSongs(filteredSongs);
+}
+
+function renderSaveSheetList() {
+  const container = document.getElementById("playlistSheetList");
+  if (userPlaylists.length === 0) {
+    container.innerHTML = `<p style="text-align:center;color:#94a3b8;font-size:13px;padding:18px 8px;">No playlists created yet. Create your first playlist below.</p>`;
+    return;
+  }
+
+  container.innerHTML = userPlaylists.map(pl => {
+    const firstSong = allSongs.find(s => s.id === pl.songIds[0]);
+    const thumb = firstSong ? firstSong.cover : "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232e1065'/></svg>";
+    const isChecked = saveTargetSongId && pl.songIds.includes(saveTargetSongId);
+
+    return `
+      <div class="pl-item-row" onclick="toggleSongInPlaylist('${pl.id}')">
+        <div class="pl-item-left">
+          <img src="${thumb}" alt="Folder">
+          <div>
+            <h4>${pl.name}</h4>
+            <span>${pl.songIds.length} songs</span>
+          </div>
+        </div>
+        <div>${isChecked ? SVG.bookmarkOn : SVG.bookmarkOff}</div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderLibraryFolders() {
+  const grid = document.getElementById("folderGridContainer");
+  if (!grid) return;
+  if (userPlaylists.length === 0) {
+    grid.innerHTML = `<p style="grid-column:1/-1;color:#94a3b8;font-size:12.5px;padding:10px 0;">No custom playlists yet. Tap + Save on any song to create folders.</p>`;
+    return;
+  }
+  grid.innerHTML = userPlaylists.map(pl => {
+    const firstSong = allSongs.find(s => s.id === pl.songIds[0]);
+    const thumb = firstSong ? firstSong.cover : "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%232e1065'/></svg>";
+    return `
+      <div class="folder-card" onclick="openFolderSongs('${pl.id}')">
+        <div class="folder-thumb"><img src="${thumb}" alt="${pl.name}"></div>
+        <div class="folder-meta">
+          <h4>${pl.name}</h4>
+          <span>${pl.songIds.length} songs</span>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function openFolderSongs(plId) {
+  const pl = userPlaylists.find(p => p.id === plId);
+  if (!pl) return;
+  document.getElementById("mainSectionTitle").textContent = pl.name;
+  filteredSongs = allSongs.filter(s => pl.songIds.includes(s.id));
+  renderSongs(filteredSongs);
+  document.getElementById("tracksList").scrollIntoView({ behavior: "smooth" });
+}
+
 // Sleep Timer Cycle
 function cycleSleepTimer() {
   clearTimeout(sleepTimerId);
   const steps = [0, 15, 30, 60];
-  const nextIdx = (steps.indexOf(sleepMinutes) + 1) % steps.length;
-  sleepMinutes = steps[nextIdx];
+  sleepMinutes = steps[(steps.indexOf(sleepMinutes) + 1) % steps.length];
 
   const btn = document.getElementById("fpSleepBtn");
+  const moonSvg = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
   if (sleepMinutes === 0) {
-    btn.textContent = "🌙 Sleep";
+    btn.innerHTML = `${moonSvg} Sleep`;
     btn.classList.remove("active-pill");
-    showToast("⏰ Sleep Timer: OFF");
+    showToast("Sleep Timer: OFF");
   } else {
-    btn.textContent = `🌙 ${sleepMinutes}m`;
+    btn.innerHTML = `${moonSvg} ${sleepMinutes}m`;
     btn.classList.add("active-pill");
-    showToast(`🌙 Sleep Timer: ${sleepMinutes} mins`);
+    showToast(`Sleep Timer: ${sleepMinutes} mins`);
     sleepTimerId = setTimeout(() => {
       audio.pause();
       updatePlayIcons(false);
       sleepMinutes = 0;
-      btn.textContent = "🌙 Sleep";
+      btn.innerHTML = `${moonSvg} Sleep`;
       btn.classList.remove("active-pill");
     }, sleepMinutes * 60000);
+  }
+}
+
+function shareSongByIndex(idx) {
+  const song = filteredSongs[idx];
+  const shareUrl = song && song.youtube ? song.youtube : window.location.href;
+  if (navigator.share) {
+    navigator.share({ title: song ? song.name : "R LOFI 01", url: shareUrl });
+  } else {
+    navigator.clipboard.writeText(shareUrl);
+    showToast("Link copied!");
   }
 }
 
@@ -362,11 +509,11 @@ function shareCurrentSong() {
     navigator.share({ title: song ? song.name : "R LOFI 01", url: shareUrl });
   } else {
     navigator.clipboard.writeText(shareUrl);
-    showToast("🔗 Link copied!");
+    showToast("Link copied!");
   }
 }
 
-// Fullscreen Open, Close & Touch Swipe Down Gesture
+// Fullscreen Open, Close & Swipe Down
 function openFullPlayer() {
   document.getElementById("fullPlayerModal").classList.add("open");
 }
@@ -378,9 +525,7 @@ function closeFullPlayer() {
   const modal = document.getElementById("fullPlayerModal");
   const dragZone = document.getElementById("fpDragZone");
   const card = document.getElementById("fpSwipeCard");
-  let startY = 0;
-  let currentY = 0;
-  let dragging = false;
+  let startY = 0, currentY = 0, dragging = false;
 
   function onStart(e) {
     if (modal.scrollTop > 5) return;
@@ -388,15 +533,11 @@ function closeFullPlayer() {
     dragging = true;
     modal.style.transition = "none";
   }
-
   function onMove(e) {
     if (!dragging) return;
     currentY = e.touches[0].clientY - startY;
-    if (currentY > 0) {
-      modal.style.transform = `translateY(${currentY}px)`;
-    }
+    if (currentY > 0) modal.style.transform = `translateY(${currentY}px)`;
   }
-
   function onEnd() {
     if (!dragging) return;
     dragging = false;
@@ -409,7 +550,6 @@ function closeFullPlayer() {
     }
     currentY = 0;
   }
-
   [dragZone, card].forEach(el => {
     el.addEventListener("touchstart", onStart, { passive: true });
     el.addEventListener("touchmove", onMove, { passive: true });
@@ -425,6 +565,7 @@ function toggleLyricsPanel() {
 // Filters & Search
 function filterMood(mood, btnEl) {
   currentMood = mood;
+  document.getElementById("mainSectionTitle").textContent = mood === "favorites" ? "Favorites" : "Latest Releases";
   document.querySelectorAll(".pill-btn").forEach(b => b.classList.remove("active"));
   if (btnEl) btnEl.classList.add("active");
   applyFilters();
@@ -447,30 +588,35 @@ function applyFilters() {
 }
 document.getElementById("searchInput").addEventListener("input", applyFilters);
 
-// Bottom Navigation Tabs with Active Pill Highlight
+// Bottom Navigation Tabs
 function switchBottomTab(tab) {
   document.querySelectorAll(".bnav-btn").forEach(b => b.classList.remove("active"));
   const searchWrap = document.getElementById("searchWrapper");
+  const libView = document.getElementById("libraryFoldersView");
 
   if (tab === "home") {
     document.getElementById("navHome").classList.add("active");
     searchWrap.style.display = "none";
+    libView.style.display = "none";
     filterMood("all", document.querySelector('[data-mood="all"]'));
     window.scrollTo({ top: 0, behavior: "smooth" });
   } else if (tab === "search") {
     document.getElementById("navSearch").classList.add("active");
+    libView.style.display = "none";
     searchWrap.style.display = "flex";
     searchWrap.scrollIntoView({ behavior: "smooth", block: "center" });
     document.getElementById("searchInput").focus();
   } else if (tab === "library") {
     document.getElementById("navLibrary").classList.add("active");
     searchWrap.style.display = "none";
+    libView.style.display = "block";
+    renderLibraryFolders();
     filterMood("favorites", document.querySelector('[data-mood="favorites"]'));
-    document.getElementById("tracksList").scrollIntoView({ behavior: "smooth" });
+    libView.scrollIntoView({ behavior: "smooth" });
   }
 }
 
-// Custom Uploaded Ambient MP3 Loop Controller
+// Ambient MP3 Loop Controller
 function bindAmbientSlider(sliderId, typeKey, labelName) {
   const slider = document.getElementById(sliderId);
   if (!slider) return;
@@ -479,17 +625,14 @@ function bindAmbientSlider(sliderId, typeKey, labelName) {
     const track = ambientAudios[typeKey];
     if (!track.src) {
       if (val > 0) {
-        showToast(`⚠️ Admin Panel se ${labelName} MP3 upload karein`);
+        showToast(`Upload ${labelName} MP3 in Admin Panel`);
         e.target.value = 0;
       }
       return;
     }
     track.volume = val;
-    if (val > 0 && track.paused) {
-      track.play().catch(() => {});
-    } else if (val === 0 && !track.paused) {
-      track.pause();
-    }
+    if (val > 0 && track.paused) track.play().catch(() => {});
+    else if (val === 0 && !track.paused) track.pause();
   });
 }
 bindAmbientSlider("ambientRain", "rain", "Rain & Thunder");
@@ -507,9 +650,8 @@ document.getElementById("requestForm").addEventListener("submit", (e) => {
   list.unshift({ name, text, date: new Date().toLocaleDateString() });
   localStorage.setItem("rlofi_requests", JSON.stringify(list));
   e.target.reset();
-  showToast("✅ Request bhej di gayi!");
+  showToast("Request submitted!");
 });
 
 loadSiteConfig();
 loadSongs();
-                   
