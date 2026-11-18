@@ -5,10 +5,10 @@ let isPlaying = false;
 let isRandom = false;
 let favoriteSongs = JSON.parse(localStorage.getItem('fav_songs') || '[]');
 let deferredPrompt = null;
+let lastTapTime = 0;
+let lastTapSongIdx = -1;
 
 const audio = new Audio();
-let ambientRain = null;
-let ambientVinyl = null;
 let customDedicateIcon = "";
 let customDownloadIcon = "";
 
@@ -26,6 +26,23 @@ const totalDurationEl = document.getElementById('totalDuration');
 const tracksList = document.getElementById('tracksList');
 const searchInput = document.getElementById('searchInput');
 
+// Toast Notification Helper
+function showToast(msg) {
+  const toast = document.getElementById('toastNotif');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// Safely encode local file paths with | or emojis or spaces
+function safeMediaUrl(path) {
+  if (!path) return '';
+  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  return path.split('/').map(part => encodeURIComponent(part)).join('/');
+}
+
 // PWA App Install Button Logic
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
@@ -38,7 +55,7 @@ document.getElementById('installAppBtn').addEventListener('click', async () => {
     await deferredPrompt.userChoice;
     deferredPrompt = null;
   } else {
-    alert("ব্রাউজারের ওপরে ডানদিকের ৩টি ডট (⋮) মেনুতে চাপ দিয়ে 'Add to Home screen' বা 'Install app' সিলেক্ট করুন!");
+    showToast("ব্রাউজার মেনু (⋮) থেকে 'Add to Home screen' চাপুন 📲");
   }
 });
 
@@ -53,8 +70,8 @@ async function initSite() {
       }
       if (cfg.bio) document.getElementById('siteBio').textContent = cfg.bio;
       if (cfg.avatar) {
-        document.getElementById('avatarImg').src = cfg.avatar;
-        document.getElementById('topLogoImg').src = cfg.avatar;
+        document.getElementById('avatarImg').src = safeMediaUrl(cfg.avatar);
+        document.getElementById('topLogoImg').src = safeMediaUrl(cfg.avatar);
       }
       if (cfg.youtubeUrl) {
         document.getElementById('topYtBtn').href = cfg.youtubeUrl;
@@ -68,8 +85,8 @@ async function initSite() {
         document.documentElement.style.setProperty('--icon-size', cfg.iconSize + 'px');
       }
       if (cfg.icons) {
-        if (cfg.icons.dedicate) customDedicateIcon = cfg.icons.dedicate;
-        if (cfg.icons.download) customDownloadIcon = cfg.icons.download;
+        if (cfg.icons.dedicate) customDedicateIcon = safeMediaUrl(cfg.icons.dedicate);
+        if (cfg.icons.download) customDownloadIcon = safeMediaUrl(cfg.icons.download);
       }
       document.getElementById('ambientSection').style.display = cfg.showAmbientStudio !== false ? 'block' : 'none';
       document.getElementById('requestBoxSection').style.display = cfg.showRequestBox !== false ? 'block' : 'none';
@@ -80,14 +97,21 @@ async function initSite() {
     const songsRes = await fetch('songs.json?t=' + Date.now());
     if (songsRes.ok) {
       const rawSongs = await songsRes.json();
-      songs = rawSongs.map((s, idx) => ({
-        ...s,
-        id: s.id || ('song_' + idx),
-        title: s.title || s.name || s.songName || (s.audio ? s.audio.replace(/\.[^/.]+$/, "") : "Untitled Track"),
-        desc: s.desc || s.description || s.subtitle || "R LOFI 01 Original",
-        mood: s.mood || s.category || "Lofi",
-        ytUrl: s.ytUrl || s.youtube || s.yt || ""
-      }));
+      songs = rawSongs.map((s, idx) => {
+        const rawFile = s.file || s.audio || s.mp3 || "";
+        const rawCover = s.cover || s.image || "";
+        return {
+          ...s,
+          id: s.id || ('song_' + idx),
+          title: s.name || s.title || "Untitled Track",
+          audio: safeMediaUrl(rawFile),
+          rawFileName: rawFile,
+          cover: safeMediaUrl(rawCover) || 'profile_1794970581989.png',
+          desc: s.desc || s.description || "R LOFI 01 Original",
+          mood: s.mood || "Lofi",
+          ytUrl: s.youtube || s.ytUrl || ""
+        };
+      });
       originalSongs = [...songs];
       renderTracks(songs);
       if (songs.length > 0) loadSong(0);
@@ -95,11 +119,15 @@ async function initSite() {
   } catch (e) {}
 }
 
-// বড় থাম্বনেইল কার্ড রেন্ডার (আগের ডিজাইনের মতো)
+// Render Big Thumbnail Cards
 function renderTracks(tracks) {
   if (!tracksList) return;
   if (tracks.length === 0) {
-    tracksList.innerHTML = `<p style="text-align:center; color:#94a3b8; padding:24px;">কোনো গান পাওয়া যায়নি</p>`;
+    tracksList.innerHTML = `
+      <div style="text-align:center; padding:30px 16px; background:rgba(255,255,255,0.03); border-radius:18px; border:1px solid rgba(255,255,255,0.08);">
+        <p style="color:#cbd5e1; margin-bottom:12px;">এখানে কোনো গান পাওয়া যায়নি (প্রথমে কোনো গানে ❤️ Fav দিন)</p>
+        <button onclick="switchBottomTab('home')" class="btn-listen" style="padding:8px 18px; font-size:12.5px;">সব গান দেখুন 🎵</button>
+      </div>`;
     return;
   }
 
@@ -113,10 +141,11 @@ function renderTracks(tracks) {
       : `💌`;
 
     return `
-      <div class="big-song-card ${currentSongIndex === i && isPlaying ? 'active' : ''}">
-        <div class="big-thumb-wrap" ondblclick="openYouTubeVideo('${song.ytUrl}')" onclick="playSongFromList(${i})">
-          <img src="${song.cover || 'profile_1794970581989.png'}" alt="${song.title}">
+      <div id="songCard_${i}" class="big-song-card ${currentSongIndex === i && isPlaying ? 'active' : ''}">
+        <div class="big-thumb-wrap" onclick="handleThumbTap(${i}, '${song.ytUrl}')">
+          <img src="${song.cover}" alt="${song.title}">
           <span class="mood-tag">${song.mood}</span>
+          <span class="dtap-badge">Double tap for YouTube</span>
           <button class="play-overlay-btn">▶️</button>
         </div>
         <div class="big-card-body">
@@ -129,7 +158,7 @@ function renderTracks(tracks) {
             </div>
             <div class="card-act-group">
               ${song.ytUrl ? `<a href="${song.ytUrl}" target="_blank" class="icon-pill">▶️ Video</a>` : ''}
-              <a href="${song.audio}" download="${song.title}.mp3" class="icon-pill">${dlIcon}</a>
+              <a href="${song.audio}" download="${song.rawFileName || (song.title + '.mp3')}" class="icon-pill">${dlIcon}</a>
             </div>
           </div>
         </div>
@@ -138,8 +167,33 @@ function renderTracks(tracks) {
   }).join('');
 }
 
-window.openYouTubeVideo = function(url) {
-  if (url) window.open(url, '_blank');
+// Mobile-friendly Single Tap (Play) & Double Tap (Open YouTube with Notification)
+window.handleThumbTap = function(index, ytUrl) {
+  const now = Date.now();
+  if (lastTapSongIdx === index && (now - lastTapTime) < 350) {
+    // Double tap detected!
+    lastTapTime = 0;
+    if (ytUrl) {
+      showToast("▶️ Opening YouTube Video...");
+      setTimeout(() => window.open(ytUrl, '_blank'), 350);
+    } else {
+      showToast("এই গানের ইউটিউব লিংক যুক্ত করা নেই");
+    }
+  } else {
+    // Single tap -> Play song
+    lastTapTime = now;
+    lastTapSongIdx = index;
+    playSongFromList(index);
+  }
+};
+
+// Click Mini Player -> Scroll to active song card
+window.focusCurrentSongCard = function() {
+  const card = document.getElementById('songCard_' + currentSongIndex);
+  if (card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    showToast("🎵 " + (songs[currentSongIndex]?.title || "Playing"));
+  }
 };
 
 function loadSong(index) {
@@ -149,8 +203,9 @@ function loadSong(index) {
 
   songTitle.textContent = song.title;
   songMood.textContent = song.mood;
-  songCover.src = song.cover || 'profile_1794970581989.png';
+  songCover.src = song.cover;
   audio.src = song.audio;
+  audio.load();
 
   favBtn.classList.toggle('active', favoriteSongs.includes(song.id));
   document.querySelectorAll('.big-song-card').forEach((card, idx) => {
@@ -165,9 +220,13 @@ function togglePlay() {
     playBtn.innerHTML = '▶️';
     isPlaying = false;
   } else {
-    audio.play();
-    playBtn.innerHTML = '⏸️';
-    isPlaying = true;
+    audio.play().then(() => {
+      playBtn.innerHTML = '⏸️';
+      isPlaying = true;
+    }).catch(err => {
+      console.error(err);
+      showToast("⚠️ গানটি লোড হতে সমস্যা হচ্ছে, আবার চাপুন");
+    });
   }
 }
 
@@ -203,6 +262,7 @@ audio.addEventListener('ended', () => nextBtn.click());
 randomBtn.addEventListener('click', () => {
   isRandom = !isRandom;
   randomBtn.classList.toggle('active', isRandom);
+  showToast(isRandom ? "🔀 Shuffle On" : "🔀 Shuffle Off");
 });
 
 if (searchInput) {
@@ -229,7 +289,6 @@ window.filterMood = function(mood, el) {
   renderTracks(songs);
 };
 
-// Bottom Nav Switcher (Home / Search / Library)
 window.switchBottomTab = function(tab) {
   document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
   const searchBox = document.getElementById('searchWrapper');
@@ -257,9 +316,11 @@ window.toggleFavorite = function(songId, el) {
   if (favoriteSongs.includes(songId)) {
     favoriteSongs = favoriteSongs.filter(id => id !== songId);
     if (el) el.classList.remove('fav-active');
+    showToast("💔 Removed from Favorites");
   } else {
     favoriteSongs.push(songId);
     if (el) el.classList.add('fav-active');
+    showToast("❤️ Added to Library / Favorites");
   }
   localStorage.setItem('fav_songs', JSON.stringify(favoriteSongs));
 };
@@ -327,40 +388,88 @@ if (reqForm) {
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     });
     localStorage.setItem('rlofi_requests', JSON.stringify(existing));
-    alert("আপনার গানের অনুরোধ সফলভাবে জমা নেওয়া হয়েছে! 📩");
+    showToast("📩 গানের অনুরোধ সফলভাবে জমা হয়েছে!");
     reqForm.reset();
   });
 }
 
+// Built-in Web Audio API Ambient Generator (কোনো এক্সটার্নাল লিংক ছাড়াই রিয়েল বৃষ্টি ও ভিনাইল শব্দ)
 function initAmbient() {
+  let audioCtx = null;
+  let rainGain = null;
+  let vinylGain = null;
+
+  function ensureAudioCtx() {
+    if (!audioCtx) {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AudioContext();
+
+      // 1. Soft Rain Generator (Pink/Brown filtered noise)
+      const bufferSize = audioCtx.sampleRate * 3;
+      const rainBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const rainData = rainBuffer.getChannelData(0);
+      let lastOut = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        rainData[i] = (lastOut + (0.04 * white)) / 1.04;
+        lastOut = rainData[i];
+        rainData[i] *= 2.5;
+      }
+      const rainSource = audioCtx.createBufferSource();
+      rainSource.buffer = rainBuffer;
+      rainSource.loop = true;
+
+      const rainFilter = audioCtx.createBiquadFilter();
+      rainFilter.type = 'lowpass';
+      rainFilter.frequency.value = 950;
+
+      rainGain = audioCtx.createGain();
+      rainGain.gain.value = 0;
+
+      rainSource.connect(rainFilter);
+      rainFilter.connect(rainGain);
+      rainGain.connect(audioCtx.destination);
+      rainSource.start();
+
+      // 2. Vinyl Crackle Generator
+      const vinylBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const vinylData = vinylBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        vinylData[i] = Math.random() > 0.996 ? (Math.random() * 2 - 1) * 0.7 : (Math.random() * 2 - 1) * 0.015;
+      }
+      const vinylSource = audioCtx.createBufferSource();
+      vinylSource.buffer = vinylBuffer;
+      vinylSource.loop = true;
+
+      const vinylFilter = audioCtx.createBiquadFilter();
+      vinylFilter.type = 'bandpass';
+      vinylFilter.frequency.value = 1800;
+
+      vinylGain = audioCtx.createGain();
+      vinylGain.gain.value = 0;
+
+      vinylSource.connect(vinylFilter);
+      vinylFilter.connect(vinylGain);
+      vinylGain.connect(audioCtx.destination);
+      vinylSource.start();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
   const rainSlider = document.getElementById('ambientRain');
   const vinylSlider = document.getElementById('ambientVinyl');
 
   if (rainSlider) {
     rainSlider.addEventListener('input', (e) => {
-      const v = e.target.value / 100;
-      if (!ambientRain) {
-        ambientRain = new Audio('https://assets.mixkit.co/active_storage/sfx/2433/2433-84.wav');
-        ambientRain.loop = true;
-      }
-      if (v > 0) {
-        ambientRain.volume = v;
-        if (ambientRain.paused) ambientRain.play().catch(() => {});
-      } else ambientRain.pause();
+      ensureAudioCtx();
+      rainGain.gain.value = (e.target.value / 100) * 0.45;
     });
   }
 
   if (vinylSlider) {
     vinylSlider.addEventListener('input', (e) => {
-      const v = e.target.value / 100;
-      if (!ambientVinyl) {
-        ambientVinyl = new Audio('https://www.soundjay.com/misc/sounds/vintage-record-player-crackles-01.mp3');
-        ambientVinyl.loop = true;
-      }
-      if (v > 0) {
-        ambientVinyl.volume = v * 0.8;
-        if (ambientVinyl.paused) ambientVinyl.play().catch(() => {});
-      } else ambientVinyl.pause();
+      ensureAudioCtx();
+      vinylGain.gain.value = (e.target.value / 100) * 0.55;
     });
   }
 }
@@ -369,3 +478,4 @@ initSite().then(() => {
   checkDedication();
   initAmbient();
 });
+      
