@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#08080e" />
+  <meta name="theme-color" content="#07070d" />
   <title>R LOFI 01 | Official Music</title>
   <link rel="manifest" href="manifest.json" />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,8 +12,8 @@
       --bg: #07070d;
       --galaxy-1: rgba(168, 85, 247, 0.18);
       --galaxy-2: rgba(59, 130, 246, 0.14);
-      --card: rgba(18, 16, 32, 0.72);
-      --border: rgba(168, 85, 247, 0.28);
+      --card: rgba(18, 16, 32, 0.78);
+      --border: rgba(168, 85, 247, 0.32);
       --accent: #a855f7;
       --accent-glow: rgba(168, 85, 247, 0.55);
       --text: #ffffff;
@@ -38,14 +38,10 @@
 
     /* Top Glass Header */
     .top-nav {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
       padding: 12px 16px;
-      background: rgba(7, 7, 13, 0.85);
+      background: rgba(7, 7, 13, 0.88);
       backdrop-filter: blur(18px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
@@ -65,17 +61,12 @@
       border: 1px solid var(--accent);
       color: #fff; text-decoration: none; font-size: 12.5px; font-weight: 600;
       box-shadow: 0 0 14px rgba(168, 85, 247, 0.25);
-      transition: 0.2s;
     }
-    .yt-pill-top:active { transform: scale(0.95); }
 
     /* Hero Banner */
     .hero-section {
-      position: relative;
-      padding: 36px 20px 30px;
-      text-align: center;
-      background-size: cover;
-      background-position: center;
+      position: relative; padding: 36px 20px 30px; text-align: center;
+      background-size: cover; background-position: center;
       border-bottom: 1px solid rgba(168, 85, 247, 0.2);
     }
 
@@ -108,8 +99,7 @@
       padding: 11px 22px; border-radius: 999px; border: none;
       background: linear-gradient(135deg, var(--accent), #7e22ce);
       color: #fff; font-family: inherit; font-weight: 600; font-size: 13.5px;
-      box-shadow: 0 0 22px var(--accent-glow);
-      cursor: pointer; text-decoration: none;
+      box-shadow: 0 0 22px var(--accent-glow); cursor: pointer;
     }
 
     .btn-glow-yt {
@@ -145,6 +135,7 @@
     }
     .mood-bar::-webkit-scrollbar { display: none; }
     .pill-btn {
+      display: inline-flex; align-items: center; gap: 6px;
       padding: 8px 16px; border-radius: 999px;
       border: 1px solid rgba(255, 255, 255, 0.12);
       background: rgba(255, 255, 255, 0.04); color: #cbd5e1;
@@ -156,90 +147,129 @@
       color: #fff; font-weight: 600; box-shadow: 0 0 16px var(--accent-glow);
     }
 
-    /* Galaxy Glowing Song Card */
-    .tracks-grid { display: flex; flex-direction: column; gap: 18px; }
+    /* Library Folders Grid */
+    .library-view { display: none; margin-bottom: 18px; }
+    .lib-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .lib-header h3 { font-size: 16px; font-weight: 700; color: #f3e8ff; }
+    .folder-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .folder-card {
+      background: linear-gradient(145deg, rgba(28, 20, 52, 0.85), rgba(12, 11, 24, 0.92));
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      border-radius: 18px; overflow: hidden; cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+    }
+    .folder-thumb {
+      width: 100%; aspect-ratio: 16 / 10; background: #17142e;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .folder-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .folder-meta { padding: 10px 12px; }
+    .folder-meta h4 { font-size: 13.5px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .folder-meta span { font-size: 11px; color: var(--muted); }
+
+    /* Premium Galaxy Song Card (Exact Reference Layout) */
+    .tracks-grid { display: flex; flex-direction: column; gap: 20px; }
 
     .galaxy-song-card {
-      background: linear-gradient(145deg, rgba(28, 20, 52, 0.85), rgba(12, 11, 24, 0.92));
-      border: 1px solid rgba(168, 85, 247, 0.26);
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.5), inset 0 0 24px rgba(168, 85, 247, 0.08);
+      background: linear-gradient(155deg, rgba(24, 18, 44, 0.88), rgba(10, 10, 20, 0.96));
+      border: 1px solid rgba(168, 85, 247, 0.28);
+      border-radius: 24px;
+      padding: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), inset 0 0 24px rgba(168, 85, 247, 0.08);
       transition: 0.25s;
     }
     .galaxy-song-card.active {
       border-color: var(--accent);
-      box-shadow: 0 0 28px rgba(168, 85, 247, 0.42), inset 0 0 28px rgba(168, 85, 247, 0.15);
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.42), inset 0 0 28px rgba(168, 85, 247, 0.14);
     }
 
     .thumb-box {
       position: relative;
       width: 100%;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 16 / 10;
+      border-radius: 16px;
       background: #131126;
-      cursor: pointer;
       overflow: hidden;
+      user-select: none;
     }
     .thumb-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
-    .mood-chip {
-      position: absolute; top: 10px; left: 10px;
-      background: rgba(8, 8, 16, 0.78); backdrop-filter: blur(8px);
-      padding: 4px 10px; border-radius: 999px; font-size: 10.5px;
-      font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
-      border: 1px solid rgba(168, 85, 247, 0.35); color: #e9d5ff;
+    .thumb-fav-circle {
+      position: absolute; top: 10px; right: 10px;
+      width: 34px; height: 34px; border-radius: 50%;
+      background: rgba(12, 10, 24, 0.72);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 0 14px rgba(0, 0, 0, 0.45);
+    }
+    .thumb-fav-circle.fav-on {
+      border-color: #f43f5e; color: #f43f5e;
+      box-shadow: 0 0 16px rgba(244, 63, 94, 0.45);
     }
 
-    .thumb-play-circle {
-      position: absolute; bottom: 12px; right: 12px;
-      width: 42px; height: 42px; border-radius: 50%; border: none;
-      background: linear-gradient(135deg, var(--accent), #7e22ce);
-      color: #fff; display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 0 18px var(--accent-glow);
+    .yt-2x-pill {
+      position: absolute; bottom: 10px; right: 10px;
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 999px;
+      background: #ef4444; color: #fff;
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.3px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.55);
       pointer-events: none;
     }
 
-    .card-body { padding: 14px 16px; }
-    .card-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
-    .card-title { font-size: 15.5px; font-weight: 700; line-height: 1.35; color: #fff; }
-    .subtle-dtap-hint {
-      font-size: 10.5px; color: #a78bfa; opacity: 0.85;
-      margin-top: 4px; display: inline-block;
-    }
-    .card-desc { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+    .card-body { padding: 14px 4px 4px; }
+    .card-title { font-size: 17px; font-weight: 800; line-height: 1.35; color: #fff; }
+    .card-desc { font-size: 12.5px; color: #cbd5e1; margin-top: 6px; line-height: 1.48; }
 
-    .card-actions {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-top: 13px; padding-top: 11px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    .card-pills-wrap {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 9px;
+      margin-top: 15px;
     }
 
-    .pill-act {
+    .pill-play-solid {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 9px 18px; border-radius: 999px; border: none;
+      background: linear-gradient(135deg, #c084fc, var(--accent));
+      color: #fff; font-family: inherit; font-size: 13px; font-weight: 700;
+      cursor: pointer; box-shadow: 0 0 18px rgba(168, 85, 247, 0.45);
+    }
+
+    .pill-outline-glow {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 13px; border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      background: rgba(255, 255, 255, 0.05); color: #f1f5f9;
-      font-family: inherit; font-size: 12px; font-weight: 500;
+      padding: 8px 15px; border-radius: 999px;
+      border: 1.2px solid rgba(168, 85, 247, 0.55);
+      background: rgba(168, 85, 247, 0.06);
+      color: #f8fafc; font-family: inherit; font-size: 12.5px; font-weight: 600;
       text-decoration: none; cursor: pointer; transition: 0.2s;
     }
-    .pill-act.fav-on {
-      border-color: #f43f5e; background: rgba(244, 63, 94, 0.16); color: #fda4af;
+    .pill-outline-glow.saved-state {
+      background: rgba(168, 85, 247, 0.24);
+      border-color: var(--accent);
     }
 
     /* Ambient & Request Glass Cards */
     .glass-box {
-      background: linear-gradient(145deg, rgba(24, 18, 44, 0.78), rgba(10, 10, 20, 0.9));
-      border: 1px solid rgba(168, 85, 247, 0.22);
+      background: linear-gradient(145deg, rgba(24, 18, 44, 0.8), rgba(10, 10, 20, 0.92));
+      border: 1px solid rgba(168, 85, 247, 0.25);
       border-radius: 22px; padding: 18px; margin-top: 22px;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
     }
-    .glass-box h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .glass-box h3 {
+      font-size: 16px; font-weight: 700; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 8px;
+    }
     .glass-box p.sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
 
     .amb-row {
       display: flex; align-items: center; justify-content: space-between; gap: 12px;
       margin-bottom: 12px; font-size: 13px; font-weight: 500;
     }
+    .amb-label { display: inline-flex; align-items: center; gap: 7px; min-width: 135px; }
     .amb-row input[type="range"] { flex: 1; accent-color: var(--accent); cursor: pointer; }
 
     .req-input {
@@ -255,10 +285,10 @@
       cursor: pointer; box-shadow: 0 0 18px var(--accent-glow);
     }
 
-    /* Mini Floating Player Bar (Exact Previous Style) */
+    /* Mini Floating Player Bar */
     .mini-bar {
       position: fixed; bottom: 64px; left: 0; right: 0; z-index: 90;
-      background: rgba(16, 13, 30, 0.94);
+      background: rgba(16, 13, 30, 0.95);
       backdrop-filter: blur(22px);
       border-top: 1px solid rgba(168, 85, 247, 0.35);
       padding: 8px 14px;
@@ -286,7 +316,7 @@
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
     }
-        /* Fullscreen Player Modal (Glowing Card + Drag Pill + Waveform + Volume) */
+        /* Fullscreen Player Modal */
     .fp-modal {
       position: fixed; inset: 0; z-index: 200;
       background: radial-gradient(circle at top, #1b1136 0%, #07070d 75%);
@@ -356,15 +386,15 @@
     .fp-title { font-size: 17px; font-weight: 800; line-height: 1.35; color: #fff; }
     .fp-artist { font-size: 12.5px; color: #cbd5e1; margin-top: 4px; font-weight: 500; }
 
-    /* Action Pills Row (Heart, Save, Share, Download, Sleep) */
+    /* Action Pills Row */
     .fp-pills-row {
       display: flex; align-items: center; justify-content: center;
       flex-wrap: wrap; gap: 8px; margin: 16px 0;
     }
     .fp-pill {
-      display: inline-flex; align-items: center; gap: 5px;
+      display: inline-flex; align-items: center; gap: 6px;
       padding: 7px 13px; border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.16);
       background: rgba(255, 255, 255, 0.05);
       color: #fff; font-family: inherit; font-size: 12px; font-weight: 500;
       text-decoration: none; cursor: pointer;
@@ -375,9 +405,7 @@
 
     /* Seek Bar */
     .fp-seek-wrap { margin: 12px 0 6px; }
-    .fp-seek-wrap input[type="range"] {
-      width: 100%; accent-color: var(--accent); cursor: pointer;
-    }
+    .fp-seek-wrap input[type="range"] { width: 100%; accent-color: var(--accent); cursor: pointer; }
     .fp-time-row {
       display: flex; justify-content: space-between;
       font-size: 11.5px; color: var(--muted); margin-top: 4px;
@@ -411,14 +439,13 @@
       font-size: 12px; color: #cbd5e1; display: flex;
       align-items: center; justify-content: center; gap: 6px; margin-bottom: 6px;
     }
-    .fp-vol-box input[type="range"] {
-      width: 100%; accent-color: var(--accent); cursor: pointer;
-    }
+    .fp-vol-box input[type="range"] { width: 100%; accent-color: var(--accent); cursor: pointer; }
 
     /* Lyrics Box inside Fullscreen */
     .fp-lyrics-toggle {
       margin-top: 14px; font-size: 12px; color: #c084fc;
       background: transparent; border: none; cursor: pointer; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 6px;
     }
     .fp-lyrics-panel {
       display: none; margin-top: 12px; padding: 12px;
@@ -427,7 +454,79 @@
       white-space: pre-line; max-height: 150px; overflow-y: auto;
     }
 
-    /* Bottom Navigation Bar (3 Premium White SVG Icons + Glowing Pill Indicator) */
+    /* Save to Playlist Bottom Sheet Modal */
+    .sheet-backdrop {
+      position: fixed; inset: 0; z-index: 250;
+      background: rgba(0, 0, 0, 0.72); backdrop-filter: blur(6px);
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .sheet-backdrop.open { display: flex; }
+
+    .save-sheet {
+      width: 100%; max-width: 520px;
+      background: linear-gradient(180deg, #16122b 0%, #0b0a16 100%);
+      border-top: 1.5px solid rgba(168, 85, 247, 0.5);
+      border-radius: 26px 26px 0 0;
+      padding: 12px 18px 26px;
+      box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.8);
+      max-height: 78vh; display: flex; flex-direction: column;
+    }
+    .sheet-pill {
+      width: 42px; height: 4px; border-radius: 999px;
+      background: rgba(255, 255, 255, 0.25); margin: 0 auto 14px;
+    }
+    .sheet-head {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .sheet-head h3 { font-size: 18px; font-weight: 800; color: #fff; }
+    .sheet-close {
+      background: rgba(255, 255, 255, 0.08); border: none; color: #fff;
+      width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .playlist-rows {
+      overflow-y: auto; flex: 1; margin-bottom: 14px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .pl-item-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 12px;
+      padding: 8px 10px; border-radius: 14px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      cursor: pointer;
+    }
+    .pl-item-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .pl-item-left img {
+      width: 54px; height: 38px; border-radius: 9px; object-fit: cover;
+      background: #1e1b4b; border: 1px solid rgba(168, 85, 247, 0.35);
+    }
+    .pl-item-left h4 { font-size: 14px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pl-item-left span { font-size: 11.5px; color: var(--muted); }
+
+    .new-pl-create-box {
+      display: none; gap: 8px; margin-bottom: 12px;
+    }
+    .new-pl-create-box input {
+      flex: 1; padding: 10px 13px; border-radius: 12px;
+      border: 1px solid var(--accent); background: rgba(0, 0, 0, 0.45);
+      color: #fff; font-family: inherit; font-size: 13.5px; outline: none;
+    }
+    .new-pl-create-box button {
+      padding: 10px 16px; border-radius: 12px; border: none;
+      background: var(--accent); color: #fff; font-weight: 700; cursor: pointer;
+    }
+
+    .btn-new-playlist {
+      width: 100%; padding: 12px; border-radius: 999px;
+      border: 1.2px solid rgba(168, 85, 247, 0.55);
+      background: rgba(168, 85, 247, 0.14); color: #fff;
+      font-family: inherit; font-size: 14px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      cursor: pointer;
+    }
+
+    /* Bottom Navigation Bar */
     .bottom-nav {
       position: fixed; bottom: 0; left: 0; right: 0; height: 64px; z-index: 100;
       background: rgba(10, 9, 20, 0.96); backdrop-filter: blur(22px);
@@ -459,7 +558,7 @@
       position: fixed; top: 68px; left: 50%; transform: translateX(-50%);
       background: rgba(20, 16, 40, 0.96); border: 1px solid var(--accent);
       color: #fff; padding: 9px 18px; border-radius: 999px;
-      font-size: 12.5px; font-weight: 600; z-index: 300;
+      font-size: 12.5px; font-weight: 600; z-index: 350;
       opacity: 0; pointer-events: none; transition: 0.25s;
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.65); white-space: nowrap;
     }
@@ -489,7 +588,7 @@
     <p id="siteTagline" class="hero-tagline">LISTEN • RELAX • FEEL • REMEMBER</p>
     <p id="siteBio" class="hero-bio">Original Music | Romantic | Sad | Lofi</p>
     <div class="hero-btns">
-      <button onclick="playSongFromList(0)" class="btn-glow-primary">
+      <button onclick="playOrToggleFromCard(0)" class="btn-glow-primary">
         Listen Now
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
       </button>
@@ -502,9 +601,9 @@
     <div class="section-head">
       <h2>
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2.2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-        Latest Releases
+        <span id="mainSectionTitle">Latest Releases</span>
       </h2>
-      <p>Filter by mood • Thumbnail par double tap karke YouTube video dekhein</p>
+      <p>Filter by mood • Thumbnail par 2x tap karke YouTube video dekhein</p>
     </div>
 
     <div id="searchWrapper" class="search-box">
@@ -517,32 +616,59 @@
       <button class="pill-btn" data-mood="Romantic" onclick="filterMood('Romantic', this)">Romantic</button>
       <button class="pill-btn" data-mood="Sad" onclick="filterMood('Sad', this)">Sad</button>
       <button class="pill-btn" data-mood="Lofi" onclick="filterMood('Lofi', this)">Lofi</button>
-      <button class="pill-btn" data-mood="favorites" onclick="filterMood('favorites', this)">❤️ Favorites</button>
+      <button class="pill-btn" data-mood="favorites" onclick="filterMood('favorites', this)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        Favorites
+      </button>
+    </div>
+
+    <!-- Custom Library Folders View -->
+    <div id="libraryFoldersView" class="library-view">
+      <div class="lib-header">
+        <h3>My Playlists</h3>
+        <button class="pill-outline-glow" onclick="openSaveModal(allSongs[currentIndex]?.id || '')">+ New Playlist</button>
+      </div>
+      <div id="folderGridContainer" class="folder-grid"></div>
     </div>
 
     <div id="tracksList" class="tracks-grid"></div>
 
-    <!-- Ambient Sound Studio (Custom Admin Uploaded MP3 Loops) -->
+    <!-- Ambient Sound Studio (Zero Emojis, Clean SVG Icons) -->
     <section id="ambientSection" class="glass-box">
-      <h3>🎧 Ambient Sound Studio</h3>
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2.2"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+        Ambient Sound Studio
+      </h3>
       <p class="sub">Mix rain & thunder, vinyl crackle & night ambience in seamless loop.</p>
       <div class="amb-row">
-        <span>🌧️ Rain & Thunder</span>
+        <span class="amb-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2.2"><path d="M20 16.2A4.5 4.5 0 0 0 17.5 8h-1.8A7 7 0 1 0 4 14.9"/><path d="M16 14v6"/><path d="M8 14v6"/><path d="M12 16v6"/></svg>
+          Rain & Thunder
+        </span>
         <input type="range" id="ambientRain" min="0" max="100" value="0">
       </div>
       <div class="amb-row">
-        <span>💿 Vinyl Crackle</span>
+        <span class="amb-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+          Vinyl Crackle
+        </span>
         <input type="range" id="ambientVinyl" min="0" max="100" value="0">
       </div>
       <div class="amb-row" style="margin-bottom:0;">
-        <span>🌙 Night Ambience</span>
+        <span class="amb-label">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2.2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          Night Ambience
+        </span>
         <input type="range" id="ambientNight" min="0" max="100" value="0">
       </div>
     </section>
 
     <!-- Song Request Box -->
     <section id="requestBoxSection" class="glass-box">
-      <h3>📩 Request a Song / Vibe</h3>
+      <h3>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Request a Song / Vibe
+      </h3>
       <p class="sub">Apni pasand ka song ya mood suggest karein.</p>
       <form id="requestForm">
         <input type="text" id="reqName" class="req-input" placeholder="Your Name" required>
@@ -552,7 +678,7 @@
     </section>
   </div>
 
-  <!-- Mini Floating Bar (Tap left side to open Fullscreen Player) -->
+  <!-- Mini Floating Bar -->
   <div id="miniBar" class="mini-bar">
     <div class="mini-left" onclick="openFullPlayer()">
       <img id="songCover" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%231e1b4b'/></svg>" alt="Cover">
@@ -594,11 +720,22 @@
       <div class="fp-artist">R LOFI 01</div>
 
       <div class="fp-pills-row">
-        <button id="fpFavBtn" class="fp-pill" onclick="toggleCurrentFav()">🤍</button>
-        <button id="fpSaveBtn" class="fp-pill" onclick="toggleCurrentFav()">+ Save</button>
-        <button class="fp-pill" onclick="shareCurrentSong()">↗ Share</button>
-        <a id="fpDownloadBtn" href="#" download class="fp-pill">↓ Download</a>
-        <button id="fpSleepBtn" class="fp-pill" onclick="cycleSleepTimer()">🌙 Sleep</button>
+        <button id="fpFavBtn" class="fp-pill" onclick="toggleCurrentFav()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        </button>
+        <button id="fpSaveBtn" class="fp-pill" onclick="openSaveModal(allSongs[currentIndex]?.id)">+ Save</button>
+        <button class="fp-pill" onclick="shareCurrentSong()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Share
+        </button>
+        <a id="fpDownloadBtn" href="#" download class="fp-pill">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+          Download
+        </a>
+        <button id="fpSleepBtn" class="fp-pill" onclick="cycleSleepTimer()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          Sleep
+        </button>
       </div>
 
       <div class="fp-seek-wrap">
@@ -613,54 +750,4 @@
         <button id="randomBtn" class="fp-ctrl-btn" title="Shuffle">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
         </button>
-        <button id="prevBtn" class="fp-ctrl-btn" title="Previous">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-        </button>
-        <button id="fpPlayBigBtn" class="fp-play-big" onclick="togglePlay()">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-        </button>
-        <button id="fpNextBtn" class="fp-ctrl-btn" onclick="document.getElementById('nextBtn').click()" title="Next">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-        </button>
-        <button id="loopBtn" class="fp-ctrl-btn" onclick="toggleLoop()" title="Repeat">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-        </button>
-      </div>
-
-      <div class="fp-vol-box">
-        <div class="fp-vol-label">🔊 Volume</div>
-        <input type="range" id="volumeBar" min="0" max="100" value="100">
-      </div>
-
-      <button class="fp-lyrics-toggle" onclick="toggleLyricsPanel()">📝 Show / Hide Lyrics</button>
-      <div id="fpLyricsBox" class="fp-lyrics-panel">🎵 এই গানের লিরিক্স এখনো যোগ করা হয়নি।</div>
-    </div>
-    <div></div>
-  </div>
-
-  <!-- Bottom Navigation Bar -->
-  <nav class="bottom-nav">
-    <button id="navHome" class="bnav-btn active" onclick="switchBottomTab('home')">
-      <div id="pillHome" class="bnav-pill">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-      </div>
-      <span>Home</span>
-    </button>
-    <button id="navSearch" class="bnav-btn" onclick="switchBottomTab('search')">
-      <div id="pillSearch" class="bnav-pill">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-      </div>
-      <span>Search</span>
-    </button>
-    <button id="navLibrary" class="bnav-btn" onclick="switchBottomTab('library')">
-      <div id="pillLibrary" class="bnav-pill">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
-      </div>
-      <span>Library</span>
-    </button>
-  </nav>
-
-  <script src="app.js?v=2"></script>
-</body>
-</html>
-        
+        <button id="prevBtn" cla
