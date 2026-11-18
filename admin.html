@@ -1,105 +1,174 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>R LOFI 01 | Admin Panel</title>
+<title>R LOFI 01 | Admin Studio</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#100b19;color:#fff;font-family:Arial,sans-serif;padding:20px}
-.box{max-width:650px;margin:0 auto 22px;background:#1c1426;padding:22px;border-radius:16px;border:1px solid #3c2852}
+body{margin:0;background:#100b19;color:#fff;font-family:Arial,sans-serif;padding:15px}
+.box{max-width:680px;margin:0 auto 18px;background:#1c1426;padding:20px;border-radius:16px;border:1px solid #3c2852}
 h2,h3{color:#d8a8ff;margin-top:0}
-label{display:block;font-size:13px;color:#c8b5d5;margin:12px 0 5px}
-input[type=text],input[type=password],select,textarea{width:100%;padding:11px;border-radius:10px;border:1px solid #452e5e;background:#130d1c;color:#fff;font-size:14px}
-input[type=file]{width:100%;padding:9px;background:#130d1c;border:1px dashed #a45ce1;border-radius:10px;color:#d8a8ff}
-button{background:#a45ce1;color:#fff;border:0;padding:12px 20px;border-radius:25px;font-weight:bold;font-size:14px;cursor:pointer;margin-top:14px;width:100%}
-button:disabled{opacity:0.5;cursor:not-allowed}
+label{display:block;font-size:12px;color:#c8b5d5;margin:10px 0 4px}
+input[type=text],input[type=password],select{width:100%;padding:10px;border-radius:10px;border:1px solid #452e5e;background:#130d1c;color:#fff;font-size:14px}
+input[type=color]{width:100%;height:42px;border:1px solid #452e5e;border-radius:10px;background:#130d1c;cursor:pointer;padding:3px}
+input[type=file]{width:100%;padding:8px;background:#130d1c;border:1px dashed #a45ce1;border-radius:10px;color:#d8a8ff;font-size:12px}
+button{background:#a45ce1;color:#fff;border:0;padding:12px 18px;border-radius:25px;font-weight:bold;font-size:14px;cursor:pointer;margin-top:12px;width:100%}
+button:disabled{opacity:0.5}
+.secondary-btn{background:#2a1d3a;border:1px solid #a45ce1;margin-top:8px}
 .del-btn{background:#e11d48;width:auto;padding:6px 14px;font-size:12px;margin:0}
-.song-item{display:flex;justify-content:space-between;align-items:center;background:#130d1c;padding:12px;border-radius:10px;margin-top:10px;border:1px solid #2e1f40}
 .status{margin-top:10px;font-size:13px;color:#86efac;text-align:center}
 .stats{display:flex;gap:12px;text-align:center}
-.stat-card{flex:1;background:#130d1c;padding:14px;border-radius:12px;border:1px solid #322344}
-.stat-card h3{margin:0;font-size:22px;color:#fff}
-.icon-preview-box{display:flex;align-items:center;gap:15px;margin-top:12px;background:#130d1c;padding:12px;border-radius:12px;border:1px solid #322344}
-.app-icon-mock{width:64px;height:64px;border-radius:16px;background:#100b19;overflow:hidden;border:1px solid #a45ce1;flex-shrink:0}
-.app-icon-mock img{width:100%;height:100%;object-fit:cover}
+.stat-card{flex:1;background:#130d1c;padding:12px;border-radius:12px;border:1px solid #322344}
+.stat-card h3{margin:0;font-size:20px;color:#fff}
+.preview-wrapper{background:#130d1c;border:2px solid #a45ce1;border-radius:22px;padding:10px;margin-top:10px}
+.preview-bar{display:flex;justify-content:space-between;align-items:center;padding:4px 8px 10px;font-size:12px;color:#d8a8ff}
+.phone-frame{width:100%;height:460px;border:0;border-radius:14px;background:#100b19}
+details.folder{background:#150f1e;border:1px solid #3c2852;border-radius:14px;margin-bottom:12px;overflow:hidden}
+details.folder summary{padding:14px 16px;font-weight:bold;color:#e0aaff;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;background:#21172e}
+details.folder summary::-webkit-details-marker{display:none}
+.folder-body{padding:14px 16px;border-top:1px solid #322344}
+.icon-slot{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#1c1426;padding:10px;border-radius:10px;margin-bottom:8px;border:1px solid #2e1f40}
+.icon-slot-info{flex:1;min-width:0}
+.icon-slot-info strong{display:block;font-size:13px;color:#f3e8ff;margin-bottom:4px}
+.icon-thumb{width:42px;height:42px;border-radius:10px;background:#2a1d3a;border:1px solid #a45ce1;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:7px}
+.icon-thumb img{width:100%;height:100%;object-fit:contain}
+.color-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.song-item{display:flex;justify-content:space-between;align-items:center;background:#130d1c;padding:12px;border-radius:10px;margin-top:10px;border:1px solid #2e1f40}
 </style>
 </head>
 <body>
 
 <div class="box">
- <h2>🔐 R LOFI 01 Admin Panel</h2>
+ <h2>🔐 R LOFI 01 Admin Studio</h2>
  <div class="stats">
   <div class="stat-card"><h3 id="visitCount">...</h3><small style="color:#bcaacb">Total Visits</small></div>
   <div class="stat-card"><h3 id="playCount">...</h3><small style="color:#bcaacb">Song Plays</small></div>
  </div>
- <label>GitHub Personal Access Token (একবার দিলে ব্রাউজারে সেভ থাকবে)</label>
+ <label>GitHub Personal Access Token</label>
  <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
- <button id="saveTokenBtn">Save Token & Load Data</button>
+ <button id="saveTokenBtn">Save Token & Load Studio</button>
  <div class="status" id="authStatus"></div>
 </div>
 
-<!-- APP LOGO / ICON UPDATER -->
 <div class="box">
- <h3>📱 App Icon / Logo পরিবর্তন করুন</h3>
- <p style="font-size:12px;color:#bcaacb;margin-top:-6px">যেকোনো ছবি সিলেক্ট করলে অটোমেটিক 512x512 Full-Bleed Square অ্যাপ আইকন তৈরি হবে (কোনো সাদা বর্ডার থাকবে না)।</p>
- <input type="file" id="appIconFile" accept="image/*">
- <div class="icon-preview-box">
-  <div class="app-icon-mock"><img id="appIconPreview" src="profile_1794922298525.png" alt="App Icon Preview"></div>
-  <div style="font-size:12px;color:#d8a8ff">
-   <strong>Home Screen Preview (512×512)</strong><br>
-   <span style="color:#bcaacb">ফোনের হোম স্ক্রিনে আইকনটি ঠিক এমন দেখাবে</span>
+ <h3>📱 Live Website Preview (সেভ করার আগেই পরিবর্তন দেখুন)</h3>
+ <div class="preview-wrapper">
+  <div class="preview-bar">
+   <span>● LIVE PREVIEW</span>
+   <button type="button" id="reloadPreviewBtn" style="width:auto;margin:0;padding:4px 12px;font-size:11px">↻ Refresh</button>
   </div>
+  <iframe id="livePreviewFrame" class="phone-frame" src="index.html"></iframe>
  </div>
- <button id="uploadAppIconBtn">📱 Update App Logo</button>
- <div class="status" id="iconStatus"></div>
 </div>
 
-<!-- SITE APPEARANCE & YOUTUBE -->
 <div class="box">
- <h3>🎨 Website DP, Background ও Video</h3>
- <label>Profile DP Image (গোল লোগো)</label>
- <input type="file" id="dpFile" accept="image/*">
- <label>Hero Background Photo (ওপরের ব্যাকগ্রাউন্ড ছবি)</label>
- <input type="file" id="bgImgFile" accept="image/*">
- <label>Animated Background Video (MP4 — নিচের অংশের জন্য)</label>
- <input type="file" id="bgVidFile" accept="video/mp4">
- <label>Featured YouTube Video Link বা ID</label>
- <input type="text" id="ytInput" placeholder="https://youtu.be/xxxxx বা Video ID">
- <button id="saveAppearanceBtn">✨ Update Appearance</button>
- <div class="status" id="appStatus"></div>
+ <h3>🛠️ Website Customize Folders</h3>
+ <p style="font-size:12px;color:#bcaacb;margin-top:-6px">নিচের ফোল্ডারগুলো খুলে লেখা, আইকন এবং রঙ বদলান—ওপরের স্ক্রিনে সাথে সাথেই লাইভ দেখাবে।</p>
+
+ <details class="folder">
+  <summary><span>📝 1. Website Text & Links Folder</span><span>▼</span></summary>
+  <div class="folder-body">
+   <label>Header Brand Name</label>
+   <input type="text" id="t_brandHeader" value="R LOFI 01">
+   <label>Header Top-Right Button Text</label>
+   <input type="text" id="t_headerYt" value="YouTube">
+   <label>YouTube Channel URL</label>
+   <input type="text" id="t_ytUrl" value="https://youtube.com/@rlofi01">
+   <label>Hero Big Title</label>
+   <input type="text" id="t_heroTitle" value="R LOFI 01">
+   <label>Hero Tagline Line 1</label>
+   <input type="text" id="t_tagline1" value="LISTEN • RELAX • FEEL • REMEMBER">
+   <label>Hero Tagline Line 2</label>
+   <input type="text" id="t_tagline2" value="Original Music | Romantic | Sad | Lofi">
+   <label>Hero Listen Button Text</label>
+   <input type="text" id="t_heroListen" value="Listen Now">
+   <label>Hero YouTube Button Text</label>
+   <input type="text" id="t_heroYt" value="YouTube Channel">
+   <label>Latest Releases Heading</label>
+   <input type="text" id="t_latestHeading" value="Latest Releases">
+   <label>Latest Releases Subtitle</label>
+   <input type="text" id="t_latestSub" value="Filter by mood • Thumbnail par double tap karke YouTube video dekhein">
+   <div class="color-grid">
+    <div><label>Mood Tab 1</label><input type="text" id="t_moodAll" value="All Songs"></div>
+    <div><label>Mood Tab 2</label><input type="text" id="t_moodRomantic" value="Romantic"></div>
+    <div><label>Mood Tab 3</label><input type="text" id="t_moodSad" value="Sad"></div>
+    <div><label>Mood Tab 4</label><input type="text" id="t_moodLofi" value="Lofi"></div>
+    <div><label>Bottom Nav 1</label><input type="text" id="t_navHome" value="Home"></div>
+    <div><label>Bottom Nav 2</label><input type="text" id="t_navSearch" value="Search"></div>
+    <div><label>Bottom Nav 3</label><input type="text" id="t_navLibrary" value="Library"></div>
+   </div>
+  </div>
+ </details>
+
+ <details class="folder">
+  <summary><span>🎛️ 2. Custom Icons Folder (Auto-Transparent)</span><span>▼</span></summary>
+  <div class="folder-body">
+   <p style="font-size:11px;color:#bcaacb;margin-top:0">কালো ব্যাকগ্রাউন্ডওয়ালা সাদা আইকন সিলেক্ট করলে অটোমেটিক কালো অংশ মুছে স্বচ্ছ (Transparent) হয়ে যাবে।</p>
+   <div id="iconSlotsContainer"></div>
+   <button type="button" class="secondary-btn" id="resetIconsBtn">🔄 Reset Default Icons</button>
+  </div>
+ </details>
+
+ <details class="folder">
+  <summary><span>🎨 3. Theme Colors Folder</span><span>▼</span></summary>
+  <div class="folder-body">
+   <div class="color-grid">
+    <div><label>Main Theme / Glow Color</label><input type="color" id="c_accent" value="#a45ce1"></div>
+    <div><label>Dark Background Color</label><input type="color" id="c_bgDark" value="#100b19"></div>
+    <div><label>Heading Title Color</label><input type="color" id="c_headingColor" value="#d8a8ff"></div>
+    <div><label>Main Text Color</label><input type="color" id="c_textColor" value="#ffffff"></div>
+   </div>
+   <button type="button" class="secondary-btn" id="resetColorsBtn">🔄 Reset Default Colors</button>
+  </div>
+ </details>
+
+ <button id="publishCustomBtn">🚀 Save & Publish All Changes</button>
+ <div class="status" id="customStatus"></div>
 </div>
 
-<!-- UPLOAD NEW SONG -->
+<details class="folder" style="max-width:680px;margin:0 auto 18px">
+ <summary><span>📱 App Home Screen Icon পরিবর্তন করুন</span><span>▼</span></summary>
+ <div class="folder-body">
+  <input type="file" id="appIconFile" accept="image/*">
+  <button id="uploadAppIconBtn">📱 Update App Logo</button>
+  <div class="status" id="iconStatus"></div>
+ </div>
+</details>
+
+<details class="folder" style="max-width:680px;margin:0 auto 18px">
+ <summary><span>🖼️ Website DP, Background ও Video</span><span>▼</span></summary>
+ <div class="folder-body">
+  <label>Profile DP Image</label><input type="file" id="dpFile" accept="image/*">
+  <label>Hero Background Photo</label><input type="file" id="bgImgFile" accept="image/*">
+  <label>Animated Background Video (MP4)</label><input type="file" id="bgVidFile" accept="video/mp4">
+  <label>Featured YouTube Video Link বা ID</label><input type="text" id="ytInput" placeholder="https://youtu.be/xxxxx">
+  <button id="saveAppearanceBtn">✨ Update Media</button>
+  <div class="status" id="appStatus"></div>
+ </div>
+</details>
+
 <div class="box">
  <h3>🎵 নতুন গান আপলোড করুন</h3>
- <label>Song Name</label>
- <input type="text" id="songTitle" placeholder="গানের নাম লিখুন...">
+ <label>Song Name</label><input type="text" id="songTitle" placeholder="গানের নাম লিখুন...">
  <label>Mood Category</label>
  <select id="songMood">
-  <option value="romantic">💜 Romantic</option>
-  <option value="sad">🌧️ Sad</option>
-  <option value="lofi">🌙 Lofi</option>
+  <option value="romantic">Romantic</option>
+  <option value="sad">Sad</option>
+  <option value="lofi">Lofi</option>
  </select>
- <label>Short Description</label>
- <input type="text" id="songDesc" placeholder="Romantic • Emotional • R LOFI 01">
- <label>YouTube Video Link (Double Tap-এর জন্য, অপশনাল)</label>
- <input type="text" id="songYt" placeholder="https://youtu.be/...">
- <label>MP3 Audio File</label>
- <input type="file" id="mp3File" accept="audio/mp3,audio/*">
- <label>Thumbnail Cover Image</label>
- <input type="file" id="coverFile" accept="image/*">
+ <label>Short Description</label><input type="text" id="songDesc" placeholder="Romantic • Emotional • R LOFI 01">
+ <label>YouTube Video Link (Double Tap-এর জন্য)</label><input type="text" id="songYt" placeholder="https://youtu.be/...">
+ <label>MP3 Audio File</label><input type="file" id="mp3File" accept="audio/mp3,audio/*">
+ <label>Thumbnail Cover Image</label><input type="file" id="coverFile" accept="image/*">
  <button id="uploadSongBtn">🚀 Publish Song</button>
  <div class="status" id="songStatus"></div>
 </div>
 
-<!-- MANAGE EXISTING SONGS -->
 <div class="box">
  <h3>📂 আপলোড করা গান ম্যানেজ করুন</h3>
  <div id="manageSongsList"><p style="color:#bcaacb;font-size:13px">Token সেভ করলে সব গান এখানে দেখাবে...</p></div>
 </div>
-
 <script>
 const OWNER = "RLOFI01-glitch";
 const REPO = "rlofi01-glitch.github.io";
@@ -109,206 +178,357 @@ document.getElementById("ghToken").value = token;
 fetch("https://api.counterapi.dev/v1/rlofi01/visits").then(r=>r.json()).then(d=>document.getElementById("visitCount").textContent=d.count||0).catch(()=>{});
 fetch("https://api.counterapi.dev/v1/rlofi01/plays").then(r=>r.json()).then(d=>document.getElementById("playCount").textContent=d.count||0).catch(()=>{});
 
-function utf8ToB64(str){ return btoa(unescape(encodeURIComponent(str))); }
-function b64ToUtf8(str){ return decodeURIComponent(escape(atob(str))); }
+const ICON_DEFS = [
+  { key: "home", label: "Home Tab Icon" },
+  { key: "search", label: "Search Tab Icon" },
+  { key: "library", label: "Library / Playlist Icon" },
+  { key: "play", label: "Play Button Icon" },
+  { key: "pause", label: "Pause Button Icon" },
+  { key: "next", label: "Next Song Icon" },
+  { key: "prev", label: "Previous Song Icon" },
+  { key: "shuffle", label: "Shuffle Icon" },
+  { key: "repeat", label: "Repeat / Loop Icon" },
+  { key: "volume", label: "Volume Speaker Icon" },
+  { key: "download", label: "Download Icon" },
+  { key: "share", label: "Share Icon" },
+  { key: "save", label: "Save (+) Icon" },
+  { key: "heart", label: "Like / Heart Icon" },
+  { key: "sleep", label: "Sleep Timer Icon" },
+  { key: "music", label: "Latest Releases Icon" }
+];
 
-function fileToB64(file){
- return new Promise((resolve, reject) => {
-  const reader = new FileReader();
-  reader.onload = () => resolve(reader.result.split(",")[1]);
-  reader.onerror = reject;
-  reader.readAsDataURL(file);
- });
+let pendingIconsB64 = {};
+let liveIconsPreview = {};
+let savedConfig = {};
+
+const slotsBox = document.getElementById("iconSlotsContainer");
+ICON_DEFS.forEach(item => {
+  const row = document.createElement("div");
+  row.className = "icon-slot";
+  row.innerHTML = `
+    <div class="icon-slot-info">
+      <strong>${item.label}</strong>
+      <input type="file" accept="image/*" data-key="${item.key}">
+    </div>
+    <div class="icon-thumb"><img id="prev_ico_${item.key}" src="" alt="" style="display:none"></div>
+  `;
+  row.querySelector("input").onchange = function(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    convertBlackBgToTransparent(file, (dataUrl) => {
+      const prevImg = document.getElementById("prev_ico_" + item.key);
+      prevImg.src = dataUrl;
+      prevImg.style.display = "block";
+      pendingIconsB64[item.key] = dataUrl.split(",")[1];
+      liveIconsPreview[item.key] = dataUrl;
+      sendLivePreview();
+    });
+  };
+  slotsBox.appendChild(row);
+});
+
+function convertBlackBgToTransparent(file, callback){
+  const img = new Image();
+  img.onload = function(){
+    const size = 128;
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0, size, size);
+    const imgData = ctx.getImageData(0, 0, size, size);
+    const d = imgData.data;
+    for(let i = 0; i < d.length; i += 4){
+      const brightness = (d[i] + d[i+1] + d[i+2]) / 3;
+      if(brightness < 45){
+        d[i+3] = 0;
+      }else{
+        d[i+3] = Math.min(255, Math.round((brightness - 40) * 1.4));
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+    callback(canvas.toDataURL("image/png"));
+  };
+  img.src = URL.createObjectURL(file);
 }
 
-/* Auto-Crop & Resize any image to 512x512 Square PNG for App Icon */
-let squaredIconBase64 = null;
-document.getElementById("appIconFile").onchange = function(e){
- const file = e.target.files[0];
- if(!file) return;
- const img = new Image();
- img.onload = function(){
-  const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 512;
-  const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#100b19";
-  ctx.fillRect(0, 0, 512, 512);
-  const minSide = Math.min(img.width, img.height);
-  const sx = (img.width - minSide) / 2;
-  const sy = (img.height - minSide) / 2;
-  ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, 512, 512);
-  const dataUrl = canvas.toDataURL("image/png");
-  document.getElementById("appIconPreview").src = dataUrl;
-  squaredIconBase64 = dataUrl.split(",")[1];
- };
- img.src = URL.createObjectURL(file);
+function collectCurrentDraft(){
+  return {
+    ...savedConfig,
+    texts: {
+      brandHeader: document.getElementById("t_brandHeader").value,
+      headerYt: document.getElementById("t_headerYt").value,
+      ytUrl: document.getElementById("t_ytUrl").value,
+      heroTitle: document.getElementById("t_heroTitle").value,
+      tagline1: document.getElementById("t_tagline1").value,
+      tagline2: document.getElementById("t_tagline2").value,
+      heroListen: document.getElementById("t_heroListen").value,
+      heroYt: document.getElementById("t_heroYt").value,
+      latestHeading: document.getElementById("t_latestHeading").value,
+      latestSub: document.getElementById("t_latestSub").value,
+      moodAll: document.getElementById("t_moodAll").value,
+      moodRomantic: document.getElementById("t_moodRomantic").value,
+      moodSad: document.getElementById("t_moodSad").value,
+      moodLofi: document.getElementById("t_moodLofi").value,
+      navHome: document.getElementById("t_navHome").value,
+      navSearch: document.getElementById("t_navSearch").value,
+      navLibrary: document.getElementById("t_navLibrary").value
+    },
+    colors: {
+      accent: document.getElementById("c_accent").value,
+      bgDark: document.getElementById("c_bgDark").value,
+      headingColor: document.getElementById("c_headingColor").value,
+      textColor: document.getElementById("c_textColor").value
+    },
+    icons: { ...(savedConfig.icons || {}), ...liveIconsPreview }
+  };
+}
+
+function sendLivePreview(){
+  const frame = document.getElementById("livePreviewFrame");
+  if(frame && frame.contentWindow){
+    frame.contentWindow.postMessage({ type: "RLOFI_LIVE_PREVIEW", cfg: collectCurrentDraft() }, "*");
+  }
+}
+
+document.querySelectorAll("details.folder input[type=text], details.folder input[type=color]").forEach(inp => {
+  inp.addEventListener("input", sendLivePreview);
+});
+document.getElementById("reloadPreviewBtn").onclick = () => {
+  const f = document.getElementById("livePreviewFrame");
+  f.src = "index.html?t=" + Date.now();
+  f.onload = sendLivePreview;
 };
 
-async function ghGet(path){
- const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}?t=${Date.now()}`, {
-  headers: { Authorization: `token ${token}` }
- });
- if(!res.ok) return null;
- return await res.json();
+document.getElementById("resetColorsBtn").onclick = () => {
+  document.getElementById("c_accent").value = "#a45ce1";
+  document.getElementById("c_bgDark").value = "#100b19";
+  document.getElementById("c_headingColor").value = "#d8a8ff";
+  document.getElementById("c_textColor").value = "#ffffff";
+  sendLivePreview();
+};
+
+document.getElementById("resetIconsBtn").onclick = () => {
+  pendingIconsB64 = {};
+  liveIconsPreview = {};
+  savedConfig.icons = {};
+  ICON_DEFS.forEach(item => {
+    const img = document.getElementById("prev_ico_" + item.key);
+    img.src = "";
+    img.style.display = "none";
+  });
+  sendLivePreview();
+};
+
+function utf8ToB64(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64ToUtf8(str){ return decodeURIComponent(escape(atob(str))); }
+function fileToB64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(",")[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
+async function ghGet(path){
+  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}?t=${Date.now()}`, {
+    headers: { Authorization: `token ${token}` }
+  });
+  if(!res.ok) return null;
+  return await res.json();
+}
 async function ghPut(path, base64Content, message, sha){
- const body = { message, content: base64Content };
- if(sha) body.sha = sha;
- const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}`, {
-  method: "PUT",
-  headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
-  body: JSON.stringify(body)
- });
- if(!res.ok) throw new Error("GitHub API Error: " + res.status);
- return await res.json();
+  const body = { message, content: base64Content };
+  if(sha) body.sha = sha;
+  const res = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${encodeURIComponent(path)}`, {
+    method: "PUT",
+    headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  if(!res.ok) throw new Error("GitHub Error: " + res.status);
+  return await res.json();
 }
 
 document.getElementById("saveTokenBtn").onclick = () => {
- token = document.getElementById("ghToken").value.trim();
- localStorage.setItem("rlofi_gh_token", token);
- document.getElementById("authStatus").textContent = "✅ Token সেভ হয়েছে!";
- loadAdminData();
-};
-
-/* Upload Squared App Icon & Update manifest.json with maskable */
-document.getElementById("uploadAppIconBtn").onclick = async function(){
- if(!token) return alert("আগে GitHub Token দিন!");
- if(!squaredIconBase64) return alert("আগে একটি ছবি সিলেক্ট করুন!");
- const st = document.getElementById("iconStatus");
- this.disabled = true;
- st.textContent = "⏳ App Icon আপলোড হচ্ছে...";
- try{
-  const iconFileName = `app_icon_${Date.now()}.png`;
-  await ghPut(iconFileName, squaredIconBase64, "Upload new square app icon");
-
-  const manifestObj = {
-   name: "R LOFI 01 | Official Music",
-   short_name: "R LOFI 01",
-   start_url: "/index.html",
-   display: "standalone",
-   background_color: "#100b19",
-   theme_color: "#100b19",
-   icons: [
-    { src: iconFileName, sizes: "192x192", type: "image/png", purpose: "maskable" },
-    { src: iconFileName, sizes: "512x512", type: "image/png", purpose: "maskable" }
-   ]
-  };
-  const existingManifest = await ghGet("manifest.json");
-  await ghPut("manifest.json", utf8ToB64(JSON.stringify(manifestObj, null, 2)), "Update maskable app icon in manifest.json", existingManifest ? existingManifest.sha : null);
-
-  st.textContent = "✅ App Logo আপডেট হয়েছে! ফোনের পুরনো অ্যাপটি Uninstall করে আবার Install/Add to Home Screen করুন।";
- }catch(err){
-  st.textContent = "❌ সমস্যা হয়েছে: " + err.message;
- }
- this.disabled = false;
-};
-
-/* Appearance Updater */
-document.getElementById("saveAppearanceBtn").onclick = async function(){
- if(!token) return alert("আগে GitHub Token দিন!");
- const st = document.getElementById("appStatus");
- this.disabled = true;
- st.textContent = "⏳ আপডেট হচ্ছে...";
- try{
-  const cfgData = await ghGet("config.json");
-  let cfg = cfgData ? JSON.parse(b64ToUtf8(cfgData.content)) : {};
-
-  const dp = document.getElementById("dpFile").files[0];
-  if(dp){
-   const fn = `profile_${Date.now()}.png`;
-   await ghPut(fn, await fileToB64(dp), "Update profile DP");
-   cfg.profileImg = fn;
-  }
-  const bg = document.getElementById("bgImgFile").files[0];
-  if(bg){
-   const fn = `bg_${Date.now()}.png`;
-   await ghPut(fn, await fileToB64(bg), "Update hero background");
-   cfg.bgImg = fn;
-  }
-  const vid = document.getElementById("bgVidFile").files[0];
-  if(vid){
-   const fn = `anim_${Date.now()}.mp4`;
-   await ghPut(fn, await fileToB64(vid), "Update animated video");
-   cfg.bgVideo = fn;
-  }
-  const ytVal = document.getElementById("ytInput").value.trim();
-  if(ytVal){
-   const match = ytVal.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
-   cfg.youtubeId = match ? match[1] : ytVal;
-  }
-  await ghPut("config.json", utf8ToB64(JSON.stringify(cfg, null, 2)), "Update config.json", cfgData ? cfgData.sha : null);
-  st.textContent = "✅ সফলভাবে আপডেট হয়েছে!";
- }catch(err){
-  st.textContent = "❌ ত্রুটি: " + err.message;
- }
- this.disabled = false;
-};
-
-/* Song Uploader */
-document.getElementById("uploadSongBtn").onclick = async function(){
- if(!token) return alert("আগে GitHub Token দিন!");
- const name = document.getElementById("songTitle").value.trim();
- const mood = document.getElementById("songMood").value;
- const desc = document.getElementById("songDesc").value.trim() || "Original Music • R LOFI 01";
- const youtube = document.getElementById("songYt").value.trim();
- const mp3 = document.getElementById("mp3File").files[0];
- const cover = document.getElementById("coverFile").files[0];
- if(!name || !mp3 || !cover) return alert("গানের নাম, MP3 এবং Cover ছবি অবশ্যই দিন!");
-
- const st = document.getElementById("songStatus");
- this.disabled = true;
- st.textContent = "⏳ গান ও কভার আপলোড হচ্ছে...";
- try{
-  const mp3Name = `${name}.mp3`;
-  const coverName = `${name}.png`;
-  await ghPut(mp3Name, await fileToB64(mp3), `Upload ${mp3Name}`);
-  await ghPut(coverName, await fileToB64(cover), `Upload ${coverName}`);
-
-  const songsData = await ghGet("songs.json");
-  let list = songsData ? JSON.parse(b64ToUtf8(songsData.content)) : [];
-  list.unshift({ name, file: mp3Name, cover: coverName, mood, desc, youtube });
-  await ghPut("songs.json", utf8ToB64(JSON.stringify(list, null, 2)), "Add new song", songsData ? songsData.sha : null);
-
-  st.textContent = "✅ নতুন গান পাবলিশ হয়েছে!";
+  token = document.getElementById("ghToken").value.trim();
+  localStorage.setItem("rlofi_gh_token", token);
+  document.getElementById("authStatus").textContent = "✅ Token সেভ হয়েছে!";
   loadAdminData();
- }catch(err){
-  st.textContent = "❌ ত্রুটি: " + err.message;
- }
- this.disabled = false;
+};
+
+document.getElementById("publishCustomBtn").onclick = async function(){
+  if(!token) return alert("আগে GitHub Token দিন!");
+  const st = document.getElementById("customStatus");
+  this.disabled = true;
+  st.textContent = "⏳ কাস্টম আইকন, লেখা ও রঙ সেভ হচ্ছে...";
+  try{
+    const cfgData = await ghGet("config.json");
+    let cfg = cfgData ? JSON.parse(b64ToUtf8(cfgData.content)) : {};
+    const draft = collectCurrentDraft();
+    const finalIcons = { ...(cfg.icons || {}) };
+    if(Object.keys(savedConfig.icons || {}).length === 0 && Object.keys(liveIconsPreview).length === 0){
+      for(const k in finalIcons) delete finalIcons[k];
+    }
+    for(const key of Object.keys(pendingIconsB64)){
+      const fn = `ico_${key}_${Date.now()}.png`;
+      await ghPut(fn, pendingIconsB64[key], `Upload custom ${key} icon`);
+      finalIcons[key] = fn;
+    }
+    cfg.texts = draft.texts;
+    cfg.colors = draft.colors;
+    cfg.icons = finalIcons;
+    await ghPut("config.json", utf8ToB64(JSON.stringify(cfg, null, 2)), "Update site text, icons & theme colors", cfgData ? cfgData.sha : null);
+    savedConfig = cfg;
+    pendingIconsB64 = {};
+    st.textContent = "✅ সফলভাবে ওয়েবসাইটে লাইভ হয়ে গেছে!";
+  }catch(err){
+    st.textContent = "❌ ত্রুটি: " + err.message;
+  }
+  this.disabled = false;
+};
+
+let squaredIconBase64 = null;
+document.getElementById("appIconFile").onchange = function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const img = new Image();
+  img.onload = function(){
+    const canvas = document.createElement("canvas");
+    canvas.width = 512; canvas.height = 512;
+    const ctx = canvas.getContext("2d");
+    const minSide = Math.min(img.width, img.height);
+    ctx.drawImage(img, (img.width - minSide)/2, (img.height - minSide)/2, minSide, minSide, 0, 0, 512, 512);
+    squaredIconBase64 = canvas.toDataURL("image/png").split(",")[1];
+  };
+  img.src = URL.createObjectURL(file);
+};
+
+document.getElementById("uploadAppIconBtn").onclick = async function(){
+  if(!token) return alert("আগে GitHub Token দিন!");
+  if(!squaredIconBase64) return alert("আগে ছবি সিলেক্ট করুন!");
+  const st = document.getElementById("iconStatus");
+  this.disabled = true;
+  st.textContent = "⏳ আপলোড হচ্ছে...";
+  try{
+    const iconFileName = `app_icon_${Date.now()}.png`;
+    await ghPut(iconFileName, squaredIconBase64, "Upload square app icon");
+    const manifestObj = {
+      name: "R LOFI 01 | Official Music",
+      short_name: "R LOFI 01",
+      start_url: "/index.html",
+      display: "standalone",
+      background_color: "#100b19",
+      theme_color: "#100b19",
+      icons: [
+        { src: iconFileName, sizes: "192x192", type: "image/png", purpose: "maskable" },
+        { src: iconFileName, sizes: "512x512", type: "image/png", purpose: "maskable" }
+      ]
+    };
+    const mData = await ghGet("manifest.json");
+    await ghPut("manifest.json", utf8ToB64(JSON.stringify(manifestObj, null, 2)), "Update manifest.json", mData ? mData.sha : null);
+    st.textContent = "✅ App Logo আপডেট হয়েছে!";
+  }catch(err){ st.textContent = "❌ ত্রুটি: " + err.message; }
+  this.disabled = false;
+};
+
+document.getElementById("saveAppearanceBtn").onclick = async function(){
+  if(!token) return alert("আগে GitHub Token দিন!");
+  const st = document.getElementById("appStatus");
+  this.disabled = true;
+  st.textContent = "⏳ আপডেট হচ্ছে...";
+  try{
+    const cfgData = await ghGet("config.json");
+    let cfg = cfgData ? JSON.parse(b64ToUtf8(cfgData.content)) : {};
+    const dp = document.getElementById("dpFile").files[0];
+    if(dp){ const fn = `profile_${Date.now()}.png`; await ghPut(fn, await fileToB64(dp), "Update DP"); cfg.profileImg = fn; }
+    const bg = document.getElementById("bgImgFile").files[0];
+    if(bg){ const fn = `bg_${Date.now()}.png`; await ghPut(fn, await fileToB64(bg), "Update BG"); cfg.bgImg = fn; }
+    const vid = document.getElementById("bgVidFile").files[0];
+    if(vid){ const fn = `anim_${Date.now()}.mp4`; await ghPut(fn, await fileToB64(vid), "Update Video"); cfg.bgVideo = fn; }
+    const ytVal = document.getElementById("ytInput").value.trim();
+    if(ytVal){ const m = ytVal.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/); cfg.youtubeId = m ? m[1] : ytVal; }
+    await ghPut("config.json", utf8ToB64(JSON.stringify(cfg, null, 2)), "Update media config", cfgData ? cfgData.sha : null);
+    savedConfig = cfg;
+    st.textContent = "✅ সফলভাবে আপডেট হয়েছে!";
+  }catch(err){ st.textContent = "❌ ত্রুটি: " + err.message; }
+  this.disabled = false;
+};
+
+document.getElementById("uploadSongBtn").onclick = async function(){
+  if(!token) return alert("আগে GitHub Token দিন!");
+  const name = document.getElementById("songTitle").value.trim();
+  const mood = document.getElementById("songMood").value;
+  const desc = document.getElementById("songDesc").value.trim() || "Original Music • R LOFI 01";
+  const youtube = document.getElementById("songYt").value.trim();
+  const mp3 = document.getElementById("mp3File").files[0];
+  const cover = document.getElementById("coverFile").files[0];
+  if(!name || !mp3 || !cover) return alert("গানের নাম, MP3 এবং Cover ছবি অবশ্যই দিন!");
+  const st = document.getElementById("songStatus");
+  this.disabled = true;
+  st.textContent = "⏳ গান আপলোড হচ্ছে...";
+  try{
+    const mp3Name = `${name}.mp3`, coverName = `${name}.png`;
+    await ghPut(mp3Name, await fileToB64(mp3), `Upload ${mp3Name}`);
+    await ghPut(coverName, await fileToB64(cover), `Upload ${coverName}`);
+    const songsData = await ghGet("songs.json");
+    let list = songsData ? JSON.parse(b64ToUtf8(songsData.content)) : [];
+    list.unshift({ name, file: mp3Name, cover: coverName, mood, desc, youtube });
+    await ghPut("songs.json", utf8ToB64(JSON.stringify(list, null, 2)), "Add song", songsData ? songsData.sha : null);
+    st.textContent = "✅ নতুন গান পাবলিশ হয়েছে!";
+    loadAdminData();
+  }catch(err){ st.textContent = "❌ ত্রুটি: " + err.message; }
+  this.disabled = false;
 };
 
 async function loadAdminData(){
- if(!token) return;
- try{
-  const cfgData = await ghGet("config.json");
-  if(cfgData){
-   const cfg = JSON.parse(b64ToUtf8(cfgData.content));
-   if(cfg.youtubeId) document.getElementById("ytInput").value = cfg.youtubeId;
-  }
-  const songsData = await ghGet("songs.json");
-  const box = document.getElementById("manageSongsList");
-  if(!songsData){ box.innerHTML = "<p>কোনো গান পাওয়া যায়নি।</p>"; return; }
-  const list = JSON.parse(b64ToUtf8(songsData.content));
-  box.innerHTML = "";
-  list.forEach((s, idx) => {
-   const row = document.createElement("div");
-   row.className = "song-item";
-   row.innerHTML = `<div><strong>${s.name}</strong><br><small style="color:#bcaacb">${s.mood.toUpperCase()}</small></div>`;
-   const del = document.createElement("button");
-   del.className = "del-btn";
-   del.textContent = "Delete";
-   del.onclick = async () => {
-    if(!confirm(`"${s.name}" ডিলিট করবেন?`)) return;
-    list.splice(idx, 1);
-    await ghPut("songs.json", utf8ToB64(JSON.stringify(list, null, 2)), `Delete ${s.name}`, songsData.sha);
-    loadAdminData();
-   };
-   row.appendChild(del);
-   box.appendChild(row);
-  });
- }catch(e){}
+  if(!token) return;
+  try{
+    const cfgData = await ghGet("config.json");
+    if(cfgData){
+      savedConfig = JSON.parse(b64ToUtf8(cfgData.content));
+      if(savedConfig.youtubeId) document.getElementById("ytInput").value = savedConfig.youtubeId;
+      if(savedConfig.texts){
+        Object.keys(savedConfig.texts).forEach(k => {
+          const el = document.getElementById("t_" + k);
+          if(el) el.value = savedConfig.texts[k];
+        });
+      }
+      if(savedConfig.colors){
+        Object.keys(savedConfig.colors).forEach(k => {
+          const el = document.getElementById("c_" + k);
+          if(el) el.value = savedConfig.colors[k];
+        });
+      }
+      if(savedConfig.icons){
+        Object.keys(savedConfig.icons).forEach(k => {
+          const img = document.getElementById("prev_ico_" + k);
+          if(img && savedConfig.icons[k]){ img.src = savedConfig.icons[k]; img.style.display = "block"; }
+        });
+      }
+    }
+    const songsData = await ghGet("songs.json");
+    const box = document.getElementById("manageSongsList");
+    if(!songsData) return;
+    const list = JSON.parse(b64ToUtf8(songsData.content));
+    box.innerHTML = "";
+    list.forEach((s, idx) => {
+      const row = document.createElement("div");
+      row.className = "song-item";
+      row.innerHTML = `<div><strong>${s.name}</strong><br><small style="color:#bcaacb">${s.mood.toUpperCase()}</small></div>`;
+      const del = document.createElement("button");
+      del.className = "del-btn";
+      del.textContent = "Delete";
+      del.onclick = async () => {
+        if(!confirm(`"${s.name}" ডিলিট করবেন?`)) return;
+        list.splice(idx, 1);
+        await ghPut("songs.json", utf8ToB64(JSON.stringify(list, null, 2)), `Delete ${s.name}`, songsData.sha);
+        loadAdminData();
+      };
+      row.appendChild(del);
+      box.appendChild(row);
+    });
+  }catch(e){}
 }
 if(token) loadAdminData();
 </script>
