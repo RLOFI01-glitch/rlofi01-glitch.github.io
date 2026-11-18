@@ -7,16 +7,16 @@
   "theme_color": "#100b19",
   "icons": [
     {
-      "src": "app_icon_1794973839800.png",
+      "src": "profile_1794922298525.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable"
     },
     {
-      "src": "app_icon_1794973839800.png",
+      "src": "profile_1794922298525.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable"
     }
   ]
 }
