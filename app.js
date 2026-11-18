@@ -3,6 +3,8 @@ let originalSongs = [];
 let currentSongIndex = 0;
 let isPlaying = false;
 let isRandom = false;
+let isLooping = false;
+let sleepTimerId = null;
 let favoriteSongs = JSON.parse(localStorage.getItem('fav_songs') || '[]');
 let deferredPrompt = null;
 let lastTapTime = 0;
@@ -26,7 +28,6 @@ const totalDurationEl = document.getElementById('totalDuration');
 const tracksList = document.getElementById('tracksList');
 const searchInput = document.getElementById('searchInput');
 
-// Toast Notification Helper
 function showToast(msg) {
   const toast = document.getElementById('toastNotif');
   if (!toast) return;
@@ -36,14 +37,12 @@ function showToast(msg) {
   toast._timer = setTimeout(() => toast.classList.remove('show'), 2800);
 }
 
-// Safely encode local file paths with | or emojis or spaces
 function safeMediaUrl(path) {
   if (!path) return '';
-  if (path.startsWith('http://') || path.startsWith('https://')) return path;
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) return path;
   return path.split('/').map(part => encodeURIComponent(part)).join('/');
 }
 
-// PWA App Install Button Logic
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
@@ -68,10 +67,16 @@ async function initSite() {
         document.getElementById('siteTitle').textContent = cfg.title;
         document.getElementById('topBrandName').textContent = cfg.title;
       }
+      if (cfg.tagline) document.getElementById('siteTagline').textContent = cfg.tagline;
       if (cfg.bio) document.getElementById('siteBio').textContent = cfg.bio;
       if (cfg.avatar) {
-        document.getElementById('avatarImg').src = safeMediaUrl(cfg.avatar);
-        document.getElementById('topLogoImg').src = safeMediaUrl(cfg.avatar);
+        const avUrl = safeMediaUrl(cfg.avatar);
+        document.getElementById('avatarImg').src = avUrl;
+        document.getElementById('topLogoImg').src = avUrl;
+      }
+      if (cfg.banner) {
+        const bnUrl = safeMediaUrl(cfg.banner);
+        document.getElementById('heroBanner').style.backgroundImage = `linear-gradient(to bottom, rgba(8, 8, 14, 0.45), rgba(8, 8, 14, 0.96)), url('${bnUrl}')`;
       }
       if (cfg.youtubeUrl) {
         document.getElementById('topYtBtn').href = cfg.youtubeUrl;
@@ -106,10 +111,11 @@ async function initSite() {
           title: s.name || s.title || "Untitled Track",
           audio: safeMediaUrl(rawFile),
           rawFileName: rawFile,
-          cover: safeMediaUrl(rawCover) || 'profile_1794970581989.png',
+          cover: safeMediaUrl(rawCover) || document.getElementById('avatarImg').src,
           desc: s.desc || s.description || "R LOFI 01 Original",
           mood: s.mood || "Lofi",
-          ytUrl: s.youtube || s.ytUrl || ""
+          ytUrl: s.youtube || s.ytUrl || "",
+          lyrics: s.lyrics || ""
         };
       });
       originalSongs = [...songs];
@@ -119,14 +125,13 @@ async function initSite() {
   } catch (e) {}
 }
 
-// Render Big Thumbnail Cards
 function renderTracks(tracks) {
   if (!tracksList) return;
   if (tracks.length === 0) {
     tracksList.innerHTML = `
-      <div style="text-align:center; padding:30px 16px; background:rgba(255,255,255,0.03); border-radius:18px; border:1px solid rgba(255,255,255,0.08);">
-        <p style="color:#cbd5e1; margin-bottom:12px;">এখানে কোনো গান পাওয়া যায়নি (প্রথমে কোনো গানে ❤️ Fav দিন)</p>
-        <button onclick="switchBottomTab('home')" class="btn-listen" style="padding:8px 18px; font-size:12.5px;">সব গান দেখুন 🎵</button>
+      <div style="text-align:center; padding:32px 16px; background:rgba(255,255,255,0.03); border-radius:20px; border:1px solid rgba(255,255,255,0.09);">
+        <p style="color:#cbd5e1; font-size:14px; margin-bottom:12px;">🎵 এখনো কোনো গান আপলোড করা হয়নি বা এই লিস্টে কোনো গান নেই।</p>
+        <p style="color:#94a3b8; font-size:12px;">Admin Panel (admin.html) থেকে নতুন গান যোগ করুন!</p>
       </div>`;
     return;
   }
@@ -167,11 +172,9 @@ function renderTracks(tracks) {
   }).join('');
 }
 
-// Mobile-friendly Single Tap (Play) & Double Tap (Open YouTube with Notification)
 window.handleThumbTap = function(index, ytUrl) {
   const now = Date.now();
   if (lastTapSongIdx === index && (now - lastTapTime) < 350) {
-    // Double tap detected!
     lastTapTime = 0;
     if (ytUrl) {
       showToast("▶️ Opening YouTube Video...");
@@ -180,19 +183,9 @@ window.handleThumbTap = function(index, ytUrl) {
       showToast("এই গানের ইউটিউব লিংক যুক্ত করা নেই");
     }
   } else {
-    // Single tap -> Play song
     lastTapTime = now;
     lastTapSongIdx = index;
     playSongFromList(index);
-  }
-};
-
-// Click Mini Player -> Scroll to active song card
-window.focusCurrentSongCard = function() {
-  const card = document.getElementById('songCard_' + currentSongIndex);
-  if (card) {
-    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    showToast("🎵 " + (songs[currentSongIndex]?.title || "Playing"));
   }
 };
 
@@ -202,10 +195,18 @@ function loadSong(index) {
   const song = songs[index];
 
   songTitle.textContent = song.title;
-  songMood.textContent = song.mood;
+  songMood.textContent = song.mood + " • Tap for Lyrics & Timer ⬆️";
   songCover.src = song.cover;
   audio.src = song.audio;
   audio.load();
+
+  // Update Fullscreen Player info
+  document.getElementById('fpCoverImg').src = song.cover;
+  document.getElementById('fpSongTitle').textContent = song.title;
+  document.getElementById('fpSongMood').textContent = song.mood;
+  document.getElementById('fpLyricsBox').textContent = song.lyrics
+    ? song.lyrics
+    : "🎵 এই গানের লিরিক্স এখনো যোগ করা হয়নি।";
 
   favBtn.classList.toggle('active', favoriteSongs.includes(song.id));
   document.querySelectorAll('.big-song-card').forEach((card, idx) => {
@@ -214,7 +215,10 @@ function loadSong(index) {
 }
 
 function togglePlay() {
-  if (songs.length === 0) return;
+  if (songs.length === 0) {
+    showToast("প্রথমে Admin Panel থেকে গান আপলোড করুন!");
+    return;
+  }
   if (isPlaying) {
     audio.pause();
     playBtn.innerHTML = '▶️';
@@ -223,18 +227,57 @@ function togglePlay() {
     audio.play().then(() => {
       playBtn.innerHTML = '⏸️';
       isPlaying = true;
-    }).catch(err => {
-      console.error(err);
-      showToast("⚠️ গানটি লোড হতে সমস্যা হচ্ছে, আবার চাপুন");
+    }).catch(() => {
+      showToast("⚠️ গানটি লোড হতে সমস্যা হচ্ছে");
     });
   }
 }
 
 function playSongFromList(index) {
+  if (songs.length === 0) return;
   loadSong(index);
   isPlaying = false;
   togglePlay();
 }
+
+// Fullscreen Player Controls
+window.openFullPlayer = function() {
+  if (songs.length === 0) {
+    showToast("কোনো গান সিলেক্ট করা নেই");
+    return;
+  }
+  document.getElementById('fullPlayerModal').classList.add('open');
+};
+
+window.closeFullPlayer = function() {
+  document.getElementById('fullPlayerModal').classList.remove('open');
+};
+
+window.toggleLoop = function() {
+  isLooping = !isLooping;
+  audio.loop = isLooping;
+  const btn = document.getElementById('loopBtn');
+  btn.textContent = isLooping ? "🔁 Loop: On" : "🔁 Loop: Off";
+  btn.classList.toggle('fav-active', isLooping);
+  showToast(isLooping ? "🔁 Repeat Current Song On" : "🔁 Repeat Off");
+};
+
+window.setSleepTimer = function(minutes) {
+  clearTimeout(sleepTimerId);
+  const statusEl = document.getElementById('sleepTimerStatus');
+  if (minutes <= 0) {
+    statusEl.textContent = "";
+    showToast("⏲️ Sleep Timer Off");
+    return;
+  }
+  statusEl.textContent = `⏲️ ${minutes}m`;
+  showToast(`⏲️ ${minutes} মিনিট পর গান অটো-বন্ধ হবে`);
+  sleepTimerId = setTimeout(() => {
+    if (isPlaying) togglePlay();
+    statusEl.textContent = "";
+    showToast("😴 Sleep Timer শেষ — গান বন্ধ হয়েছে");
+  }, minutes * 60 * 1000);
+};
 
 audio.addEventListener('timeupdate', () => {
   if (!audio.duration) return;
@@ -252,12 +295,17 @@ progressBar.addEventListener('input', () => {
   if (audio.duration) audio.currentTime = (progressBar.value / 100) * audio.duration;
 });
 
-prevBtn.addEventListener('click', () => playSongFromList((currentSongIndex - 1 + songs.length) % songs.length));
+prevBtn.addEventListener('click', () => {
+  if (songs.length) playSongFromList((currentSongIndex - 1 + songs.length) % songs.length);
+});
 nextBtn.addEventListener('click', () => {
+  if (!songs.length) return;
   if (isRandom) playSongFromList(Math.floor(Math.random() * songs.length));
   else playSongFromList((currentSongIndex + 1) % songs.length);
 });
-audio.addEventListener('ended', () => nextBtn.click());
+audio.addEventListener('ended', () => {
+  if (!isLooping) nextBtn.click();
+});
 
 randomBtn.addEventListener('click', () => {
   isRandom = !isRandom;
@@ -273,7 +321,8 @@ if (searchInput) {
       : originalSongs.filter(s =>
           s.title.toLowerCase().includes(val) ||
           s.mood.toLowerCase().includes(val) ||
-          s.desc.toLowerCase().includes(val)
+          s.desc.toLowerCase().includes(val) ||
+          (s.lyrics && s.lyrics.toLowerCase().includes(val))
         );
     renderTracks(songs);
   });
@@ -393,19 +442,20 @@ if (reqForm) {
   });
 }
 
-// Built-in Web Audio API Ambient Generator (কোনো এক্সটার্নাল লিংক ছাড়াই রিয়েল বৃষ্টি ও ভিনাইল শব্দ)
+// Built-in Web Audio API Ambient Generator (Rain + Vinyl + Night Crickets)
 function initAmbient() {
   let audioCtx = null;
   let rainGain = null;
   let vinylGain = null;
+  let nightGain = null;
 
   function ensureAudioCtx() {
     if (!audioCtx) {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       audioCtx = new AudioContext();
-
-      // 1. Soft Rain Generator (Pink/Brown filtered noise)
       const bufferSize = audioCtx.sampleRate * 3;
+
+      // 1. Rain
       const rainBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const rainData = rainBuffer.getChannelData(0);
       let lastOut = 0.0;
@@ -418,20 +468,17 @@ function initAmbient() {
       const rainSource = audioCtx.createBufferSource();
       rainSource.buffer = rainBuffer;
       rainSource.loop = true;
-
       const rainFilter = audioCtx.createBiquadFilter();
       rainFilter.type = 'lowpass';
       rainFilter.frequency.value = 950;
-
       rainGain = audioCtx.createGain();
       rainGain.gain.value = 0;
-
       rainSource.connect(rainFilter);
       rainFilter.connect(rainGain);
       rainGain.connect(audioCtx.destination);
       rainSource.start();
 
-      // 2. Vinyl Crackle Generator
+      // 2. Vinyl Crackle
       const vinylBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const vinylData = vinylBuffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
@@ -440,42 +487,53 @@ function initAmbient() {
       const vinylSource = audioCtx.createBufferSource();
       vinylSource.buffer = vinylBuffer;
       vinylSource.loop = true;
-
       const vinylFilter = audioCtx.createBiquadFilter();
       vinylFilter.type = 'bandpass';
       vinylFilter.frequency.value = 1800;
-
       vinylGain = audioCtx.createGain();
       vinylGain.gain.value = 0;
-
       vinylSource.connect(vinylFilter);
       vinylFilter.connect(vinylGain);
       vinylGain.connect(audioCtx.destination);
       vinylSource.start();
+
+      // 3. Night Crickets Ambience
+      const nightBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const nightData = nightBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        const t = i / audioCtx.sampleRate;
+        const pulse = Math.sin(2 * Math.PI * 3.5 * t) > 0.6 ? 1 : 0;
+        const chirp = Math.sin(2 * Math.PI * 4200 * t) * pulse * 0.15;
+        nightData[i] = chirp + (Math.random() * 2 - 1) * 0.01;
+      }
+      const nightSource = audioCtx.createBufferSource();
+      nightSource.buffer = nightBuffer;
+      nightSource.loop = true;
+      nightGain = audioCtx.createGain();
+      nightGain.gain.value = 0;
+      nightSource.connect(nightGain);
+      nightGain.connect(audioCtx.destination);
+      nightSource.start();
     }
     if (audioCtx.state === 'suspended') audioCtx.resume();
   }
 
-  const rainSlider = document.getElementById('ambientRain');
-  const vinylSlider = document.getElementById('ambientVinyl');
-
-  if (rainSlider) {
-    rainSlider.addEventListener('input', (e) => {
-      ensureAudioCtx();
-      rainGain.gain.value = (e.target.value / 100) * 0.45;
-    });
-  }
-
-  if (vinylSlider) {
-    vinylSlider.addEventListener('input', (e) => {
-      ensureAudioCtx();
-      vinylGain.gain.value = (e.target.value / 100) * 0.55;
-    });
-  }
+  document.getElementById('ambientRain')?.addEventListener('input', (e) => {
+    ensureAudioCtx();
+    rainGain.gain.value = (e.target.value / 100) * 0.45;
+  });
+  document.getElementById('ambientVinyl')?.addEventListener('input', (e) => {
+    ensureAudioCtx();
+    vinylGain.gain.value = (e.target.value / 100) * 0.55;
+  });
+  document.getElementById('ambientNight')?.addEventListener('input', (e) => {
+    ensureAudioCtx();
+    nightGain.gain.value = (e.target.value / 100) * 0.35;
+  });
 }
 
 initSite().then(() => {
   checkDedication();
   initAmbient();
 });
-      
+  
