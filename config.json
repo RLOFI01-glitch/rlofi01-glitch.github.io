@@ -1,4 +1,18 @@
 {
+  "title": "R LOFI 01",
+  "bio": "Late night lofi, sad melodies & emotional Hinglish vibes.",
+  "avatar": "",
+  "accent": "#a855f7",
+  "iconSize": 32,
+  "ytUrl": "https://youtube.com",
+  "instaUrl": "https://instagram.com",
+  "showRadioBadge": true,
+  "showAmbientStudio": true,
+  "showDedicateBtn": true,
+  "showRequestBox": true,
+  "icons": {
+    "home": "ico_home_1794999816093.png"
+  },
   "youtubeId": "5G5vla1XpWE",
   "profileImg": "profile_1794970581989.png",
   "bgImg": "bg_1794971610787.png",
@@ -27,8 +41,5 @@
     "bgDark": "#100b19",
     "headingColor": "#d8a8ff",
     "textColor": "#ffffff"
-  },
-  "icons": {
-    "home": "ico_home_1794999816093.png"
   }
 }
