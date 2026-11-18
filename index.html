@@ -1,282 +1,389 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>R LOFI 01 | Official Music</title>
-<meta name="theme-color" content="#100b19">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="profile_1794922298525.png">
-<style>
-:root{
-  --accent:#a45ce1;
-  --accent-glow:rgba(164,92,225,0.65);
-  --bg-dark:#100b19;
-  --card-bg:rgba(33,24,44,0.34);
-  --heading-color:#d8a8ff;
-  --text-color:#ffffff;
-  --icon-tint:none;
-}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg-dark);color:var(--text-color);font-family:Arial,sans-serif;padding-bottom:140px;transition:background 0.3s,color 0.3s}
-header{display:flex;justify-content:space-between;align-items:center;padding:14px 7%;background:rgba(23,16,32,0.92);backdrop-filter:blur(8px);position:sticky;top:0;z-index:10;border-bottom:1px solid rgba(255,255,255,0.08)}
-.logo{display:flex;align-items:center;gap:10px;font-size:21px;font-weight:bold;color:var(--heading-color)}
-.logo img{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)}
-.header-social{color:var(--heading-color);text-decoration:none;font-size:13px;border:1px solid var(--accent);padding:6px 14px;border-radius:20px;background:rgba(33,24,44,0.6);display:inline-flex;align-items:center;gap:6px}
-.ui-ico{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;vertical-align:middle;flex-shrink:0}
-.ui-ico svg,.ui-ico img{width:100%;height:100%;object-fit:contain;display:block}
-.ui-ico img{filter:var(--icon-tint)}
-.nav-icon-wrap .ui-ico{width:21px;height:21px}
-#play .ui-ico{width:24px;height:24px}
-.hero{position:relative;overflow:hidden;min-height:420px;padding:60px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(to bottom,rgba(16,11,25,0.65),rgba(16,11,25,0.92)),url('r lofi 01.png') center/cover no-repeat}
-.hero-content{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center}
-.hero-logo{width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--accent);box-shadow:0 0 25px var(--accent-glow);margin-bottom:12px}
-.hero h1{font-size:clamp(38px,8vw,68px);margin:8px 0;text-shadow:0 4px 15px rgba(0,0,0,0.8)}
-.hero p{color:#ebd9f8;letter-spacing:2px;margin:6px 0}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:var(--accent);color:white;padding:13px 24px;border-radius:30px;text-decoration:none;margin:8px 5px;font-weight:bold;font-size:14px;border:0;cursor:pointer;box-shadow:0 4px 15px var(--accent-glow)}
-.insta-btn{background:linear-gradient(45deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);box-shadow:none}
-.yt-btn{background:#ff0033;box-shadow:none}
-.app-btn{background:linear-gradient(45deg,#10b981,#059669);box-shadow:0 0 15px rgba(16,185,129,0.4)}
-.lower-stage{position:relative;background:transparent}
-.lower-bg-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-1;opacity:0.75;display:none;pointer-events:none}
-.lower-stage > section, .lower-stage > footer{position:relative;z-index:1}
-section{padding:35px 7%}
-h2{color:var(--heading-color);text-shadow:0 2px 10px rgba(0,0,0,0.85);display:flex;align-items:center;gap:9px}
-.sub{color:#e2d4ec;font-size:14px;text-shadow:0 1px 6px rgba(0,0,0,0.85)}
-.mood-filters{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
-.mood-btn{background:rgba(33,24,44,0.48);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);color:#f3e8ff;border:1.5px solid var(--accent);padding:8px 18px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:bold;transition:0.3s;display:inline-flex;align-items:center;gap:6px}
-.mood-btn.active,.mood-btn:hover{background:var(--accent);color:#fff;box-shadow:0 0 12px var(--accent-glow)}
-.songs{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:17px;margin-top:15px}
-.card{background:var(--card-bg);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:18px;border-radius:15px;border:1px solid rgba(255,255,255,0.16);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
-.art{position:relative;height:145px;border-radius:12px;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#694381,#25172f);overflow:hidden;cursor:pointer;user-select:none}
-.art img{width:100%;height:100%;object-fit:cover;pointer-events:none}
-.yt-tag{position:absolute;bottom:8px;right:8px;background:rgba(255,0,51,0.9);color:#fff;font-size:10px;padding:3px 8px;border-radius:12px;font-weight:bold;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,0.5);display:inline-flex;align-items:center;gap:4px}
-.fav-tag{position:absolute;top:8px;right:8px;background:rgba(16,11,25,0.75);color:#fff;border:1px solid var(--accent);width:34px;height:34px;border-radius:50%;display:flex;justify-content:center;align-items:center;cursor:pointer;z-index:2}
-.fav-tag.liked{background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
-.card h3{margin-bottom:5px;text-shadow:0 1px 6px rgba(0,0,0,0.8)}
-.card p{color:#ece0f5;font-size:13px;text-shadow:0 1px 5px rgba(0,0,0,0.8)}
-.card-btns{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
-.card button.play-btn{background:var(--accent);color:white;border:0;padding:9px 14px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:bold;display:inline-flex;align-items:center;gap:6px}
-.dl-btn,.share-btn{display:inline-flex;align-items:center;gap:5px;background:rgba(16,11,25,0.45);color:#f3e8ff;border:1.5px solid var(--accent);padding:7px 12px;border-radius:20px;text-decoration:none;font-size:12px;cursor:pointer}
-.dl-btn:hover,.share-btn:hover{background:var(--accent);color:white}
-.no-result{text-align:center;padding:30px;color:#e2d4ec;background:rgba(33,24,44,0.4);backdrop-filter:blur(6px);border-radius:15px;display:none}
-.video-box,.youtube,.about{background:var(--card-bg);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:24px 20px;border-radius:15px;border:1px solid rgba(255,255,255,0.14)}
-.video-box{text-align:center;max-width:750px;margin:auto}
-.video-frame{position:relative;width:100%;padding-bottom:56.25%;border-radius:12px;overflow:hidden;background:var(--bg-dark);margin:15px 0}
-.video-frame iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
-.about{line-height:1.8;color:#ece0f5}
-.youtube{text-align:center}
-.social-links{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:15px}
-footer{text-align:center;background:rgba(23,16,32,0.55);backdrop-filter:blur(6px);padding:30px 15px;color:#e2d4ec;border-top:1px solid rgba(255,255,255,0.1)}
-footer a{color:var(--heading-color);margin:0 10px;text-decoration:none;font-size:14px}
-.tab-view{display:none}.tab-view.active{display:block}
-.search-input-box{width:100%;padding:14px 18px;border-radius:25px;border:1.5px solid var(--accent);background:rgba(33,24,44,0.65);backdrop-filter:blur(6px);color:#fff;font-size:15px;outline:none;margin-bottom:15px}
-.mini-player{position:fixed;bottom:68px;left:0;right:0;background:linear-gradient(90deg,rgba(38,25,54,0.92),rgba(27,18,38,0.92));backdrop-filter:blur(8px);border-top:1px solid var(--accent);padding:8px 14px;display:none;align-items:center;justify-content:space-between;gap:10px;z-index:30;box-shadow:0 -4px 20px rgba(0,0,0,0.7);cursor:pointer}
-.mini-info{display:flex;align-items:center;gap:10px;overflow:hidden;flex:1}
-.mini-info img{width:44px;height:44px;border-radius:8px;object-fit:cover;border:1px solid var(--accent);flex-shrink:0}
-.mini-text{overflow:hidden}.mini-text h4{margin:0;font-size:14px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mini-text p{margin:2px 0 0;font-size:11px;color:var(--heading-color)}
-.mini-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}.mini-actions button{background:transparent;border:0;color:#fff;cursor:pointer;padding:7px;display:flex;align-items:center;justify-content:center}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:68px;background:rgba(23,16,32,0.96);border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-around;align-items:center;z-index:35}
-.nav-item{background:transparent;border:0;color:#b9a9c5;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;gap:4px;cursor:pointer;flex:1;height:100%}
-.nav-icon-wrap{padding:5px 20px;border-radius:20px;transition:0.3s;display:flex;align-items:center;justify-content:center}
-.nav-item.active .nav-icon-wrap{background:var(--accent);color:#fff;box-shadow:0 0 15px var(--accent-glow)}
-.nav-item.active{color:var(--heading-color);font-weight:bold}
-.full-player-modal{position:fixed;inset:0;background:var(--bg-dark);z-index:60;display:none;flex-direction:column;overflow-y:auto;padding:12px 15px 25px}
-.fp-drag-area{text-align:center;padding:6px 0 12px;cursor:pointer;max-width:600px;width:100%;margin:0 auto}
-.fp-drag-bar{width:54px;height:6px;background:var(--accent);border-radius:10px;margin:0 auto 8px;box-shadow:0 0 10px var(--accent-glow)}
-.player{background:linear-gradient(145deg,rgba(48,32,63,0.9),rgba(25,19,33,0.95));padding:22px 18px;border-radius:20px;max-width:600px;width:100%;margin:auto;text-align:center;border:1px solid rgba(255,255,255,0.12);transition:0.4s}
-.player.playing{border-color:var(--accent);box-shadow:0 0 30px var(--accent-glow)}
-.cover{width:100%;max-width:290px;aspect-ratio:16/10;margin:0 auto 14px;border-radius:15px;background:linear-gradient(135deg,#70458f,#24182f);display:flex;justify-content:center;align-items:center;overflow:hidden;box-shadow:0 8px 20px rgba(0,0,0,0.5);transition:0.4s;cursor:pointer}
-.player.playing .cover{animation:neonPulse 2s infinite alternate}
-@keyframes neonPulse{0%{box-shadow:0 0 12px var(--accent),0 0 24px var(--accent-glow);transform:scale(1)}100%{box-shadow:0 0 22px var(--heading-color),0 0 40px var(--accent-glow);transform:scale(1.02)}}
-.cover img{width:100%;height:100%;object-fit:cover}
-.visualizer{display:flex;justify-content:center;align-items:flex-end;gap:5px;height:24px;margin:8px auto}
-.bar{width:5px;height:6px;background:linear-gradient(to top,var(--accent),var(--heading-color));border-radius:3px}
-.player.playing .bar{animation:wave 0.8s infinite ease-in-out alternate}
-.player.playing .bar:nth-child(1){animation-delay:0.1s}.player.playing .bar:nth-child(2){animation-delay:0.3s}.player.playing .bar:nth-child(3){animation-delay:0.5s}.player.playing .bar:nth-child(4){animation-delay:0.2s}.player.playing .bar:nth-child(5){animation-delay:0.4s}.player.playing .bar:nth-child(6){animation-delay:0.6s}.player.playing .bar:nth-child(7){animation-delay:0.15s}
-@keyframes wave{0%{height:6px}100%{height:24px}}
-.player h3{margin:6px 0 4px}
-.ytm-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:14px 0}
-.ytm-pill{background:rgba(36,25,50,0.85);color:#f3e8ff;border:1px solid var(--accent);padding:8px 14px;border-radius:22px;font-size:12px;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
-.ytm-pill:hover,.ytm-pill.active-pill{background:var(--accent);color:#fff}
-.ytm-controls{display:flex;justify-content:space-around;align-items:center;max-width:340px;margin:12px auto}
-.ctrl-icon{background:transparent;border:0;color:var(--heading-color);cursor:pointer;padding:10px;border-radius:50%;transition:0.2s;display:flex;align-items:center;justify-content:center}
-.ctrl-icon.active-ctrl{color:#fff;background:var(--accent);box-shadow:0 0 12px var(--accent-glow)}
-#play{width:62px;height:62px;border-radius:50%;border:0;background:#fff;color:#100b19;cursor:pointer;box-shadow:0 0 20px rgba(255,255,255,0.35);display:flex;align-items:center;justify-content:center}
-input[type=range]{width:100%;accent-color:var(--accent)}.time{display:flex;justify-content:space-between;font-size:12px;color:#c8b5d5;margin-top:4px}
-.sleep-menu{display:none;justify-content:center;gap:6px;flex-wrap:wrap;margin:10px 0;background:rgba(23,16,32,0.9);padding:10px;border-radius:14px;border:1px solid var(--accent)}
-.sleep-opt{background:#261b35;color:var(--heading-color);border:1px solid var(--accent);padding:6px 12px;border-radius:15px;font-size:12px;cursor:pointer}
-.save-modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:80;display:none;align-items:flex-end;justify-content:center}
-.save-sheet{background:#21182c;width:100%;max-width:520px;border-radius:22px 22px 0 0;padding:20px;border-top:2px solid var(--accent);max-height:75vh;overflow-y:auto}
-.pl-row{display:flex;justify-content:space-between;align-items:center;padding:12px;background:#171020;border-radius:12px;margin-bottom:8px;cursor:pointer;border:1px solid #322344}
-.toast-hint{position:fixed;bottom:145px;left:50%;transform:translateX(-50%);background:rgba(27,19,38,0.96);color:#f3e8ff;border:1px solid var(--accent);padding:10px 18px;border-radius:25px;font-size:13px;z-index:90;box-shadow:0 5px 20px rgba(0,0,0,0.6);display:none;text-align:center;max-width:90%}
-@media(max-width:500px){header{padding:14px 4%}section{padding:28px 5%}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>R LOFI 01 — Official Music & Lofi Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07070c;
+      --card: rgba(255, 255, 255, 0.045);
+      --card-hover: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.1);
+      --accent: #a855f7;
+      --accent-glow: rgba(168, 85, 247, 0.35);
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --icon-size: 32px;
+      --nav-icon-size: 24px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: 110px;
+      background-image:
+        radial-gradient(circle at 15% 10%, var(--accent-glow), transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(56, 189, 248, 0.12), transparent 45%);
+    }
+
+    .container { max-width: 680px; margin: 0 auto; padding: 18px 16px; }
+
+    /* Glassmorphism Base */
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+
+    /* Header / Hero */
+    .hero { text-align: center; padding: 26px 18px 22px; position: relative; margin-bottom: 20px; }
+    .avatar-wrap { position: relative; width: 96px; height: 96px; margin: 0 auto 14px; }
+    .avatar-wrap img {
+      width: 100%; height: 100%; border-radius: 50%; object-fit: cover;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 25px var(--accent-glow);
+    }
+    .radio-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 5px 13px; border-radius: 999px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7; font-size: 12px; font-weight: 500;
+      margin-bottom: 10px;
+    }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(0.95); opacity: 0.85; }
+      50% { transform: scale(1.25); opacity: 1; }
+    }
+    .hero h1 { font-size: 24px; font-weight: 700; letter-spacing: 0.4px; }
+    .hero p { font-size: 13.5px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+
+    /* Dedication Banner (If opened via shared link) */
+    .dedication-banner {
+      display: none; margin-bottom: 18px; padding: 16px;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.18), rgba(168, 85, 247, 0.18));
+      border: 1px solid rgba(236, 72, 153, 0.45);
+      border-radius: 18px; text-align: center;
+    }
+    .dedication-banner h3 { font-size: 15px; color: #f9a8d4; margin-bottom: 4px; }
+    .dedication-banner p { font-size: 13.5px; color: #fff; font-style: italic; }
+
+    /* Search & Mood Pills */
+    .search-box {
+      display: flex; align-items: center; gap: 10px;
+      padding: 11px 15px; margin-bottom: 14px;
+    }
+    .search-box input {
+      width: 100%; background: transparent; border: none; outline: none;
+      color: var(--text); font-family: inherit; font-size: 14px;
+    }
+    .mood-bar { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 16px; scrollbar-width: none; }
+    .mood-bar::-webkit-scrollbar { display: none; }
+    .pill-btn {
+      padding: 7px 15px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--card); color: var(--muted); font-size: 13px; font-weight: 500;
+      cursor: pointer; white-space: nowrap; transition: 0.25s; font-family: inherit;
+    }
+    .pill-btn.active, .pill-btn:hover {
+      background: var(--accent); color: #fff; border-color: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    /* Section Title */
+    .sec-head { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 12px; }
+    .sec-head h2 { font-size: 17px; font-weight: 600; }
+
+    /* Song Card */
+    .song-list { display: flex; flex-direction: column; gap: 12px; }
+    .song-card {
+      display: flex; align-items: center; gap: 12px; padding: 11px;
+      transition: 0.25s; position: relative;
+    }
+    .song-card:hover { background: var(--card-hover); border-color: rgba(255,255,255,0.18); }
+    .song-card.playing { border-color: var(--accent); box-shadow: 0 0 18px var(--accent-glow); }
+    .thumb-box {
+      position: relative; width: 64px; height: 64px; border-radius: 14px;
+      overflow: hidden; flex-shrink: 0; cursor: pointer;
+    }
+    .thumb-box img { width: 100%; height: 100%; object-fit: cover; }
+    .play-overlay {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.38);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: #fff;
+    }
+    .song-info { flex: 1; min-width: 0; cursor: pointer; }
+    .song-title { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-meta { font-size: 12px; color: var(--muted); margin-top: 3px; display: flex; gap: 8px; align-items: center; }
+    .mood-tag {
+      padding: 2px 8px; border-radius: 6px; font-size: 10.5px;
+      background: rgba(168, 85, 247, 0.16); color: #d8b4fe;
+    }
+    .card-actions { display: flex; align-items: center; gap: 6px; }
+    .icon-btn {
+      width: 36px; height: 36px; border-radius: 12px; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); color: var(--text);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 15px; transition: 0.2s;
+    }
+    .icon-btn:active { transform: scale(0.92); }
+    .custom-icon { width: var(--icon-size); height: var(--icon-size); object-fit: contain; }
+    .nav-custom-icon { width: var(--nav-icon-size); height: var(--nav-icon-size); object-fit: contain; }
+        /* Separate Ambient Sound Studio Section */
+    .ambient-studio { padding: 18px; margin: 22px 0; }
+    .ambient-studio h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; display: flex; align-items: center; gap: 8px; }
+    .ambient-studio p { font-size: 12.5px; color: var(--muted); margin-bottom: 14px; }
+    .slider-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .slider-row:last-child { margin-bottom: 0; }
+    .slider-label { width: 88px; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+    .slider-row input[type="range"] {
+      flex: 1; accent-color: var(--accent); height: 5px; border-radius: 5px; cursor: pointer;
+    }
+
+    /* Song Request Box */
+    .request-box { padding: 18px; margin: 20px 0; }
+    .request-box h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+    .request-box p { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
+    .req-input {
+      width: 100%; padding: 11px 14px; border-radius: 12px; border: 1px solid var(--border);
+      background: rgba(0,0,0,0.28); color: var(--text); font-family: inherit;
+      font-size: 13.5px; margin-bottom: 10px; outline: none;
+    }
+    .req-input:focus { border-color: var(--accent); }
+    .primary-btn {
+      width: 100%; padding: 11px; border-radius: 12px; border: none;
+      background: var(--accent); color: #fff; font-weight: 600; font-size: 14px;
+      cursor: pointer; font-family: inherit; box-shadow: 0 4px 18px var(--accent-glow);
+    }
+
+    /* Social / Connect */
+    .social-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 18px 0; }
+    .social-chip {
+      display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px;
+      border-radius: 999px; text-decoration: none; color: var(--text); font-size: 13px;
+    }
+
+    /* Mini Player */
+    .mini-player {
+      position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+      width: calc(100% - 24px); max-width: 656px; padding: 10px 14px;
+      display: none; align-items: center; gap: 11px; z-index: 90;
+      background: rgba(15, 15, 24, 0.88); backdrop-filter: blur(20px);
+      border: 1px solid rgba(168, 85, 247, 0.4); border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.65);
+    }
+    .mini-player img { width: 44px; height: 44px; border-radius: 10px; object-fit: cover; cursor: pointer; }
+    .mini-info { flex: 1; min-width: 0; cursor: pointer; }
+    .mini-title { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mini-sub { font-size: 11.5px; color: var(--muted); }
+
+    /* Smart Ambient Mute Pill (Only appears when Rain/Vinyl is active) */
+    .ambient-mute-pill {
+      display: none; align-items: center; gap: 6px; padding: 6px 12px;
+      border-radius: 999px; background: rgba(56, 189, 248, 0.18);
+      border: 1px solid rgba(56, 189, 248, 0.45); color: #7dd3fc;
+      font-size: 12px; font-weight: 500; cursor: pointer;
+    }
+
+    /* Full Player & Modals */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(5, 5, 10, 0.92);
+      backdrop-filter: blur(22px); z-index: 120; display: none;
+      flex-direction: column; overflow-y: auto; padding: 20px 18px;
+    }
+    .full-wrap { max-width: 480px; width: 100%; margin: auto; text-align: center; }
+    .full-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+    .full-cover {
+      width: 240px; height: 240px; border-radius: 24px; object-fit: cover;
+      margin: 0 auto 18px; border: 1px solid var(--border);
+      box-shadow: 0 16px 45px rgba(0,0,0,0.6);
+    }
+    .seek-wrap { margin: 16px 0; }
+    .seek-wrap input[type="range"] { width: 100%; accent-color: var(--accent); }
+    .time-row { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--muted); margin-top: 4px; }
+    .controls-row { display: flex; justify-content: center; align-items: center; gap: 22px; margin: 16px 0; }
+    .play-big {
+      width: 58px; height: 58px; border-radius: 50%; border: none;
+      background: var(--accent); color: #fff; font-size: 22px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 0 25px var(--accent-glow);
+    }
+    .action-pills { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
+    .lyrics-box {
+      display: none; margin-top: 16px; padding: 14px; text-align: left;
+      max-height: 180px; overflow-y: auto; white-space: pre-line;
+      font-size: 13.5px; line-height: 1.65; color: #e2e8f0;
+    }
+
+    /* Dialog Card (Dedicate / Story Preview) */
+    .dialog-card {
+      max-width: 400px; width: 100%; margin: auto; padding: 20px; text-align: center;
+    }
+    .dialog-card h3 { font-size: 17px; margin-bottom: 10px; }
+    #storyCanvas { max-width: 100%; border-radius: 16px; margin: 10px 0; border: 1px solid var(--border); }
+  </style>
 </head>
 <body>
 
-<video class="lower-bg-video" id="lowerBgVideo" autoplay loop muted playsinline></video>
+  <div class="container">
+    <!-- Hero Section -->
+    <header class="hero glass">
+      <div class="avatar-wrap">
+        <img id="siteAvatar" src="https://via.placeholder.com/150/11111b/a855f7?text=R" alt="R LOFI 01">
+      </div>
+      <div id="radioBadge" class="radio-badge">
+        <span class="pulse-dot"></span>
+        <span>Lofi Radio Active</span>
+      </div>
+      <h1 id="siteTitle">R LOFI 01</h1>
+      <p id="siteBio">Late night lofi, sad melodies & emotional Hinglish vibes.</p>
+    </header>
 
-<header>
- <div class="logo"><img id="navLogo" src="r lofi 01.png" alt="Logo"><span id="txtBrandHeader">R LOFI 01</span></div>
- <a class="header-social" id="headerYtLink" href="https://youtube.com/@rlofi01" target="_blank"><span class="ui-ico" data-icon="play"></span><span id="txtHeaderYt">YouTube</span></a>
-</header>
-
-<div id="tab-home" class="tab-view active">
- <div class="hero" id="home">
-  <div class="hero-content">
-   <img class="hero-logo" id="heroProfileImg" src="r lofi 01.png" alt="R LOFI 01">
-   <h1 id="txtHeroTitle">R LOFI 01</h1>
-   <p id="txtTagline1">LISTEN • RELAX • FEEL • REMEMBER</p>
-   <p id="txtTagline2">Original Music | Romantic | Sad | Lofi</p>
-   <div>
-    <button class="btn" id="heroListenBtn"><span id="txtHeroListen">Listen Now</span><span class="ui-ico" data-icon="play"></span></button>
-    <a class="btn yt-btn" id="heroYtLink" href="https://youtube.com/@rlofi01" target="_blank"><span id="txtHeroYt">YouTube Channel</span></a>
-    <button class="btn app-btn" id="installAppBtn" style="display:none"><span class="ui-ico" data-icon="download"></span><span>Install App</span></button>
-   </div>
-  </div>
- </div>
-
- <div class="lower-stage">
-  <section id="music">
-   <h2><span class="ui-ico" data-icon="music"></span><span id="txtLatestHeading">Latest Releases</span></h2>
-   <p class="sub" id="txtLatestSub">Filter by mood • Thumbnail par double tap karke YouTube video dekhein</p>
-   <div class="mood-filters" id="moodFilters">
-    <button class="mood-btn active" data-mood="all" id="txtMoodAll">All Songs</button>
-    <button class="mood-btn" data-mood="romantic" id="txtMoodRomantic">Romantic</button>
-    <button class="mood-btn" data-mood="sad" id="txtMoodSad">Sad</button>
-    <button class="mood-btn" data-mood="lofi" id="txtMoodLofi">Lofi</button>
-   </div>
-   <div class="songs" id="songList"></div>
-   <div class="no-result" id="noResult">Is category mein abhi koi song add nahi hua hai.</div>
-  </section>
-
-  <section id="youtube">
-   <h2><span class="ui-ico" data-icon="play"></span><span>Watch on YouTube</span></h2>
-   <p class="sub">Featured Music Video from R LOFI 01</p>
-   <div class="video-box">
-    <div class="video-frame"><iframe id="ytIframe" src="https://www.youtube.com/embed/5G5vla1XpWE" title="YouTube Video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
-    <p class="sub">Subscribe to our official YouTube channel for full HD music videos.</p>
-    <a class="btn yt-btn" href="https://youtube.com/@rlofi01" target="_blank"><span class="ui-ico" data-icon="play"></span><span>Subscribe @rlofi01</span></a>
-   </div>
-  </section>
-
-  <section id="social">
-   <h2><span>Follow & Connect</span></h2>
-   <div class="youtube">
-    <h3>Join the R LOFI 01 Community</h3>
-    <p class="sub">Follow our official channel and personal updates on YouTube & Instagram.</p>
-    <div class="social-links">
-     <a class="btn yt-btn" href="https://youtube.com/@rlofi01" target="_blank">YouTube (@rlofi01)</a>
-     <a class="btn insta-btn" href="https://www.instagram.com/r_lofi_01" target="_blank">Channel IG (@r_lofi_01)</a>
-     <a class="btn insta-btn" href="https://www.instagram.com/rohitzz7" target="_blank">Personal IG (@rohitzz7)</a>
+    <!-- Dedication Banner (Shown when someone opens a dedicated link) -->
+    <div id="dedicationBanner" class="dedication-banner">
+      <h3 id="dedicateHeader">💌 Dedicated Specially For You</h3>
+      <p id="dedicateMessage"></p>
     </div>
-   </div>
-  </section>
 
-  <section id="about">
-   <h2><span>About R LOFI 01</span></h2>
-   <div class="about">Welcome to R LOFI 01 Official Music Website. Discover original music, romantic melodies, emotional songs, sad songs and relaxing Lofi vibes.<br><br>Listen • Relax • Feel • Remember</div>
-  </section>
+    <!-- Search & Mood Filter -->
+    <div class="search-box glass">
+      <span>🔍</span>
+      <input type="text" id="searchInput" placeholder="Search songs, mood or vibe...">
+    </div>
 
-  <footer>
-   <h3>R LOFI 01</h3>
-   <p>Feel Every Beat. Remember Every Moment.</p>
-   <div style="margin:15px 0"><a href="https://youtube.com/@rlofi01" target="_blank">YouTube</a> • <a href="https://www.instagram.com/r_lofi_01" target="_blank">@r_lofi_01</a> • <a href="https://www.instagram.com/rohitzz7" target="_blank">@rohitzz7</a></div>
-   <p>© 2026 R LOFI 01. All Rights Reserved.</p>
-  </footer>
- </div>
-</div>
+    <div class="mood-bar" id="moodBar">
+      <button class="pill-btn active" data-mood="All">All Songs</button>
+      <button class="pill-btn" data-mood="Lofi">Lofi</button>
+      <button class="pill-btn" data-mood="Sad">Sad</button>
+      <button class="pill-btn" data-mood="Romantic">Romantic</button>
+      <button class="pill-btn" data-mood="Saved">❤️ Favorites</button>
+    </div>
 
-<div id="tab-search" class="tab-view">
- <section>
-  <h2><span class="ui-ico" data-icon="search"></span><span>Search Songs</span></h2>
-  <p class="sub">Song ka naam ya mood (Romantic, Sad, Lofi) likhkar search karein</p>
-  <input type="text" class="search-input-box" id="searchInput" placeholder="Search song name...">
-  <div class="songs" id="searchResults"></div>
- </section>
-</div>
+    <!-- Songs List -->
+    <div class="sec-head">
+      <h2>🎵 Latest Releases</h2>
+      <span id="songCount" style="font-size:12px; color:var(--muted);">0 tracks</span>
+    </div>
+    <div id="songList" class="song-list"></div>
 
-<div id="tab-library" class="tab-view">
- <section>
-  <h2><span class="ui-ico" data-icon="library"></span><span>Your Saved Library</span></h2>
-  <p class="sub">Liked songs aur aapke banaye huye folders yahan dikhenge</p>
-  <div class="mood-filters" id="libraryFoldersBar"></div>
-  <div class="songs" id="libraryList"></div>
-  <div class="no-result" id="emptyLibrary" style="display:block">Is folder mein abhi koi song save nahi hai.</div>
- </section>
-</div>
+    <!-- Separate Ambient Sound Studio -->
+    <section id="ambientSection" class="ambient-studio glass">
+      <h3>🌧️ Ambient Sound Studio</h3>
+      <p>Mix soft rain & vinyl crackle independently for study, sleep or deep focus.</p>
+      <div class="slider-row">
+        <span class="slider-label">🌧️ Rain</span>
+        <input type="range" id="rainSlider" min="0" max="100" value="0">
+      </div>
+      <div class="slider-row">
+        <span class="slider-label">📀 Vinyl</span>
+        <input type="range" id="vinylSlider" min="0" max="100" value="0">
+      </div>
+    </section>
 
-<div class="mini-player" id="miniPlayer">
- <div class="mini-info" id="miniOpenArea">
-  <img id="miniCover" src="Ek Naam Tha.png" alt="Cover">
-  <div class="mini-text"><h4 id="miniTitle">Ek Naam Tha</h4><p id="miniSub">Tap to open Full Player • R LOFI 01</p></div>
- </div>
- <div class="mini-actions">
-  <button id="miniPlayBtn"><span class="ui-ico" data-icon="play"></span></button>
-  <button id="miniNextBtn"><span class="ui-ico" data-icon="next"></span></button>
-  <button id="miniCloseBtn"><span class="ui-ico" data-icon="close"></span></button>
- </div>
-</div>
+    <!-- Song Request Box -->
+    <section id="requestSection" class="request-box glass">
+      <h3>📩 Request a Song / Vibe</h3>
+      <p>Tell us what mood or Hinglish song you want next on R LOFI 01.</p>
+      <input type="text" id="reqName" class="req-input" placeholder="Your Name">
+      <input type="text" id="reqText" class="req-input" placeholder="Song idea or mood (e.g. Rain Sad Lofi)...">
+      <button id="sendReqBtn" class="primary-btn">Send Request</button>
+      <p id="reqStatus" style="font-size:12px; margin-top:8px; color:#6ee7b7; display:none;"></p>
+    </section>
 
-<div class="bottom-nav">
- <button class="nav-item active" id="nav-home" data-tab="home"><div class="nav-icon-wrap"><span class="ui-ico" data-icon="home"></span></div><span id="txtNavHome">Home</span></button>
- <button class="nav-item" id="nav-search" data-tab="search"><div class="nav-icon-wrap"><span class="ui-ico" data-icon="search"></span></div><span id="txtNavSearch">Search</span></button>
- <button class="nav-item" id="nav-library" data-tab="library"><div class="nav-icon-wrap"><span class="ui-ico" data-icon="library"></span></div><span id="txtNavLibrary">Library</span></button>
-</div>
-
-<div class="full-player-modal" id="fullPlayerModal">
- <div class="fp-drag-area" id="fpDragHandle" title="Swipe down or tap to minimize">
-  <div class="fp-drag-bar"></div>
-  <span style="font-size:12px;color:var(--heading-color);letter-spacing:1.5px;font-weight:bold">NOW PLAYING • R LOFI 01</span>
- </div>
- <div class="player" id="playerBox">
-  <div class="cover" id="cover"><img src="Ek Naam Tha.png" alt="Ek Naam Tha"></div>
-  <div class="visualizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
-  <h3 id="songName">Ek Naam Tha</h3>
-  <p class="sub" id="artist">R LOFI 01</p>
-  <div class="ytm-actions">
-   <button class="ytm-pill" id="fpFavBtn"><span class="ui-ico" data-icon="heart"></span></button>
-   <button class="ytm-pill" id="fpSavePlaylistBtn"><span class="ui-ico" data-icon="save"></span><span>Save</span></button>
-   <button class="ytm-pill" id="fpShareBtn"><span class="ui-ico" data-icon="share"></span><span>Share</span></button>
-   <a id="playerDownload" class="ytm-pill" href="Ek Naam Tha.mp3" download="Ek Naam Tha - R LOFI 01.mp3"><span class="ui-ico" data-icon="download"></span><span>Download</span></a>
-   <button class="ytm-pill" id="sleepBtn"><span class="ui-ico" data-icon="sleep"></span><span>Sleep</span></button>
+    <!-- Social Links -->
+    <div class="social-row">
+      <a id="ytChannelLink" href="https://youtube.com" target="_blank" class="social-chip glass">▶️ YouTube</a>
+      <a id="instaLink" href="https://instagram.com" target="_blank" class="social-chip glass">📸 Instagram</a>
+    </div>
   </div>
-  <div class="sleep-menu" id="sleepMenu">
-   <button class="sleep-opt" data-mins="15">15 Min</button>
-   <button class="sleep-opt" data-mins="30">30 Min</button>
-   <button class="sleep-opt" data-mins="45">45 Min</button>
-   <button class="sleep-opt" data-mins="60">60 Min</button>
-   <button class="sleep-opt" data-mins="0" style="color:#fda4af">Off</button>
-  </div>
-  <audio id="audio" src="Ek Naam Tha.mp3"></audio>
-  <input type="range" id="seek" value="0" min="0" max="100">
-  <div class="time"><span id="current">0:00</span><span id="duration">0:00</span></div>
-  <div class="ytm-controls">
-   <button class="ctrl-icon" id="shuffleBtn" title="Shuffle"><span class="ui-ico" data-icon="shuffle"></span></button>
-   <button class="ctrl-icon" id="prev" title="Previous"><span class="ui-ico" data-icon="prev"></span></button>
-   <button id="play" title="Play/Pause"><span class="ui-ico" data-icon="play"></span></button>
-   <button class="ctrl-icon" id="next" title="Next"><span class="ui-ico" data-icon="next"></span></button>
-   <button class="ctrl-icon" id="loopBtn" title="Repeat"><span class="ui-ico" data-icon="repeat"></span></button>
-  </div>
-  <p class="sub" style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px"><span class="ui-ico" data-icon="volume"></span><span>Volume</span></p>
-  <input type="range" id="volume" min="0" max="1" step="0.01" value="0.8">
- </div>
-</div>
 
-<div class="save-modal" id="saveModal">
- <div class="save-sheet">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-   <h3 style="margin:0;color:var(--heading-color)">Save to...</h3>
-   <button id="closeSaveModalBtn" style="background:transparent;border:0;color:#fff;cursor:pointer"><span class="ui-ico" data-icon="close"></span></button>
+  <!-- Mini Player -->
+  <div id="miniPlayer" class="mini-player">
+    <img id="miniThumb" src="" alt="Cover">
+    <div class="mini-info" id="openFullBtn">
+      <div id="miniTitle" class="mini-title">Select a song</div>
+      <div id="miniSub" class="mini-sub">R LOFI 01</div>
+    </div>
+    <button id="miniAmbientMute" class="ambient-mute-pill" title="Mute Rain/Vinyl">🌧️ Off</button>
+    <button id="miniPlayBtn" class="icon-btn">▶️</button>
   </div>
-  <p class="sub" id="saveModalSongName" style="margin-top:0"></p>
-  <div id="playlistOptionsList"></div>
-  <button class="btn" id="createPlaylistBtn" style="width:100%;margin:12px 0 0">+ New playlist</button>
- </div>
-</div>
 
-<div class="toast-hint" id="toastHint">YouTube par video dekhne ke liye thumbnail par double tap karein</div>
-<script src="app.js?v=6"></script>
+  <!-- Full Screen Player Modal -->
+  <div id="fullPlayerModal" class="modal-backdrop">
+    <div class="full-wrap">
+      <div class="full-top">
+        <button id="closeFullBtn" class="icon-btn">⬇️</button>
+        <button id="fullAmbientMute" class="ambient-mute-pill">🌧️ Rain/Vinyl On • Tap to Mute</button>
+        <span style="font-size:12px; color:var(--muted);">NOW PLAYING</span>
+      </div>
+
+      <img id="fullCover" class="full-cover" src="" alt="Cover">
+      <h2 id="fullTitle" style="font-size:20px; font-weight:700;">Song Title</h2>
+      <p id="fullMood" style="font-size:13px; color:var(--muted); margin-top:4px;">Lofi • R LOFI 01</p>
+
+      <div class="seek-wrap">
+        <input type="range" id="seekBar" min="0" max="100" value="0">
+        <div class="time-row">
+          <span id="curTime">0:00</span>
+          <span id="durTime">0:00</span>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <button id="prevBtn" class="icon-btn">⏮️</button>
+        <button id="fullPlayBtn" class="play-big">▶️</button>
+        <button id="nextBtn" class="icon-btn">⏭️</button>
+      </div>
+
+      <div class="action-pills">
+        <button id="likeBtn" class="pill-btn">🤍 Like</button>
+        <button id="lyricsToggleBtn" class="pill-btn">📝 Lyrics</button>
+        <button id="storyCardBtn" class="pill-btn">🖼️ Story Card</button>
+        <button id="fullDedicateBtn" class="pill-btn">💌 Dedicate</button>
+        <a id="fullYtBtn" href="#" target="_blank" class="pill-btn" style="text-decoration:none;">▶️ YouTube</a>
+      </div>
+
+      <div id="lyricsBox" class="lyrics-box glass"></div>
+    </div>
+  </div>
+
+  <!-- Dedicate Modal -->
+  <div id="dedicateModal" class="modal-backdrop">
+    <div class="dialog-card glass">
+      <h3>💌 Dedicate This Song</h3>
+      <p id="dedicateSongName" style="font-size:13px; color:var(--muted); margin-bottom:12px;"></p>
+      <input type="text" id="dedicateToName" class="req-input" placeholder="Special Person's Name">
+      <input type="text" id="dedicateNote" class="req-input" placeholder="Write a short message...">
+      <button id="copyDedicateBtn" class="primary-btn">Copy Special Link 🔗</button>
+      <button id="closeDedicateBtn" class="pill-btn" style="margin-top:10px; width:100%;">Close</button>
+    </div>
+  </div>
+
+  <!-- Instagram Story Card Modal -->
+  <div id="storyModal" class="modal-backdrop">
+    <div class="dialog-card glass">
+      <h3>🖼️ Hinglish Story Card</h3>
+      <canvas id="storyCanvas" width="720" height="1280"></canvas>
+      <button id="downloadStoryBtn" class="primary-btn">Download Story Poster ⬇️</button>
+      <button id="closeStoryBtn" class="pill-btn" style="margin-top:10px; width:100%;">Close</button>
+    </div>
+  </div>
+
+  <audio id="audioPlayer" crossorigin="anonymous"></audio>
+  <script src="app.js?v=8"></script>
 </body>
 </html>
+  
