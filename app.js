@@ -1,565 +1,413 @@
-// R LOFI 01 - Main Application Logic (v8)
-const DATA_URL = "songs.json";
-const CONFIG_URL = "config.json";
-const REQUESTS_URL = "requests.json";
-
 let songs = [];
-let filteredSongs = [];
-let currentIdx = -1;
-let currentMood = "All";
-let likedSongs = JSON.parse(localStorage.getItem("rlofi_likes") || "[]");
-let siteConfig = {
-  title: "R LOFI 01",
-  bio: "Late night lofi, sad melodies & emotional Hinglish vibes.",
-  avatar: "",
-  accent: "#a855f7",
-  iconSize: 32,
-  ytUrl: "https://youtube.com",
-  instaUrl: "https://instagram.com",
-  showRadioBadge: true,
-  showAmbientStudio: true,
-  showDedicateBtn: true,
-  showRequestBox: true,
-  icons: {}
-};
+let originalSongs = [];
+let currentSongIndex = 0;
+let isPlaying = false;
+let isRandom = false;
+let favoriteSongs = JSON.parse(localStorage.getItem('fav_songs') || '[]');
 
-const audio = document.getElementById("audioPlayer");
+const audio = new Audio();
+let ambientRain = null;
+let ambientVinyl = null;
 
-// 1. Initialize App
-async function initApp() {
-  await loadConfig();
-  await loadSongs();
-  checkDedicationURL();
-  bindEvents();
-}
+// DOM Elements
+const audioPlayer = document.getElementById('audioPlayer');
+const playBtn = document.getElementById('playBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const randomBtn = document.getElementById('randomBtn');
+const favBtn = document.getElementById('favBtn');
+const songTitle = document.getElementById('songTitle');
+const songMood = document.getElementById('songMood');
+const songCover = document.getElementById('songCover');
+const progressBar = document.getElementById('progressBar');
+const currentTimeEl = document.getElementById('currentTime');
+const totalDurationEl = document.getElementById('totalDuration');
+const tracksList = document.getElementById('tracksList');
+const searchInput = document.getElementById('searchInput');
 
-// 2. Load Site Configuration & Custom Icons
-async function loadConfig() {
+// Load Site configurations and Songs
+async function initSite() {
   try {
-    const res = await fetch(`${CONFIG_URL}?t=${Date.now()}`);
-    if (res.ok) {
-      const data = await res.json();
-      siteConfig = { ...siteConfig, ...data };
+    // ১. কনফিগ লোড
+    const cfgRes = await fetch('config.json?t=' + Date.now()).catch(() => null);
+    if (cfgRes && cfgRes.ok) {
+      const cfg = await cfgRes.json();
+      if (cfg.title) document.getElementById('siteTitle').textContent = cfg.title;
+      if (cfg.bio) document.getElementById('siteBio').textContent = cfg.bio;
+      if (cfg.avatar) document.getElementById('avatarImg').src = cfg.avatar;
+      
+      if (cfg.accent) {
+        document.documentElement.style.setProperty('--accent', cfg.accent);
+        document.documentElement.style.setProperty('--accent-glow', cfg.accent + '59');
+      }
+
+      // কাস্টম আইকন সাইজ ও ছবি
+      if (cfg.iconSize) {
+        document.documentElement.style.setProperty('--icon-size', cfg.iconSize + 'px');
+      }
+      if (cfg.icons) {
+        if (cfg.icons.dedicate) {
+          document.querySelectorAll('.dedicate-icon').forEach(img => img.src = cfg.icons.dedicate);
+        }
+        if (cfg.icons.download) {
+          document.querySelectorAll('.download-icon').forEach(img => img.src = cfg.icons.download);
+        }
+      }
+
+      // ফিচার টগলস
+      document.getElementById('radioActiveBadge').style.display = cfg.showRadioBadge !== false ? 'inline-flex' : 'none';
+      document.getElementById('ambientSection').style.display = cfg.showAmbientStudio !== false ? 'block' : 'none';
+      document.getElementById('requestBoxSection').style.display = cfg.showRequestBox !== false ? 'block' : 'none';
     }
-  } catch (e) { console.log("Using default config"); }
+  } catch (e) { console.log('Config failed, using defaults'); }
 
-  // Apply Theme & Icon Size
-  document.documentElement.style.setProperty("--accent", siteConfig.accent || "#a855f7");
-  document.documentElement.style.setProperty("--accent-glow", hexToGlow(siteConfig.accent || "#a855f7"));
-  document.documentElement.style.setProperty("--icon-size", (siteConfig.iconSize || 32) + "px");
-
-  // Apply Hero Content
-  document.getElementById("siteTitle").textContent = siteConfig.title || "R LOFI 01";
-  document.getElementById("siteBio").textContent = siteConfig.bio || "";
-  if (siteConfig.avatar) document.getElementById("siteAvatar").src = siteConfig.avatar;
-  if (siteConfig.ytUrl) document.getElementById("ytChannelLink").href = siteConfig.ytUrl;
-  if (siteConfig.instaUrl) document.getElementById("instaLink").href = siteConfig.instaUrl;
-
-  // Apply Feature Toggles from Admin Panel
-  document.getElementById("radioBadge").style.display = siteConfig.showRadioBadge !== false ? "inline-flex" : "none";
-  document.getElementById("ambientSection").style.display = siteConfig.showAmbientStudio !== false ? "block" : "none";
-  document.getElementById("requestSection").style.display = siteConfig.showRequestBox !== false ? "block" : "none";
-  document.getElementById("fullDedicateBtn").style.display = siteConfig.showDedicateBtn !== false ? "inline-block" : "none";
-}
-
-function hexToGlow(hex) {
-  const c = hex.replace("#", "");
-  const r = parseInt(c.substring(0, 2), 16) || 168;
-  const g = parseInt(c.substring(2, 4), 16) || 85;
-  const b = parseInt(c.substring(4, 6), 16) || 247;
-  return `rgba(${r}, ${g}, ${b}, 0.35)`;
-}
-
-// Helper for Custom Icon or Emoji Fallback
-function getIconHTML(key, fallbackEmoji) {
-  const customUrl = siteConfig.icons && siteConfig.icons[key];
-  if (customUrl) {
-    return `<img src="${customUrl}" class="custom-icon" alt="${key}">`;
+  try {
+    // ২. গান লোড ও পাথ ফিক্স (রুটে থাকা গান ও কভার সাপোর্ট)
+    const songsRes = await fetch('songs.json?t=' + Date.now());
+    if (songsRes.ok) {
+      const rawSongs = await songsRes.json();
+      songs = rawSongs.map(s => {
+        // যদি ফোল্ডার পাথ না থাকে, তবে সরাসরি রুট ফাইলের পাথ সেট করো
+        let sCover = s.cover;
+        if (sCover && !sCover.startsWith('http') && !sCover.startsWith('assets/')) {
+          sCover = sCover; // directly 'Ek Naam Tha.png' etc
+        }
+        let sAudio = s.audio;
+        if (sAudio && !sAudio.startsWith('http') && !sAudio.startsWith('assets/')) {
+          sAudio = sAudio;
+        }
+        return { ...s, cover: sCover, audio: sAudio };
+      });
+      originalSongs = [...songs];
+      renderTracks(songs);
+      if (songs.length > 0) {
+        loadSong(0);
+      }
+    }
+  } catch (e) {
+    console.error('Failed to load songs:', e);
   }
-  return fallbackEmoji;
 }
 
-// 3. Load Songs List
-async function loadSongs() {
-  try {
-    const res = await fetch(`${DATA_URL}?t=${Date.now()}`);
-    if (res.ok) {
-      songs = await res.json();
-    }
-  } catch (e) { songs = []; }
-  renderSongs();
-}
-
-function renderSongs() {
-  const query = document.getElementById("searchInput").value.toLowerCase().trim();
-  filteredSongs = songs.filter(s => {
-    const matchesSearch = s.title.toLowerCase().includes(query) || (s.mood || "").toLowerCase().includes(query);
-    if (currentMood === "All") return matchesSearch;
-    if (currentMood === "Saved") return matchesSearch && likedSongs.includes(s.id);
-    return matchesSearch && (s.mood || "").toLowerCase() === currentMood.toLowerCase();
-  });
-
-  const listEl = document.getElementById("songList");
-  document.getElementById("songCount").textContent = `${filteredSongs.length} tracks`;
-
-  if (filteredSongs.length === 0) {
-    listEl.innerHTML = `<div class="glass" style="padding:24px; text-align:center; color:var(--muted); font-size:13.5px;">No tracks found in this mood.</div>`;
+// Render Tracks (হোমস্ক্রিনের গানের লিস্ট)
+function renderTracks(tracks) {
+  if (!tracksList) return;
+  if (tracks.length === 0) {
+    tracksList.innerHTML = `<p class="no-tracks">কোনো গান পাওয়া যায়নি</p>`;
     return;
   }
 
-  listEl.innerHTML = filteredSongs.map((song, idx) => {
-    const isPlaying = currentIdx >= 0 && songs[currentIdx] && songs[currentIdx].id === song.id && !audio.paused;
-    const devoteBtn = siteConfig.showDedicateBtn !== false
-      ? `<button class="icon-btn" onclick="openDedicate('${song.id}')" title="Dedicate Song">${getIconHTML("dedicate", "💌")}</button>`
-      : "";
-
+  tracksList.innerHTML = tracks.map((song, i) => {
+    const isFav = favoriteSongs.includes(song.id);
     return `
-      <div class="song-card glass ${isPlaying ? "playing" : ""}">
-        <div class="thumb-box" onclick="playSongById('${song.id}')">
-          <img src="${song.cover}" alt="${song.title}">
-          <div class="play-overlay">${isPlaying ? "⏸️" : "▶️"}</div>
+      <div class="song-card ${currentSongIndex === i && isPlaying ? 'active' : ''}" onclick="playSongFromList(${i})">
+        <img src="${song.cover || 'assets/default.png'}" class="song-card-img" alt="${song.title}">
+        <div class="song-card-info">
+          <div class="song-card-title">${song.title}</div>
+          <div class="song-card-sub">${song.mood || 'Lofi'} • ${song.desc || 'R LOFI 01'}</div>
         </div>
-        <div class="song-info" onclick="playSongById('${song.id}')">
-          <div class="song-title">${song.title}</div>
-          <div class="song-meta">
-            <span class="mood-tag">${song.mood || "Lofi"}</span>
-            <span>${song.desc ? song.desc.slice(0, 28) + (song.desc.length > 28 ? "..." : "") : "R LOFI 01"}</span>
-          </div>
-        </div>
-        <div class="card-actions">
-          ${devoteBtn}
-          <a href="${song.audio}" download="${song.title}.mp3" class="icon-btn" title="Download">${getIconHTML("download", "⬇️")}</a>
+        <div class="song-card-actions" onclick="event.stopPropagation();">
+          <button class="action-btn fav-card-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${song.id}', this)">
+            ❤️
+          </button>
+          ${song.ytUrl ? `
+            <a href="${song.ytUrl}" target="_blank" class="action-btn">
+              ▶️
+            </a>
+          ` : ''}
+          <a href="${song.audio}" download="${song.title}.mp3" class="action-btn download-btn">
+            <img class="download-icon" src="assets/icons/download.png" onerror="this.src='⬇️'" style="width:var(--icon-size, 20px); height:var(--icon-size, 20px); object-fit:contain;">
+          </a>
+          <button class="action-btn dedicate-btn" onclick="openDedicateModal('${song.id}')">
+            <img class="dedicate-icon" src="assets/icons/dedicate.png" onerror="this.src='💌'" style="width:var(--icon-size, 20px); height:var(--icon-size, 20px); object-fit:contain;">
+          </button>
         </div>
       </div>
     `;
-  }).join("");
+  }).join('');
 }
-// 4. Player Controls & Double-Tap YouTube
-function playSongById(id) {
-  const index = songs.findIndex(s => s.id === id);
-  if (index === -1) return;
 
-  if (currentIdx === index) {
-    togglePlay();
-    return;
-  }
-
-  currentIdx = index;
-  const song = songs[currentIdx];
+// Load Song
+function loadSong(index) {
+  if (index < 0 || index >= songs.length) return;
+  currentSongIndex = index;
+  const song = songs[index];
+  
+  songTitle.textContent = song.title;
+  songMood.textContent = song.mood || 'Lofi';
+  songCover.src = song.cover || 'assets/default.png';
   audio.src = song.audio;
-  audio.play();
-  updatePlayerUI();
-  renderSongs();
-}
-
-function togglePlay() {
-  if (currentIdx === -1 && songs.length > 0) {
-    playSongById(songs[0].id);
-    return;
-  }
-  if (audio.paused) {
-    audio.play();
+  
+  // Fav status update
+  if (favoriteSongs.includes(song.id)) {
+    favBtn.classList.add('active');
   } else {
-    audio.pause();
-  }
-  updatePlayerUI();
-  renderSongs();
-}
-
-function updatePlayerUI() {
-  if (currentIdx < 0 || !songs[currentIdx]) return;
-  const song = songs[currentIdx];
-  const isPaused = audio.paused;
-
-  document.getElementById("miniPlayer").style.display = "flex";
-  document.getElementById("miniThumb").src = song.cover;
-  document.getElementById("miniTitle").textContent = song.title;
-  document.getElementById("miniSub").textContent = `${song.mood || "Lofi"} • R LOFI 01`;
-  document.getElementById("miniPlayBtn").textContent = isPaused ? "▶️" : "⏸️";
-
-  document.getElementById("fullCover").src = song.cover;
-  document.getElementById("fullTitle").textContent = song.title;
-  document.getElementById("fullMood").textContent = `${song.mood || "Lofi"} • R LOFI 01`;
-  document.getElementById("fullPlayBtn").textContent = isPaused ? "▶️" : "⏸️";
-  document.getElementById("fullYtBtn").href = song.ytUrl || siteConfig.ytUrl || "https://youtube.com";
-
-  // Lyrics Box
-  const lyricsBox = document.getElementById("lyricsBox");
-  if (song.lyrics && song.lyrics.trim() !== "") {
-    lyricsBox.textContent = song.lyrics;
-  } else {
-    lyricsBox.textContent = getAutoHinglishShayari(song);
+    favBtn.classList.remove('active');
   }
 
-  // Like Button State
-  const isLiked = likedSongs.includes(song.id);
-  document.getElementById("likeBtn").textContent = isLiked ? "❤️ Liked" : "🤍 Like";
-}
-
-function formatTime(sec) {
-  if (isNaN(sec)) return "0:00";
-  const m = Math.floor(sec / 60);
-  const s = Math.floor(sec % 60);
-  return `${m}:${s < 10 ? "0" : ""}${s}`;
-}
-
-// 5. Web Audio API: Built-in Rain & Vinyl Crackle Synthesizer (No MP3 needed!)
-let audioCtx = null;
-let rainGain = null;
-let vinylGain = null;
-
-function initAmbientAudio() {
-  if (audioCtx) return;
-  const AudioContext = window.AudioContext || window.webkitAudioContext;
-  audioCtx = new AudioContext();
-
-  // Rain Generator (Filtered Pink/Brown Noise)
-  const bufferSize = 2 * audioCtx.sampleRate;
-  const rainBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const rainData = rainBuffer.getChannelData(0);
-  let lastOut = 0.0;
-  for (let i = 0; i < bufferSize; i++) {
-    const white = Math.random() * 2 - 1;
-    rainData[i] = (lastOut + (0.04 * white)) / 1.04;
-    lastOut = rainData[i];
-    rainData[i] *= 2.8;
-  }
-  const rainSource = audioCtx.createBufferSource();
-  rainSource.buffer = rainBuffer;
-  rainSource.loop = true;
-
-  const rainFilter = audioCtx.createBiquadFilter();
-  rainFilter.type = "lowpass";
-  rainFilter.frequency.value = 950;
-
-  rainGain = audioCtx.createGain();
-  rainGain.gain.value = 0;
-  rainSource.connect(rainFilter);
-  rainFilter.connect(rainGain);
-  rainGain.connect(audioCtx.destination);
-  rainSource.start(0);
-
-  // Vinyl Crackle Generator (Sparse Impulse Pops + Warm Hum)
-  const vinylBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const vinylData = vinylBuffer.getChannelData(0);
-  for (let i = 0; i < bufferSize; i++) {
-    const r = Math.random();
-    vinylData[i] = r > 0.9982 ? (Math.random() * 2 - 1) * 0.65 : (Math.random() * 2 - 1) * 0.015;
-  }
-  const vinylSource = audioCtx.createBufferSource();
-  vinylSource.buffer = vinylBuffer;
-  vinylSource.loop = true;
-
-  const vinylFilter = audioCtx.createBiquadFilter();
-  vinylFilter.type = "bandpass";
-  vinylFilter.frequency.value = 1800;
-
-  vinylGain = audioCtx.createGain();
-  vinylGain.gain.value = 0;
-  vinylSource.connect(vinylFilter);
-  vinylFilter.connect(vinylGain);
-  vinylGain.connect(audioCtx.destination);
-  vinylSource.start(0);
-}
-
-function updateAmbientLevels() {
-  const rainVal = Number(document.getElementById("rainSlider").value);
-  const vinylVal = Number(document.getElementById("vinylSlider").value);
-
-  if (rainVal > 0 || vinylVal > 0) {
-    initAmbientAudio();
-    if (audioCtx.state === "suspended") audioCtx.resume();
-  }
-
-  if (rainGain) rainGain.gain.setTargetAtTime((rainVal / 100) * 0.45, audioCtx.currentTime, 0.05);
-  if (vinylGain) vinylGain.gain.setTargetAtTime((vinylVal / 100) * 0.55, audioCtx.currentTime, 0.05);
-
-  // Show/Hide Smart Mute Pill inside Mini & Full Player
-  const isActive = rainVal > 0 || vinylVal > 0;
-  document.getElementById("miniAmbientMute").style.display = isActive ? "inline-flex" : "none";
-  document.getElementById("fullAmbientMute").style.display = isActive ? "inline-flex" : "none";
-}
-
-function muteAllAmbient() {
-  document.getElementById("rainSlider").value = 0;
-  document.getElementById("vinylSlider").value = 0;
-  updateAmbientLevels();
-    }
-// 6. Auto Hinglish Shayari & Instagram Story Card Generator
-function getAutoHinglishShayari(song) {
-  if (song.lyrics && song.lyrics.trim()) {
-    return song.lyrics.trim().split("\n").slice(0, 3).join("\n");
-  }
-  if (song.desc && song.desc.trim()) {
-    return `"${song.desc.trim()}"`;
-  }
-  const mood = (song.mood || "Lofi").toLowerCase();
-  if (mood.includes("sad")) {
-    return `"Kuch baatein adhoori reh jaati hain,\nPar unki yaadein har raat geet ban jaati hain..."`;
-  }
-  if (mood.includes("romantic")) {
-    return `"Teri khamoshi bhi ek dhun si lagti hai,\nHar shaam ab bas tere naam se sajti hai..."`;
-  }
-  return `"Raat ki khamoshi aur ye halki si dhun,\nDil ke har dard ko sukoon de jaati hai..."`;
-}
-
-function generateStoryCard() {
-  if (currentIdx < 0 || !songs[currentIdx]) return;
-  const song = songs[currentIdx];
-  const canvas = document.getElementById("storyCanvas");
-  const ctx = canvas.getContext("2d");
-
-  // Background Gradient
-  const grad = ctx.createLinearGradient(0, 0, 720, 1280);
-  grad.addColorStop(0, "#0b0918");
-  grad.addColorStop(0.5, "#1d1035");
-  grad.addColorStop(1, "#07070c");
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 720, 1280);
-
-  // Subtle Glow Circle
-  const rad = ctx.createRadialGradient(360, 420, 40, 360, 420, 340);
-  rad.addColorStop(0, "rgba(168, 85, 247, 0.35)");
-  rad.addColorStop(1, "transparent");
-  ctx.fillStyle = rad;
-  ctx.fillRect(0, 0, 720, 1280);
-
-  const img = new Image();
-  img.crossOrigin = "anonymous";
-  img.onload = () => {
-    // Draw Rounded Cover
-    ctx.save();
-    roundRect(ctx, 135, 180, 450, 450, 36);
-    ctx.clip();
-    ctx.drawImage(img, 135, 180, 450, 450);
-    ctx.restore();
-
-    // Border around cover
-    ctx.strokeStyle = "rgba(255,255,255,0.22)";
-    ctx.lineWidth = 3;
-    roundRect(ctx, 135, 180, 450, 450, 36);
-    ctx.stroke();
-
-    // Song Title & Mood
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 40px Outfit, sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(song.title, 360, 705);
-
-    ctx.fillStyle = "#c084fc";
-    ctx.font = "500 24px Outfit, sans-serif";
-    ctx.fillText(`${(song.mood || "LOFI").toUpperCase()} • ${siteConfig.title || "R LOFI 01"}`, 360, 750);
-
-    // Hinglish Lines
-    ctx.fillStyle = "#e2e8f0";
-    ctx.font = "italic 28px Outfit, sans-serif";
-    const lines = getAutoHinglishShayari(song).split("\n");
-    lines.forEach((line, i) => {
-      ctx.fillText(line.slice(0, 44), 360, 845 + i * 44);
-    });
-
-    // Footer Watermark
-    ctx.fillStyle = "rgba(255,255,255,0.55)";
-    ctx.font = "500 22px Outfit, sans-serif";
-    ctx.fillText("🎧 Listen Now on R LOFI 01 Official", 360, 1170);
-
-    document.getElementById("storyModal").style.display = "flex";
-  };
-  img.src = song.cover;
-}
-
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
-}
-
-// 7. Dedicate This Song Feature
-let dedicateSongId = null;
-
-function openDedicate(id) {
-  const song = songs.find(s => s.id === id);
-  if (!song) return;
-  dedicateSongId = id;
-  document.getElementById("dedicateSongName").textContent = `Song: "${song.title}"`;
-  document.getElementById("dedicateModal").style.display = "flex";
-}
-
-function checkDedicationURL() {
-  const params = new URLSearchParams(window.location.search);
-  const songId = params.get("song");
-  const toName = params.get("to");
-  const note = params.get("note");
-
-  if (toName || note) {
-    const banner = document.getElementById("dedicationBanner");
-    banner.style.display = "block";
-    document.getElementById("dedicateHeader").textContent = toName
-      ? `💌 Specially Dedicated For ${toName}`
-      : `💌 A Special Song Dedicated For You`;
-    document.getElementById("dedicateMessage").textContent = note ? `"${note}"` : "";
-  }
-  if (songId) {
-    setTimeout(() => playSongById(songId), 400);
-  }
-}
-
-// 8. Song Request Submission (Stored in localStorage + ready for GitHub sync)
-function submitSongRequest() {
-  const name = document.getElementById("reqName").value.trim() || "Anonymous Listener";
-  const text = document.getElementById("reqText").value.trim();
-  const statusEl = document.getElementById("reqStatus");
-
-  if (!text) {
-    statusEl.style.display = "block";
-    statusEl.style.color = "#fca5a5";
-    statusEl.textContent = "Please write a song or mood idea first!";
-    return;
-  }
-
-  const saved = JSON.parse(localStorage.getItem("rlofi_requests") || "[]");
-  saved.unshift({
-    id: "req_" + Date.now(),
-    name,
-    text,
-    date: new Date().toLocaleDateString()
-  });
-  localStorage.setItem("rlofi_requests", JSON.stringify(saved));
-
-  document.getElementById("reqName").value = "";
-  document.getElementById("reqText").value = "";
-  statusEl.style.display = "block";
-  statusEl.style.color = "#6ee7b7";
-  statusEl.textContent = "✅ Request sent! Thank you for sharing your vibe.";
-}
-
-// 9. Bind All Events
-function bindEvents() {
-  document.getElementById("searchInput").addEventListener("input", renderSongs);
-
-  document.querySelectorAll("#moodBar .pill-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("#moodBar .pill-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      currentMood = btn.dataset.mood;
-      renderSongs();
-    });
-  });
-
-  document.getElementById("miniPlayBtn").addEventListener("click", togglePlay);
-  document.getElementById("fullPlayBtn").addEventListener("click", togglePlay);
-
-  document.getElementById("openFullBtn").addEventListener("click", () => {
-    document.getElementById("fullPlayerModal").style.display = "flex";
-  });
-  document.getElementById("miniThumb").addEventListener("click", () => {
-    document.getElementById("fullPlayerModal").style.display = "flex";
-  });
-  document.getElementById("closeFullBtn").addEventListener("click", () => {
-    document.getElementById("fullPlayerModal").style.display = "none";
-  });
-
-  // Double-tap Cover to Open YouTube
-  let lastTap = 0;
-  document.getElementById("fullCover").addEventListener("click", () => {
-    const now = Date.now();
-    if (now - lastTap < 350 && currentIdx >= 0) {
-      window.open(songs[currentIdx].ytUrl || siteConfig.ytUrl, "_blank");
-    }
-    lastTap = now;
-  });
-
-  document.getElementById("prevBtn").addEventListener("click", () => {
-    if (songs.length === 0) return;
-    const next = (currentIdx - 1 + songs.length) % songs.length;
-    playSongById(songs[next].id);
-  });
-
-  document.getElementById("nextBtn").addEventListener("click", () => {
-    if (songs.length === 0) return;
-    const next = (currentIdx + 1) % songs.length;
-    playSongById(songs[next].id);
-  });
-
-  audio.addEventListener("ended", () => {
-    if (songs.length > 0) {
-      const next = (currentIdx + 1) % songs.length;
-      playSongById(songs[next].id);
-    }
-  });
-
-  audio.addEventListener("timeupdate", () => {
-    if (!audio.duration) return;
-    const pct = (audio.currentTime / audio.duration) * 100;
-    document.getElementById("seekBar").value = pct;
-    document.getElementById("curTime").textContent = formatTime(audio.currentTime);
-    document.getElementById("durTime").textContent = formatTime(audio.duration);
-  });
-
-  document.getElementById("seekBar").addEventListener("input", e => {
-    if (audio.duration) {
-      audio.currentTime = (e.target.value / 100) * audio.duration;
-    }
-  });
-
-  // Like, Lyrics, Story, Dedicate
-  document.getElementById("likeBtn").addEventListener("click", () => {
-    if (currentIdx < 0) return;
-    const id = songs[currentIdx].id;
-    if (likedSongs.includes(id)) {
-      likedSongs = likedSongs.filter(x => x !== id);
+  // Active state in list visual update
+  document.querySelectorAll('.song-card').forEach((card, idx) => {
+    if (idx === index) {
+      card.classList.add('active');
     } else {
-      likedSongs.push(id);
+      card.classList.remove('active');
     }
-    localStorage.setItem("rlofi_likes", JSON.stringify(likedSongs));
-    updatePlayerUI();
   });
-
-  document.getElementById("lyricsToggleBtn").addEventListener("click", () => {
-    const box = document.getElementById("lyricsBox");
-    box.style.display = box.style.display === "block" ? "none" : "block";
-  });
-
-  document.getElementById("storyCardBtn").addEventListener("click", generateStoryCard);
-  document.getElementById("closeStoryBtn").addEventListener("click", () => {
-    document.getElementById("storyModal").style.display = "none";
-  });
-  document.getElementById("downloadStoryBtn").addEventListener("click", () => {
-    const link = document.createElement("a");
-    link.download = "R-LOFI-01-Story.png";
-    link.href = document.getElementById("storyCanvas").toDataURL("image/png");
-    link.click();
-  });
-
-  document.getElementById("fullDedicateBtn").addEventListener("click", () => {
-    if (currentIdx >= 0) openDedicate(songs[currentIdx].id);
-  });
-  document.getElementById("closeDedicateBtn").addEventListener("click", () => {
-    document.getElementById("dedicateModal").style.display = "none";
-  });
-  document.getElementById("copyDedicateBtn").addEventListener("click", () => {
-    const to = encodeURIComponent(document.getElementById("dedicateToName").value.trim());
-    const note = encodeURIComponent(document.getElementById("dedicateNote").value.trim());
-    const base = window.location.origin + window.location.pathname;
-    const shareUrl = `${base}?song=${dedicateSongId}&to=${to}&note=${note}`;
-    navigator.clipboard.writeText(shareUrl);
-    alert("💌 Special Dedication Link Copied! Now share it on WhatsApp or Instagram.");
-    document.getElementById("dedicateModal").style.display = "none";
-  });
-
-  // Ambient Sound Studio Sliders & Smart Mute Pills
-  document.getElementById("rainSlider").addEventListener("input", updateAmbientLevels);
-  document.getElementById("vinylSlider").addEventListener("input", updateAmbientLevels);
-  document.getElementById("miniAmbientMute").addEventListener("click", muteAllAmbient);
-  document.getElementById("fullAmbientMute").addEventListener("click", muteAllAmbient);
-
-  // Song Request Button
-  document.getElementById("sendReqBtn").addEventListener("click", submitSongRequest);
 }
 
-initApp();
+// Play-Pause
+function togglePlay() {
+  if (songs.length === 0) return;
+  if (isPlaying) {
+    audio.pause();
+    playBtn.innerHTML = '▶️';
+    isPlaying = false;
+  } else {
+    audio.play();
+    playBtn.innerHTML = '⏸️';
+    isPlaying = true;
+  }
+}
+
+function playSongFromList(index) {
+  loadSong(index);
+  isPlaying = false;
+  togglePlay();
+}
+
+// Progress and Time
+audio.addEventListener('timeupdate', () => {
+  if (!audio.duration) return;
+  const progress = (audio.currentTime / audio.duration) * 100;
+  progressBar.value = progress;
+  
+  // Formatted Current Time
+  const curMin = Math.floor(audio.currentTime / 60);
+  const curSec = Math.floor(audio.currentTime % 60).toString().padStart(2, '0');
+  currentTimeEl.textContent = `${curMin}:${curSec}`;
+
+  // Formatted Duration
+  const durMin = Math.floor(audio.duration / 60);
+  const durSec = Math.floor(audio.duration % 60).toString().padStart(2, '0');
+  totalDurationEl.textContent = `${durMin}:${durSec}`;
+});
+
+progressBar.addEventListener('input', () => {
+  if (!audio.duration) return;
+  audio.currentTime = (progressBar.value / 100) * audio.duration;
+});
+
+// Controls Action
+prevBtn.addEventListener('click', () => {
+  let prevIndex = currentSongIndex - 1;
+  if (prevIndex < 0) prevIndex = songs.length - 1;
+  playSongFromList(prevIndex);
+});
+
+nextBtn.addEventListener('click', () => {
+  if (isRandom) {
+    let randIndex = Math.floor(Math.random() * songs.length);
+    playSongFromList(randIndex);
+  } else {
+    let nextIndex = currentSongIndex + 1;
+    if (nextIndex >= songs.length) nextIndex = 0;
+    playSongFromList(nextIndex);
+  }
+});
+
+audio.addEventListener('ended', () => {
+  nextBtn.click();
+});
+
+randomBtn.addEventListener('click', () => {
+  isRandom = !isRandom;
+  randomBtn.classList.toggle('active', isRandom);
+});
+
+// Search & filter feature
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase().trim();
+    if (val === '') {
+      songs = [...originalSongs];
+    } else {
+      songs = originalSongs.filter(s => 
+        s.title.toLowerCase().includes(val) || 
+        (s.mood && s.mood.toLowerCase().includes(val)) ||
+        (s.desc && s.desc.toLowerCase().includes(val))
+      );
+    }
+    renderTracks(songs);
+  });
+}
+
+// Filter Navigation Tabs
+window.filterMood = function(mood, el) {
+  document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  if (mood === 'all') {
+    songs = [...originalSongs];
+  } else if (mood === 'favorites') {
+    songs = originalSongs.filter(s => favoriteSongs.includes(s.id));
+  } else {
+    songs = originalSongs.filter(s => s.mood && s.mood.toLowerCase() === mood.toLowerCase());
+  }
+  renderTracks(songs);
+};
+
+// Favorites Toggle
+window.toggleFavorite = function(songId, el) {
+  if (favoriteSongs.includes(songId)) {
+    favoriteSongs = favoriteSongs.filter(id => id !== songId);
+    if (el) el.classList.remove('active');
+  } else {
+    favoriteSongs.push(songId);
+    if (el) el.classList.add('active');
+  }
+  localStorage.setItem('fav_songs', JSON.stringify(favoriteSongs));
+};
+
+// Toggle Current Playing Fav
+favBtn.addEventListener('click', () => {
+  if (songs.length === 0) return;
+  const currentSongId = songs[currentSongIndex].id;
+  toggleFavorite(currentSongId);
+  favBtn.classList.toggle('active', favoriteSongs.includes(currentSongId));
+  renderTracks(songs);
+});
+
+// Dedication Dialog Box
+window.openDedicateModal = function(songId) {
+  const song = originalSongs.find(s => s.id === songId);
+  if (!song) return;
+  const fromWho = prompt("আপনার নাম (Dedicator):");
+  if (!fromWho) return;
+  const toWho = prompt("কাকে উৎসর্গ করতে চান (To Who):");
+  if (!toWho) return;
+  const message = prompt("কোনো বিশেষ বার্তা বা অনুভূতি (Message):");
+  
+  const dedicationData = {
+    songId: songId,
+    from: fromWho,
+    to: toWho,
+    msg: message || ""
+  };
+
+  // Dedication Link generation
+  const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(dedicationData))));
+  const shareLink = `${location.origin}${location.pathname}?dedicate=${encoded}`;
+  
+  // Show dedicated Link to copy
+  alert(`💖 ডেডিকেশন লিংক তৈরি হয়েছে! কপি করে প্রিয়জনকে পাঠান:\n\n${shareLink}`);
+  navigator.clipboard.writeText(shareLink).then(() => {
+    alert("লিংকটি কপি করা হয়েছে! 💌");
+  });
+};
+
+// Check for incoming dedication Link
+function checkDedication() {
+  const params = new URLSearchParams(window.location.search);
+  const dedB64 = params.get('dedicate');
+  if (dedB64) {
+    try {
+      const data = JSON.parse(decodeURIComponent(escape(atob(dedB64))));
+      // Find the song
+      const songIdx = originalSongs.findIndex(s => s.id === data.songId);
+      if (songIdx !== -1) {
+        loadSong(songIdx);
+        
+        // Show dedicatons overlay message box
+        const overlay = document.createElement('div');
+        overlay.className = 'dedication-overlay';
+        overlay.innerHTML = `
+          <div class="dedication-modal-content">
+            <h2>💖 বিশেষ উৎসর্গ 💖</h2>
+            <p class="ded-text"><strong>${data.from}</strong> এই গানটি <strong>${data.to}</strong> কে ডেডিকেট করেছেন।</p>
+            ${data.msg ? `<blockquote class="ded-msg">"${data.msg}"</blockquote>` : ''}
+            <button onclick="this.parentElement.parentElement.remove(); togglePlay();" class="play-ded-btn">গানটি শুনুন 🎵</button>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+      }
+    } catch (e) { console.log('Invalid dedication format'); }
+  }
+}
+
+// Listener Song Request Form Box submission locally
+const reqForm = document.getElementById('requestForm');
+if (reqForm) {
+  reqForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('reqName').value.trim();
+    const text = document.getElementById('reqVibe').value.trim();
     
+    if (!name || !text) return;
+    
+    // Save to LocalStorage for Admin to review in Inbox
+    const existing = JSON.parse(localStorage.getItem('rlofi_requests') || '[]');
+    existing.unshift({
+      id: "req_" + Date.now(),
+      name: name,
+      text: text,
+      date: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric'})
+    });
+    localStorage.setItem('rlofi_requests', JSON.stringify(existing));
+    
+    alert("আপনার গানের অনুরোধ সফলভাবে জমা নেওয়া হয়েছে! 📩");
+    reqForm.reset();
+  });
+}
+
+// Ambient Mixer Studio controls
+function initAmbient() {
+  const rainSlider = document.getElementById('ambientRain');
+  const vinylSlider = document.getElementById('ambientVinyl');
+
+  if (rainSlider) {
+    rainSlider.addEventListener('input', (e) => {
+      const v = e.target.value / 100;
+      if (!ambientRain) {
+        ambientRain = new Audio('https://assets.mixkit.co/active_storage/sfx/2433/2433-84.wav');
+        ambientRain.loop = true;
+      }
+      if (v > 0) {
+        ambientRain.volume = v;
+        if (ambientRain.paused) ambientRain.play().catch(e=>console.log(e));
+      } else {
+        ambientRain.pause();
+      }
+    });
+  }
+
+  if (vinylSlider) {
+    vinylSlider.addEventListener('input', (e) => {
+      const v = e.target.value / 100;
+      if (!ambientVinyl) {
+        ambientVinyl = new Audio('https://www.soundjay.com/misc/sounds/vintage-record-player-crackles-01.mp3');
+        ambientVinyl.loop = true;
+      }
+      if (v > 0) {
+        ambientVinyl.volume = v * 0.8; // Limit Vinyl Volume max
+        if (ambientVinyl.paused) ambientVinyl.play().catch(e=>console.log(e));
+      } else {
+        ambientVinyl.pause();
+      }
+    });
+  }
+}
+
+// Start everything up
+initSite().then(() => {
+  checkDedication();
+  initAmbient();
+});
+
+// Toggle Main search visual bar on bottom click
+window.toggleSearchView = function() {
+  const wrapper = document.getElementById('searchWrapper');
+  wrapper.style.display = (wrapper.style.display === 'none' || wrapper.style.display === '') ? 'flex' : 'none';
+  if (wrapper.style.display === 'flex') {
+    searchInput.focus();
+  }
+};
