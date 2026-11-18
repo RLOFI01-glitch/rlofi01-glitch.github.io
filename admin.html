@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -39,10 +40,10 @@ button:disabled{opacity:0.5;cursor:not-allowed}
  <div class="status" id="authStatus"></div>
 </div>
 
-<!-- NEW: APP LOGO / ICON UPDATER -->
+<!-- APP LOGO / ICON UPDATER -->
 <div class="box">
  <h3>📱 App Icon / Logo পরিবর্তন করুন</h3>
- <p style="font-size:12px;color:#bcaacb;margin-top:-6px">যেকোনো ছবি সিলেক্ট করলে অটোমেটিক 512x512 Square অ্যাপ আইকন সাইজে তৈরি হয়ে যাবে (কোনো সাদা বর্ডার থাকবে না)।</p>
+ <p style="font-size:12px;color:#bcaacb;margin-top:-6px">যেকোনো ছবি সিলেক্ট করলে অটোমেটিক 512x512 Full-Bleed Square অ্যাপ আইকন তৈরি হবে (কোনো সাদা বর্ডার থাকবে না)।</p>
  <input type="file" id="appIconFile" accept="image/*">
  <div class="icon-preview-box">
   <div class="app-icon-mock"><img id="appIconPreview" src="profile_1794922298525.png" alt="App Icon Preview"></div>
@@ -171,7 +172,7 @@ document.getElementById("saveTokenBtn").onclick = () => {
  loadAdminData();
 };
 
-/* Upload Squared App Icon & Update manifest.json */
+/* Upload Squared App Icon & Update manifest.json with maskable */
 document.getElementById("uploadAppIconBtn").onclick = async function(){
  if(!token) return alert("আগে GitHub Token দিন!");
  if(!squaredIconBase64) return alert("আগে একটি ছবি সিলেক্ট করুন!");
@@ -190,14 +191,14 @@ document.getElementById("uploadAppIconBtn").onclick = async function(){
    background_color: "#100b19",
    theme_color: "#100b19",
    icons: [
-    { src: iconFileName, sizes: "192x192", type: "image/png", purpose: "any" },
-    { src: iconFileName, sizes: "512x512", type: "image/png", purpose: "any" }
+    { src: iconFileName, sizes: "192x192", type: "image/png", purpose: "maskable" },
+    { src: iconFileName, sizes: "512x512", type: "image/png", purpose: "maskable" }
    ]
   };
   const existingManifest = await ghGet("manifest.json");
-  await ghPut("manifest.json", utf8ToB64(JSON.stringify(manifestObj, null, 2)), "Update app icon in manifest.json", existingManifest ? existingManifest.sha : null);
+  await ghPut("manifest.json", utf8ToB64(JSON.stringify(manifestObj, null, 2)), "Update maskable app icon in manifest.json", existingManifest ? existingManifest.sha : null);
 
-  st.textContent = "✅ App Logo আপডেট হয়েছে! হোম স্ক্রিনের পুরনো আইকন রিমুভ করে আবার Install/Add to Home Screen করুন।";
+  st.textContent = "✅ App Logo আপডেট হয়েছে! ফোনের পুরনো অ্যাপটি Uninstall করে আবার Install/Add to Home Screen করুন।";
  }catch(err){
   st.textContent = "❌ সমস্যা হয়েছে: " + err.message;
  }
