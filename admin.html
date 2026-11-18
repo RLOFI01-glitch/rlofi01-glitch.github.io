@@ -7,9 +7,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #08080e;
-      --card: rgba(255, 255, 255, 0.05);
-      --border: rgba(255, 255, 255, 0.12);
+      --bg: #07070d;
+      --card: rgba(22, 18, 42, 0.78);
+      --border: rgba(168, 85, 247, 0.25);
       --accent: #a855f7;
       --text: #ffffff;
       --muted: #94a3b8;
@@ -17,9 +17,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Outfit', sans-serif;
-      background: var(--bg);
+      background-color: var(--bg);
+      background-image: radial-gradient(circle at 20% 10%, rgba(168, 85, 247, 0.16), transparent 45%);
       color: var(--text);
-      padding: 16px 14px 90px;
+      padding: 16px 14px 95px;
       max-width: 620px;
       margin: 0 auto;
     }
@@ -27,23 +28,26 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 12px 16px; background: var(--card); border: 1px solid var(--border);
       border-radius: 18px; margin-bottom: 18px;
+      box-shadow: 0 0 22px rgba(168, 85, 247, 0.2);
     }
     .header-bar h1 { font-size: 18px; font-weight: 700; }
     .view-site-btn {
       padding: 7px 14px; border-radius: 999px; background: var(--accent);
       color: #fff; text-decoration: none; font-size: 12.5px; font-weight: 600;
+      box-shadow: 0 0 14px rgba(168, 85, 247, 0.45);
     }
     .card {
       background: var(--card); border: 1px solid var(--border);
       border-radius: 20px; padding: 16px; margin-bottom: 18px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
     }
-    .card h2 { font-size: 16px; margin-bottom: 4px; }
+    .card h2 { font-size: 16px; margin-bottom: 4px; color: #f3e8ff; }
     .card p.sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
 
     label { display: block; font-size: 12px; color: #cbd5e1; margin-bottom: 5px; font-weight: 500; }
     input[type="text"], input[type="password"], input[type="url"], select, textarea {
       width: 100%; padding: 10px 12px; border-radius: 12px;
-      border: 1px solid var(--border); background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(0, 0, 0, 0.42);
       color: #fff; font-family: inherit; font-size: 13.5px; margin-bottom: 12px;
       outline: none;
     }
@@ -53,40 +57,43 @@
       border: 1px dashed var(--accent); background: rgba(168, 85, 247, 0.08);
       color: #e2e8f0; font-size: 12.5px; margin-bottom: 12px;
     }
+    input[type="range"] { width: 100%; accent-color: var(--accent); margin-bottom: 12px; }
     .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .btn {
-      width: 100%; padding: 12px; border-radius: 12px; border: none;
+      width: 100%; padding: 12px; border-radius: 13px; border: none;
       background: linear-gradient(135deg, var(--accent), #7e22ce);
       color: #fff; font-family: inherit; font-size: 14px; font-weight: 600;
       cursor: pointer; transition: 0.2s;
+      box-shadow: 0 0 18px rgba(168, 85, 247, 0.35);
     }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .btn-sm {
-      padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.14);
       background: rgba(255, 255, 255, 0.08); color: #fff; font-size: 12px; cursor: pointer;
     }
     .btn-danger { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #fca5a5; }
 
     .switch-row {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       font-size: 13.5px;
     }
     .song-item {
       display: flex; align-items: center; gap: 10px;
-      padding: 10px; border-radius: 14px; background: rgba(0, 0, 0, 0.3);
-      border: 1px solid var(--border); margin-bottom: 10px;
+      padding: 10px; border-radius: 14px; background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(168, 85, 247, 0.2); margin-bottom: 10px;
     }
     .song-item img { width: 48px; height: 48px; border-radius: 10px; object-fit: cover; background: #1e1b4b; }
     .song-item-info { flex: 1; min-width: 0; }
     .song-item-info h4 { font-size: 13.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .song-item-info span { font-size: 11.5px; color: var(--muted); }
+    .badge-ok { font-size: 11px; color: #4ade80; margin-left: 6px; }
 
     .status-banner {
       position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
-      background: #141424; border: 1px solid var(--accent); color: #fff;
+      background: #141028; border: 1px solid var(--accent); color: #fff;
       padding: 10px 18px; border-radius: 999px; font-size: 12.5px; font-weight: 600;
-      z-index: 999; display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.7);
+      z-index: 999; display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.8);
       white-space: nowrap;
     }
   </style>
@@ -103,7 +110,7 @@
   <!-- 1. GitHub Connection -->
   <div class="card">
     <h2>🔑 GitHub Token Setup</h2>
-    <p class="sub">আপনার রিপোজিটরিতে সরাসরি ফাইল সেভ ও আপলোড করার জন্য টোকেন সেভ করুন।</p>
+    <p class="sub">রিপোজিটরিতে সরাসরি গান, ছবি ও আইকন সেভ করার জন্য টোকেন যুক্ত করুন।</p>
     <label>GitHub Personal Access Token</label>
     <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxx">
     <div class="row-2">
@@ -122,10 +129,10 @@
   <!-- 2. Upload New Song + Cover + Lyrics -->
   <div class="card">
     <h2>🎵 Upload New Song</h2>
-    <p class="sub">নতুন গান, কভার ফটো, YouTube লিংক এবং লিরিক্স যোগ করুন।</p>
+    <p class="sub">নতুন গান, কভার থাম্বনেইল, YouTube লিংক এবং লিরিক্স যোগ করুন।</p>
 
     <label>Song Title *</label>
-    <input type="text" id="songName" placeholder="উদাহরণ: Tere Jaane Ke Baad">
+    <input type="text" id="songName" placeholder="উদাহরণ: Tera Naam Meri Junoon">
 
     <div class="row-2">
       <div>
@@ -143,7 +150,7 @@
     </div>
 
     <label>Short Description</label>
-    <input type="text" id="songDesc" placeholder="Emotional Hinglish Lofi • R LOFI 01">
+    <input type="text" id="songDesc" placeholder="Original Music • R LOFI 01">
 
     <label>Song Lyrics (Optional - Fullscreen প্লেয়ারে দেখাবে)</label>
     <textarea id="songLyrics" placeholder="এখানে গানের লিরিক্স পেস্ট করুন..."></textarea>
@@ -160,13 +167,13 @@
   <!-- 3. Manage Published Songs -->
   <div class="card">
     <h2>📂 Published Songs (<span id="songCount">0</span>)</h2>
-    <p class="sub">আপলোড করা গানগুলো এখান থেকে এডিট বা ডিলিট করতে পারবেন।</p>
+    <p class="sub">আপলোড করা গানগুলো এখান থেকে লিরিক্স এডিট বা ডিলিট করতে পারবেন।</p>
     <div id="adminSongsList">Loading...</div>
   </div>
 
   <!-- 4. Brand Logo, Banner & Theme Settings -->
   <div class="card">
-    <h2>🎨 Logo, Banner & Site Settings</h2>
+    <h2>🎨 Logo, Banner & Theme Settings</h2>
     <p class="sub">চ্যানেলের লোগো, ব্যানার, নাম, থিম কালার এবং ফিচার কন্ট্রোল করুন।</p>
 
     <div class="row-2">
@@ -184,19 +191,19 @@
     <input type="text" id="cfgTagline" value="LISTEN • RELAX • FEEL • REMEMBER">
 
     <label>Channel Bio</label>
-    <input type="text" id="cfgBio" value="Late night lofi, sad melodies & emotional Hinglish vibes.">
+    <input type="text" id="cfgBio" value="Original Music | Romantic | Sad | Lofi">
 
     <label>Main YouTube Channel URL</label>
     <input type="url" id="cfgYoutube" value="https://youtube.com/@rlofi01?si=p4i9ZYVoa45vNk4G">
 
-    <label>Upload New Profile Logo (Optional)</label>
+    <label>Upload Profile Logo <span id="stAvatar" class="badge-ok"></span></label>
     <input type="file" id="cfgAvatarFile" accept="image/*">
 
-    <label>Upload New Hero Banner Background (Optional)</label>
+    <label>Upload Hero Banner Background <span id="stBanner" class="badge-ok"></span></label>
     <input type="file" id="cfgBannerFile" accept="image/*">
 
     <div class="switch-row">
-      <span>🌧️ Show Ambient Sound Studio</span>
+      <span>🎧 Show Ambient Sound Studio</span>
       <input type="checkbox" id="cfgAmbient" checked>
     </div>
     <div class="switch-row" style="margin-bottom: 14px;">
@@ -207,7 +214,57 @@
     <button id="saveCfgBtn" class="btn" onclick="saveSiteConfig()">✨ Save Brand & Theme Settings</button>
   </div>
 
-  <!-- 5. Listener Song Requests -->
+  <!-- 5. Custom PNG Icons & Size Manager -->
+  <div class="card">
+    <h2>🖼️ Custom PNG Icons & Size</h2>
+    <p class="sub">নিচের নেভিগেশন বার ও বাটনগুলোর জন্য আপনার নিজের .png আইকন সেট করুন (ফাঁকা রাখলে ডিফল্ট সাদা প্রিমিয়াম আইকন দেখাবে)।</p>
+
+    <label>Icon Size: <strong id="iconSizeVal">20</strong> px</label>
+    <input type="range" id="cfgIconSize" min="16" max="32" value="20" oninput="document.getElementById('iconSizeVal').textContent=this.value">
+
+    <div class="row-2">
+      <div>
+        <label>Home PNG <span id="stIconHome" class="badge-ok"></span></label>
+        <input type="file" id="iconHomeFile" accept="image/png,image/*">
+      </div>
+      <div>
+        <label>Search PNG <span id="stIconSearch" class="badge-ok"></span></label>
+        <input type="file" id="iconSearchFile" accept="image/png,image/*">
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div>
+        <label>Library PNG <span id="stIconLibrary" class="badge-ok"></span></label>
+        <input type="file" id="iconLibraryFile" accept="image/png,image/*">
+      </div>
+      <div>
+        <label>Download PNG <span id="stIconDownload" class="badge-ok"></span></label>
+        <input type="file" id="iconDownloadFile" accept="image/png,image/*">
+      </div>
+    </div>
+
+    <button id="saveIconsBtn" class="btn" onclick="saveCustomIcons()">💾 Save Custom PNG Icons</button>
+  </div>
+
+  <!-- 6. Ambient Sound Studio (Upload Copyright-Free MP3 Loops) -->
+  <div class="card">
+    <h2>🌧️ Ambient Sound Studio (MP3 Loops)</h2>
+    <p class="sub">আপনার নিজের কপিরাইট-ফ্রি বৃষ্টি ও বজ্রপাত, ভিনাইল এবং রাতের প্রকৃতির MP3 আপলোড করুন—এগুলো স্মুথভাবে লুপ হয়ে বাজবে।</p>
+
+    <label>🌧️ Rain & Thunder MP3 <span id="stAmbRain" class="badge-ok"></span></label>
+    <input type="file" id="ambRainFile" accept="audio/*">
+
+    <label>💿 Vinyl Crackle MP3 <span id="stAmbVinyl" class="badge-ok"></span></label>
+    <input type="file" id="ambVinylFile" accept="audio/*">
+
+    <label>🌙 Night Ambience MP3 <span id="stAmbNight" class="badge-ok"></span></label>
+    <input type="file" id="ambNightFile" accept="audio/*">
+
+    <button id="saveAmbBtn" class="btn" onclick="saveAmbientAudios()">🎶 Upload & Save Ambient Loops</button>
+  </div>
+
+  <!-- 7. Listener Song Requests -->
   <div class="card">
     <h2>📩 Song Requests from Listeners</h2>
     <p class="sub">দর্শকদের পাঠানো গানের অনুরোধগুলো এখানে জমা হয়।</p>
@@ -216,7 +273,7 @@
 
   <script>
     let currentSongs = [];
-    let currentConfig = {};
+    let currentConfig = { icons: {}, ambient: {} };
 
     function showStatus(msg, duration = 3500) {
       const el = document.getElementById('statusBanner');
@@ -230,9 +287,9 @@
 
     function getAuth() {
       return {
-        token: localStorage.getItem('gh_token') || '',
-        owner: localStorage.getItem('gh_owner') || 'RLOFI01-glitch',
-        repo: localStorage.getItem('gh_repo') || 'rlofi01-glitch.github.io'
+        token: (localStorage.getItem('gh_token') || '').trim(),
+        owner: (localStorage.getItem('gh_owner') || 'RLOFI01-glitch').trim(),
+        repo: (localStorage.getItem('gh_repo') || 'rlofi01-glitch.github.io').trim()
       };
     }
 
@@ -250,7 +307,7 @@
 
     function cleanFileName(prefix, originalName) {
       const ext = originalName.split('.').pop().toLowerCase();
-      return `${prefix}_${Date.now()}.${ext}`;
+      return `${prefix}_${Date.now()}_${Math.floor(Math.random()*999)}.${ext}`;
     }
 
     function fileToBase64(file) {
@@ -259,6 +316,29 @@
         reader.onload = () => resolve(reader.result.split(',')[1]);
         reader.onerror = reject;
         reader.readAsDataURL(file);
+      });
+    }
+
+    // Optimize large images slightly so mobile uploads never timeout
+    function optimizeImageToBase64(file, maxW = 1280, isPng = false) {
+      return new Promise((resolve, reject) => {
+        if (file.size < 900 * 1024 || isPng) {
+          return fileToBase64(file).then(resolve).catch(reject);
+        }
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          let w = img.width, h = img.height;
+          if (w > maxW) { h = Math.round((h * maxW) / w); w = maxW; }
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+          resolve(dataUrl.split(',')[1]);
+        };
+        img.onerror = () => fileToBase64(file).then(resolve).catch(reject);
+        img.src = url;
       });
     }
 
@@ -328,6 +408,9 @@
         const cfgRes = await fetch('config.json?t=' + Date.now());
         if (cfgRes.ok) {
           currentConfig = await cfgRes.json();
+          if (!currentConfig.icons) currentConfig.icons = {};
+          if (!currentConfig.ambient) currentConfig.ambient = {};
+
           document.getElementById('cfgTitle').value = currentConfig.title || 'R LOFI 01';
           document.getElementById('cfgAccent').value = currentConfig.accent || '#a855f7';
           document.getElementById('cfgTagline').value = currentConfig.tagline || 'LISTEN • RELAX • FEEL • REMEMBER';
@@ -335,6 +418,20 @@
           document.getElementById('cfgYoutube').value = currentConfig.youtubeUrl || '';
           document.getElementById('cfgAmbient').checked = currentConfig.showAmbientStudio !== false;
           document.getElementById('cfgRequest').checked = currentConfig.showRequestBox !== false;
+
+          const sz = currentConfig.iconSize || 20;
+          document.getElementById('cfgIconSize').value = sz;
+          document.getElementById('iconSizeVal').textContent = sz;
+
+          if (currentConfig.avatar) document.getElementById('stAvatar').textContent = "✓ Active";
+          if (currentConfig.banner) document.getElementById('stBanner').textContent = "✓ Active";
+          if (currentConfig.icons.home) document.getElementById('stIconHome').textContent = "✓ Set";
+          if (currentConfig.icons.search) document.getElementById('stIconSearch').textContent = "✓ Set";
+          if (currentConfig.icons.library) document.getElementById('stIconLibrary').textContent = "✓ Set";
+          if (currentConfig.icons.download) document.getElementById('stIconDownload').textContent = "✓ Set";
+          if (currentConfig.ambient.rain) document.getElementById('stAmbRain').textContent = "✓ Loop Active";
+          if (currentConfig.ambient.vinyl) document.getElementById('stAmbVinyl').textContent = "✓ Loop Active";
+          if (currentConfig.ambient.night) document.getElementById('stAmbNight').textContent = "✓ Loop Active";
         }
       } catch (e) {}
 
@@ -394,7 +491,7 @@
         await githubPutFile(audioFileName, audioB64, `Upload audio: ${name}`);
 
         showStatus("⏳ ২/৩: কভার ফটো আপলোড হচ্ছে...", 0);
-        const coverB64 = await fileToBase64(coverFile);
+        const coverB64 = await optimizeImageToBase64(coverFile, 1280, false);
         await githubPutFile(coverFileName, coverB64, `Upload cover: ${name}`);
 
         showStatus("⏳ ৩/৩: গানের লিস্ট আপডেট হচ্ছে...", 0);
@@ -469,16 +566,18 @@
 
         if (avatarFile) {
           const avName = cleanFileName('profile', avatarFile.name);
-          const avB64 = await fileToBase64(avatarFile);
+          const avB64 = await optimizeImageToBase64(avatarFile, 512, false);
           await githubPutFile(avName, avB64, "Update channel logo");
           currentConfig.avatar = avName;
+          document.getElementById('stAvatar').textContent = "✓ Active";
         }
 
         if (bannerFile) {
           const bnName = cleanFileName('banner', bannerFile.name);
-          const bnB64 = await fileToBase64(bannerFile);
+          const bnB64 = await optimizeImageToBase64(bannerFile, 1400, false);
           await githubPutFile(bnName, bnB64, "Update hero banner");
           currentConfig.banner = bnName;
+          document.getElementById('stBanner').textContent = "✓ Active";
         }
 
         currentConfig.title = document.getElementById('cfgTitle').value.trim() || 'R LOFI 01';
@@ -497,7 +596,7 @@
             short_name: currentConfig.title,
             start_url: "./index.html",
             display: "standalone",
-            background_color: "#08080e",
+            background_color: "#07070d",
             theme_color: currentConfig.accent,
             icons: [
               { src: currentConfig.avatar, sizes: "192x192", type: "image/png" },
@@ -507,10 +606,80 @@
           await githubPutFile('manifest.json', utf8ToBase64(JSON.stringify(manifestObj, null, 2)), "Update PWA manifest icon");
         }
 
-        showStatus("✅ সব সেটিংস সফলভাবে সেভ হয়েছে!");
+        showStatus("✅ ব্র্যান্ড ও থিম সেটিংস সেভ হয়েছে!");
       } catch (err) {
         alert("❌ Error: " + err.message);
         showStatus("❌ সেভ ব্যর্থ হয়েছে");
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function saveCustomIcons() {
+      const btn = document.getElementById('saveIconsBtn');
+      btn.disabled = true;
+      try {
+        showStatus("⏳ কাস্টম PNG আইকন আপলোড হচ্ছে...", 0);
+        if (!currentConfig.icons) currentConfig.icons = {};
+
+        const slots = [
+          { id: 'iconHomeFile', key: 'home', badge: 'stIconHome' },
+          { id: 'iconSearchFile', key: 'search', badge: 'stIconSearch' },
+          { id: 'iconLibraryFile', key: 'library', badge: 'stIconLibrary' },
+          { id: 'iconDownloadFile', key: 'download', badge: 'stIconDownload' }
+        ];
+
+        for (const s of slots) {
+          const f = document.getElementById(s.id).files[0];
+          if (f) {
+            const fname = cleanFileName(`icon_${s.key}`, f.name);
+            const b64 = await fileToBase64(f);
+            await githubPutFile(fname, b64, `Upload ${s.key} PNG icon`);
+            currentConfig.icons[s.key] = fname;
+            document.getElementById(s.badge).textContent = "✓ Set";
+          }
+        }
+
+        currentConfig.iconSize = Number(document.getElementById('cfgIconSize').value) || 20;
+        await githubPutFile('config.json', utf8ToBase64(JSON.stringify(currentConfig, null, 2)), "Update custom PNG icons");
+        showStatus("✅ কাস্টম PNG আইকন সেভ হয়েছে!");
+      } catch (err) {
+        alert("❌ Error: " + err.message);
+        showStatus("❌ আইকন সেভ ব্যর্থ হয়েছে");
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    async function saveAmbientAudios() {
+      const btn = document.getElementById('saveAmbBtn');
+      btn.disabled = true;
+      try {
+        showStatus("⏳ Ambient MP3 লুপ আপলোড হচ্ছে...", 0);
+        if (!currentConfig.ambient) currentConfig.ambient = {};
+
+        const ambSlots = [
+          { id: 'ambRainFile', key: 'rain', badge: 'stAmbRain' },
+          { id: 'ambVinylFile', key: 'vinyl', badge: 'stAmbVinyl' },
+          { id: 'ambNightFile', key: 'night', badge: 'stAmbNight' }
+        ];
+
+        for (const s of ambSlots) {
+          const f = document.getElementById(s.id).files[0];
+          if (f) {
+            const fname = cleanFileName(`amb_${s.key}`, f.name);
+            const b64 = await fileToBase64(f);
+            await githubPutFile(fname, b64, `Upload ambient ${s.key} loop`);
+            currentConfig.ambient[s.key] = fname;
+            document.getElementById(s.badge).textContent = "✓ Loop Active";
+          }
+        }
+
+        await githubPutFile('config.json', utf8ToBase64(JSON.stringify(currentConfig, null, 2)), "Update ambient audio loops");
+        showStatus("✅ Ambient MP3 লুপ সফলভাবে সেভ হয়েছে!");
+      } catch (err) {
+        alert("❌ Error: " + err.message);
+        showStatus("❌ Ambient আপলোড ব্যর্থ হয়েছে");
       } finally {
         btn.disabled = false;
       }
