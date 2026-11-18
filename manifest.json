@@ -1,20 +1,23 @@
 {
   "name": "R LOFI 01 | Official Music",
   "short_name": "R LOFI 01",
-  "start_url": "./index.html",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#100b19",
   "theme_color": "#100b19",
   "icons": [
     {
-      "src": "r lofi 01.png",
+      "src": "profile_1794922298525.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "r lofi 01.png",
+      "src": "profile_1794922298525.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }
+
