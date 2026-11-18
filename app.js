@@ -4,6 +4,7 @@ let currentSongIndex = 0;
 let isPlaying = false;
 let isRandom = false;
 let favoriteSongs = JSON.parse(localStorage.getItem('fav_songs') || '[]');
+let deferredPrompt = null;
 
 const audio = new Audio();
 let ambientRain = null;
@@ -25,18 +26,43 @@ const totalDurationEl = document.getElementById('totalDuration');
 const tracksList = document.getElementById('tracksList');
 const searchInput = document.getElementById('searchInput');
 
+// PWA App Install Button Logic
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+document.getElementById('installAppBtn').addEventListener('click', async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  } else {
+    alert("ব্রাউজারের ওপরে ডানদিকের ৩টি ডট (⋮) মেনুতে চাপ দিয়ে 'Add to Home screen' বা 'Install app' সিলেক্ট করুন!");
+  }
+});
+
 async function initSite() {
   try {
     const cfgRes = await fetch('config.json?t=' + Date.now()).catch(() => null);
     if (cfgRes && cfgRes.ok) {
       const cfg = await cfgRes.json();
-      if (cfg.title) document.getElementById('siteTitle').textContent = cfg.title;
+      if (cfg.title) {
+        document.getElementById('siteTitle').textContent = cfg.title;
+        document.getElementById('topBrandName').textContent = cfg.title;
+      }
       if (cfg.bio) document.getElementById('siteBio').textContent = cfg.bio;
-      if (cfg.avatar) document.getElementById('avatarImg').src = cfg.avatar;
-
+      if (cfg.avatar) {
+        document.getElementById('avatarImg').src = cfg.avatar;
+        document.getElementById('topLogoImg').src = cfg.avatar;
+      }
+      if (cfg.youtubeUrl) {
+        document.getElementById('topYtBtn').href = cfg.youtubeUrl;
+        document.getElementById('heroYtBtn').href = cfg.youtubeUrl;
+      }
       if (cfg.accent) {
         document.documentElement.style.setProperty('--accent', cfg.accent);
-        document.documentElement.style.setProperty('--accent-glow', cfg.accent + '59');
+        document.documentElement.style.setProperty('--accent-glow', cfg.accent + '66');
       }
       if (cfg.iconSize) {
         document.documentElement.style.setProperty('--icon-size', cfg.iconSize + 'px');
@@ -45,8 +71,6 @@ async function initSite() {
         if (cfg.icons.dedicate) customDedicateIcon = cfg.icons.dedicate;
         if (cfg.icons.download) customDownloadIcon = cfg.icons.download;
       }
-
-      document.getElementById('radioActiveBadge').style.display = cfg.showRadioBadge !== false ? 'inline-flex' : 'none';
       document.getElementById('ambientSection').style.display = cfg.showAmbientStudio !== false ? 'block' : 'none';
       document.getElementById('requestBoxSection').style.display = cfg.showRequestBox !== false ? 'block' : 'none';
     }
@@ -60,7 +84,7 @@ async function initSite() {
         ...s,
         id: s.id || ('song_' + idx),
         title: s.title || s.name || s.songName || (s.audio ? s.audio.replace(/\.[^/.]+$/, "") : "Untitled Track"),
-        desc: s.desc || s.description || s.subtitle || "R LOFI 01",
+        desc: s.desc || s.description || s.subtitle || "R LOFI 01 Original",
         mood: s.mood || s.category || "Lofi",
         ytUrl: s.ytUrl || s.youtube || s.yt || ""
       }));
@@ -68,44 +92,55 @@ async function initSite() {
       renderTracks(songs);
       if (songs.length > 0) loadSong(0);
     }
-  } catch (e) {
-    console.error('Failed to load songs:', e);
-  }
+  } catch (e) {}
 }
 
+// বড় থাম্বনেইল কার্ড রেন্ডার (আগের ডিজাইনের মতো)
 function renderTracks(tracks) {
   if (!tracksList) return;
   if (tracks.length === 0) {
-    tracksList.innerHTML = `<p class="no-tracks">কোনো গান পাওয়া যায়নি</p>`;
+    tracksList.innerHTML = `<p style="text-align:center; color:#94a3b8; padding:24px;">কোনো গান পাওয়া যায়নি</p>`;
     return;
   }
 
   tracksList.innerHTML = tracks.map((song, i) => {
     const isFav = favoriteSongs.includes(song.id);
-    const dlIconHtml = customDownloadIcon
-      ? `<img src="${customDownloadIcon}" style="width:var(--icon-size, 20px); height:var(--icon-size, 20px); object-fit:contain;">`
+    const dlIcon = customDownloadIcon
+      ? `<img src="${customDownloadIcon}" style="width:var(--icon-size, 18px); height:var(--icon-size, 18px); object-fit:contain;">`
       : `⬇️`;
-    const dedIconHtml = customDedicateIcon
-      ? `<img src="${customDedicateIcon}" style="width:var(--icon-size, 20px); height:var(--icon-size, 20px); object-fit:contain;">`
+    const dedIcon = customDedicateIcon
+      ? `<img src="${customDedicateIcon}" style="width:var(--icon-size, 18px); height:var(--icon-size, 18px); object-fit:contain;">`
       : `💌`;
 
     return `
-      <div class="song-card ${currentSongIndex === i && isPlaying ? 'active' : ''}" onclick="playSongFromList(${i})">
-        <img src="${song.cover || 'rlofi 01.png'}" class="song-card-img" alt="${song.title}">
-        <div class="song-card-info">
-          <div class="song-card-title">${song.title}</div>
-          <div class="song-card-sub">${song.mood} • ${song.desc}</div>
+      <div class="big-song-card ${currentSongIndex === i && isPlaying ? 'active' : ''}">
+        <div class="big-thumb-wrap" ondblclick="openYouTubeVideo('${song.ytUrl}')" onclick="playSongFromList(${i})">
+          <img src="${song.cover || 'profile_1794970581989.png'}" alt="${song.title}">
+          <span class="mood-tag">${song.mood}</span>
+          <button class="play-overlay-btn">▶️</button>
         </div>
-        <div class="song-card-actions" onclick="event.stopPropagation();">
-          <button class="action-btn fav-card-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${song.id}', this)">❤️</button>
-          ${song.ytUrl ? `<a href="${song.ytUrl}" target="_blank" class="action-btn">▶️</a>` : ''}
-          <a href="${song.audio}" download="${song.title}.mp3" class="action-btn download-btn">${dlIconHtml}</a>
-          <button class="action-btn dedicate-btn" onclick="openDedicateModal('${song.id}')">${dedIconHtml}</button>
+        <div class="big-card-body">
+          <div class="big-card-title">${song.title}</div>
+          <div class="big-card-desc">${song.desc}</div>
+          <div class="big-card-footer">
+            <div class="card-act-group">
+              <button class="icon-pill ${isFav ? 'fav-active' : ''}" onclick="toggleFavorite('${song.id}', this)">❤️ Fav</button>
+              <button class="icon-pill" onclick="openDedicateModal('${song.id}')">${dedIcon} Dedicate</button>
+            </div>
+            <div class="card-act-group">
+              ${song.ytUrl ? `<a href="${song.ytUrl}" target="_blank" class="icon-pill">▶️ Video</a>` : ''}
+              <a href="${song.audio}" download="${song.title}.mp3" class="icon-pill">${dlIcon}</a>
+            </div>
+          </div>
         </div>
       </div>
     `;
   }).join('');
 }
+
+window.openYouTubeVideo = function(url) {
+  if (url) window.open(url, '_blank');
+};
 
 function loadSong(index) {
   if (index < 0 || index >= songs.length) return;
@@ -114,12 +149,11 @@ function loadSong(index) {
 
   songTitle.textContent = song.title;
   songMood.textContent = song.mood;
-  songCover.src = song.cover || 'rlofi 01.png';
+  songCover.src = song.cover || 'profile_1794970581989.png';
   audio.src = song.audio;
 
   favBtn.classList.toggle('active', favoriteSongs.includes(song.id));
-
-  document.querySelectorAll('.song-card').forEach((card, idx) => {
+  document.querySelectorAll('.big-song-card').forEach((card, idx) => {
     card.classList.toggle('active', idx === index);
   });
 }
@@ -159,18 +193,11 @@ progressBar.addEventListener('input', () => {
   if (audio.duration) audio.currentTime = (progressBar.value / 100) * audio.duration;
 });
 
-prevBtn.addEventListener('click', () => {
-  playSongFromList((currentSongIndex - 1 + songs.length) % songs.length);
-});
-
+prevBtn.addEventListener('click', () => playSongFromList((currentSongIndex - 1 + songs.length) % songs.length));
 nextBtn.addEventListener('click', () => {
-  if (isRandom) {
-    playSongFromList(Math.floor(Math.random() * songs.length));
-  } else {
-    playSongFromList((currentSongIndex + 1) % songs.length);
-  }
+  if (isRandom) playSongFromList(Math.floor(Math.random() * songs.length));
+  else playSongFromList((currentSongIndex + 1) % songs.length);
 });
-
 audio.addEventListener('ended', () => nextBtn.click());
 
 randomBtn.addEventListener('click', () => {
@@ -193,7 +220,7 @@ if (searchInput) {
 }
 
 window.filterMood = function(mood, el) {
-  document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
   if (el) el.classList.add('active');
 
   if (mood === 'all') songs = [...originalSongs];
@@ -202,13 +229,37 @@ window.filterMood = function(mood, el) {
   renderTracks(songs);
 };
 
+// Bottom Nav Switcher (Home / Search / Library)
+window.switchBottomTab = function(tab) {
+  document.querySelectorAll('.bnav-btn').forEach(b => b.classList.remove('active'));
+  const searchBox = document.getElementById('searchWrapper');
+
+  if (tab === 'home') {
+    document.getElementById('navHome').classList.add('active');
+    searchBox.style.display = 'none';
+    filterMood('all', document.querySelector('[data-mood="all"]'));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } else if (tab === 'search') {
+    document.getElementById('navSearch').classList.add('active');
+    searchBox.style.display = 'flex';
+    searchBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    searchInput.focus();
+  } else if (tab === 'library') {
+    document.getElementById('navLibrary').classList.add('active');
+    searchBox.style.display = 'none';
+    songs = originalSongs.filter(s => favoriteSongs.includes(s.id));
+    renderTracks(songs);
+    document.getElementById('tracksList').scrollIntoView({ behavior: 'smooth' });
+  }
+};
+
 window.toggleFavorite = function(songId, el) {
   if (favoriteSongs.includes(songId)) {
     favoriteSongs = favoriteSongs.filter(id => id !== songId);
-    if (el) el.classList.remove('active');
+    if (el) el.classList.remove('fav-active');
   } else {
     favoriteSongs.push(songId);
-    if (el) el.classList.add('active');
+    if (el) el.classList.add('fav-active');
   }
   localStorage.setItem('fav_songs', JSON.stringify(favoriteSongs));
 };
@@ -250,8 +301,8 @@ function checkDedication() {
       overlay.innerHTML = `
         <div class="dedication-modal-content">
           <h2>💖 বিশেষ উৎসর্গ 💖</h2>
-          <p class="ded-text"><strong>${data.from}</strong> এই গানটি <strong>${data.to}</strong> কে ডেডিকেট করেছেন।</p>
-          ${data.msg ? `<blockquote class="ded-msg">"${data.msg}"</blockquote>` : ''}
+          <p style="margin:12px 0;"><strong>${data.from}</strong> এই গানটি <strong>${data.to}</strong> কে ডেডিকেট করেছেন।</p>
+          ${data.msg ? `<blockquote style="font-style:italic; color:#c4b5fd;">"${data.msg}"</blockquote>` : ''}
           <button onclick="this.parentElement.parentElement.remove(); togglePlay();" class="play-ded-btn">গানটি শুনুন 🎵</button>
         </div>
       `;
@@ -318,10 +369,3 @@ initSite().then(() => {
   checkDedication();
   initAmbient();
 });
-
-window.toggleSearchView = function() {
-  const wrapper = document.getElementById('searchWrapper');
-  wrapper.style.display = (wrapper.style.display === 'none' || wrapper.style.display === '') ? 'flex' : 'none';
-  if (wrapper.style.display === 'flex') searchInput.focus();
-};
-      
